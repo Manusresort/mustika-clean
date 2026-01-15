@@ -1,0 +1,48 @@
+name: Verify repository invariants
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Block runtime or indices tracking
+        run: |
+          set -e
+          if git ls-files | grep -E '^(runtime/|indices/)' >/dev/null; then
+            echo "ERROR: runtime/ or indices/ paths are tracked in git, which violates repo invariants." >&2
+            echo "Tracked paths:" >&2
+            git ls-files | grep -E '^(runtime/|indices/)' >&2
+            exit 1
+          fi
+          echo "OK: no runtime/ or indices/ paths tracked."
+
+      - name: Ensure governance docs exist
+        run: |
+          set -e
+          for path in \
+            docs/GITHUB_USAGE_BOUNDARY.md \
+            docs/REPO_FREEZE.md \
+            docs/REPO_MIGRATION_VERIFICATION.md \
+            documentation/system_overview/AS_BUILT_ARCH.md \
+            documentation/system_overview/GOVERNANCE.md
+          do
+            if [ ! -f "$path" ]; then
+              echo "ERROR: missing required doc: $path" >&2
+              exit 1
+            fi
+          done
+          echo "OK: required governance docs present."
+
+      - name: Validate meta snapshot JSON
+        run: |
+          set -e
+          test -f meta/SNAPSHOT.json
+          python -m json.tool meta/SNAPSHOT.json >/dev/null
+          echo "OK: meta/SNAPSHOT.json parses."
