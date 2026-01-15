@@ -1,0 +1,36 @@
+# Single-agent crew-ai config for LOBAK shakedown of Mistral via Ollama.
+# This file does NOT run anything by itself; it is used by a local crew runner.
+# Traceability: docs/crew/CREW_SHAKEDOWN_PLAN_LOBAK_MISTRAL.md
+
+crew:
+  name: shakedown_lobak_mistral
+  description: "Annotation-only shakedown focused on glossary ambiguity for lobak."
+  tasks:
+    - id: shakedown_annotate_lobak
+      description: >
+        Classify the locked LOBAK excerpt (lines 52–55) into annotation labels.
+        Goal: signal glossary ambiguity around "lobak" only.
+        No translation, no meaning decisions, JSON stdout only.
+      agent: annotator_mistral
+      expected_output: >
+        JSON array of {line, span, label, reason} for the input text.
+
+agents:
+  annotator_mistral:
+    role: "Annotation helper (Mistral via Ollama)"
+    goal: "Label lobak-related spans without changing the text."
+    backstory: >
+      Works on the Mustikarasa project. Knows about HISTORICAL / GLOSSARY /
+      SAFETY / OCR labels and the need to preserve ambiguity and traceability.
+    llm:
+      provider: "ollama"
+      model: "mistral"
+      # Let your crew-ai / Codex integration fill in host/port/settings.
+    prompt:
+      system: "sandbox/crew/prompts/shakedown_lobak_mistral_system.md"
+    tools: []
+    constraints:
+      - "Read-only: cannot modify files."
+      - "No web access."
+      - "No glossary decisions."
+      - "Max output: 40 items."

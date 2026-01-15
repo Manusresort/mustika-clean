@@ -1,0 +1,10 @@
+[
+  {
+    "line": null,
+    "span": "Sajuran",
+    "issue_type": "EQUIVALENT",
+    "severity": "WARNING",
+    "comment": "The annotator actively proposes a translation or equivalent for 'Sajuran'. In Phase-4, the use of EQUIVALENT should be reserved for cases where the annotator explicitly provides a translation or equivalent, not simply because there is no English translation present."
+  }
+]
+---OPTIONAL_AGENT_STEPS---

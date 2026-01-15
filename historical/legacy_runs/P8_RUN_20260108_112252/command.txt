@@ -1,0 +1,1 @@
+python mustikarasa_codex_cli.py recipe --english "sandbox/phase8_runs/P8_RUN_20260108_112252/inputs/english.txt" --rough-nl "sandbox/phase8_runs/P8_RUN_20260108_112252/inputs/rough_nl.txt" --output "sandbox/phase8_runs/P8_RUN_20260108_112252/outputs/final.txt" 2>&1 | tee "sandbox/phase8_runs/P8_RUN_20260108_112252/logs/run.log"

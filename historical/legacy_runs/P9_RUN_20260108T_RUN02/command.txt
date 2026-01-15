@@ -1,0 +1,4 @@
+sandbox/tools/phase8_run_with_gate.sh \
+  sandbox/phase9_runs/P9_RUN_20260108T_RUN02 \
+  sandbox/phase9_runs/P9_RUN_20260108T_RUN02/inputs/english.txt \
+  sandbox/phase9_runs/P9_RUN_20260108T_RUN02/inputs/rough_nl.txt

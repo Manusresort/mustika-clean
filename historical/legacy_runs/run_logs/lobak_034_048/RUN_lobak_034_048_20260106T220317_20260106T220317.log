@@ -1,0 +1,18 @@
+mode: excerpt-aware
+excerpt_id: lobak_034_048
+excerpt_source: docs/pilots/P6_LOBAK_CASE02_EXCERPT_SELECTION.md
+excerpt_version: locked-2026-01-12
+run_id: RUN_lobak_034_048_20260106T220317
+started_at: 2026-01-06T22:03:17Z
+status: PENDING
+config_path: sandbox/crew/configs/lobak_case02.yaml
+cli_config_mismatch: false
+Pre-flight OK. Starting pipeline.
+--- PIPELINE OUTPUT ---
+Traceback (most recent call last):
+  File "/Users/vwvd/Millway/AI-folder/Crew-AI/sandbox/crew/configs/lobak_case02_runner.py", line 20, in <module>
+    from sandbox.crew.shakedown_lobak_mistral_runner import main
+ModuleNotFoundError: No module named 'sandbox'
+[WARN] JSON parse failed: Expecting value: line 1 column 1 (char 0)
+Pipeline failed or not implemented.
+status: ERROR

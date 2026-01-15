@@ -1,0 +1,21 @@
+SUMMARY
+overall_status: FAIL
+failed_checks: [NL_ONLY_MAIN_OUTPUT, REMARKS_SEPARATOR_PRESENT, NO_META_IN_MAIN_TEXT]
+
+CHECK_RESULTS
+check_id: NL_ONLY_MAIN_OUTPUT
+status: FAIL
+evidence: 1:Fry the spices until fragrant, but do not let them burn.
+2:Add sliced chilies and cook until soft.
+6:- 'brown' is vertaald als 'bruin', maar in de oorspronkelijke tekst wordt niet expliciet gesproken over bruining, dus 'donkeren' zou een meer neutrale vertaling kunnen zijn.
+check_id: NO_GOVERNANCE_TERMS
+status: PASS
+evidence: no matches
+check_id: REMARKS_SEPARATOR_PRESENT
+status: FAIL
+evidence: 2:Add sliced chilies and cook until soft.
+3:
+4:Opmerkingen:
+check_id: NO_META_IN_MAIN_TEXT
+status: FAIL
+evidence: Opmerkingen not cleanly separated

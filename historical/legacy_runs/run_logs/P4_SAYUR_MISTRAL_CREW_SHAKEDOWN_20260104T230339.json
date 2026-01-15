@@ -1,0 +1,14 @@
+[
+  {
+    "line": 14,
+    "span": "Golongan VI",
+    "label": "HISTORICAL",
+    "reason": "Term appears to be a category label or classification number."
+  },
+  {
+    "line": 14,
+    "span": "Sajuran",
+    "label": "GLOSSARY",
+    "reason": "Term that looks like a key category name in the vegetable taxonomy."
+  }
+]

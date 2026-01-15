@@ -1,0 +1,10 @@
+runner_name: P4_LOBAK_MISTRAL_CREW
+command: python3 sandbox/crew/shakedown_lobak_mistral_runner.py
+returncode: 2
+
+=== STDOUT ===
+
+
+=== STDERR ===
+/opt/homebrew/Cellar/python@3.11/3.11.14_1/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python: can't open file '/Users/vwvd/Millway/AI-folder/Crew-AI/sandbox/crew/shakedown_lobak_mistral_runner.py': [Errno 2] No such file or directory
+

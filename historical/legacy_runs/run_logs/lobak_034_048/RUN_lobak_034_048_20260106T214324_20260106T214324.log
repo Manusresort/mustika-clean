@@ -1,0 +1,14 @@
+mode: excerpt-aware
+excerpt_id: lobak_034_048
+excerpt_source: docs/pilots/P6_LOBAK_CASE02_EXCERPT_SELECTION.md
+excerpt_version: locked-2026-01-12
+run_id: RUN_lobak_034_048_20260106T214324
+started_at: 2026-01-06T21:43:24Z
+status: PENDING
+config_path: sandbox/crew/configs/lobak_case02.yaml
+cli_config_mismatch: false
+Pre-flight OK. Starting pipeline.
+--- PIPELINE OUTPUT ---
+No runner script found for YAML config: sandbox/crew/configs/lobak_case02.yaml
+Pipeline failed or not implemented.
+status: ERROR

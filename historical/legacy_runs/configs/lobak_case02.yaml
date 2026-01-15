@@ -1,0 +1,12 @@
+run_id: RUN_lobak_034_048_case02_001
+mode: sandbox
+
+excerpt:
+  id: lobak_034_048
+  source: docs/pilots/P6_LOBAK_CASE02_EXCERPT_SELECTION.md
+  version: locked-2026-01-12
+
+pipeline:
+  agents:
+    - annotator_primary
+    - challenger_primary

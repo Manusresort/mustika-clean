@@ -1,0 +1,8 @@
+{
+  "_meta": {
+    "case": "sayur_internal_case01",
+    "step": "annotator",
+    "status": "pending_no_aligned_log",
+    "note": "Previous binding used MICROPILOT_SAYUR_20260105T154946.log, which does not match the Case-01 excerpt (lines 52–66). Awaiting a future excerpt-aware run."
+  }
+}

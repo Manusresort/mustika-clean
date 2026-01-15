@@ -1,0 +1,19 @@
+SUMMARY
+overall_status: PASS
+failed_checks: []
+
+CHECK_RESULTS
+check_id: MAIN_TEXT_NONEMPTY
+status: PASS
+evidence: non-empty main text detected
+check_id: NO_GOVERNANCE_TERMS
+status: PASS
+evidence: no matches
+check_id: REMARKS_SEPARATOR_PRESENT
+status: PASS
+evidence: 1:Deze is een kleine testtekst. Ik wil zien of CrewAI en Mistral deze juist kunnen vertalen naar het Nederlands. Het moet duidelijk, natuurlijk en gemakkelijk leesbaar zijn.
+2:
+3:Opmerkingen: (geen)
+check_id: NO_META_IN_MAIN_TEXT
+status: PASS
+evidence: Opmerkingen separated by blank line

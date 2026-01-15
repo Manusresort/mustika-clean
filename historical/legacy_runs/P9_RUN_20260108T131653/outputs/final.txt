@@ -1,0 +1,3 @@
+Deze is een kleine testtekst. Ik wil zien of CrewAI en Mistral deze juist kunnen vertalen naar het Nederlands. Het moet duidelijk, natuurlijk en gemakkelijk leesbaar zijn.
+
+Opmerkingen: (geen)

@@ -1,0 +1,6 @@
+# OS
+.DS_Store
+
+# Runtime-generated state (MVP invariant: filesystem-first, but not versioned)
+runtime/
+indices/

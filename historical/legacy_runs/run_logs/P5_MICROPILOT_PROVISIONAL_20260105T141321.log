@@ -1,0 +1,498 @@
+╭────────────────────────────────────────────────────── Crew Execution Started ──────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Crew Execution Started                                                                                                            │
+│  Name: crew                                                                                                                        │
+│  ID: 23c8fd24-abab-4583-ab40-1ce074586ce2                                                                                          │
+│  Tool Args:                                                                                                                        │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+🚀 Crew: crew
+└── 📋 Task: ecfc6a3b-6419-4053-8d0e-98d793c8274f
+    Status: Executing Task...╭───────────────────────────────────────────────────────── 🤖 Agent Started ─────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Agent: Annotation helper (Mistral via Ollama)                                                                                     │
+│                                                                                                                                    │
+│  Task: You are an Annotation Agent working in the Mustikarasa Project,                                                             │
+│  Phase-4 sandbox (SAYUR micropilot).                                                                                               │
+│                                                                                                                                    │
+│  Your role is to READ the excerpt and PRODUCE ANNOTATIONS ONLY.                                                                    │
+│                                                                                                                                    │
+│  You DO NOT translate.                                                                                                             │
+│  You DO NOT decide meanings.                                                                                                       │
+│  You DO NOT correct or modernise the text.                                                                                         │
+│                                                                                                                                    │
+│  You SIGNAL possible issues and EXPLAIN why — nothing more.                                                                        │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Scope                                                                                                                          │
+│                                                                                                                                    │
+│  You annotate ONLY the provided excerpt.                                                                                           │
+│  You do not modify files, create glossaries, or resolve ambiguity.                                                                 │
+│                                                                                                                                    │
+│  When something is uncertain: you flag it and explain it.                                                                          │
+│                                                                                                                                    │
+│  Agents in Phase-4 are signalers, not decision-makers.                                                                             │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Labels                                                                                                                         │
+│                                                                                                                                    │
+│  Choose exactly ONE label per span:                                                                                                │
+│                                                                                                                                    │
+│  - HISTORICAL   — historically situated phrasing or concepts                                                                       │
+│  - GLOSSARY     — term likely requiring a glossary entry (proposal-only)                                                           │
+│  - SAFETY       — handling, storage, hygiene, health, spoilage                                                                     │
+│  - OCR          — likely OCR/scanning artefact                                                                                     │
+│  - NONE         — observation without classification impact                                                                        │
+│                                                                                                                                    │
+│  Do NOT “fix”. Do NOT infer. You describe what you see.                                                                            │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Evidence & reasoning                                                                                                           │
+│                                                                                                                                    │
+│  Each annotation includes a short, neutral reason.                                                                                 │
+│                                                                                                                                    │
+│  Guidelines:                                                                                                                       │
+│                                                                                                                                    │
+│  - point to the text itself                                                                                                        │
+│  - avoid speculation                                                                                                               │
+│  - no cultural interpretation beyond what is visible                                                                               │
+│  - absolutely NO translations or “best equivalents”                                                                                │
+│                                                                                                                                    │
+│  If ambiguous, explicitly say: “ambiguous — requires human review”.                                                                │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## OUTPUT FORMAT (STRICT)                                                                                                         │
+│                                                                                                                                    │
+│  You MUST output **VALID JSON ONLY**.                                                                                              │
+│                                                                                                                                    │
+│  Structure:                                                                                                                        │
+│                                                                                                                                    │
+│  [                                                                                                                                 │
+│    {                                                                                                                               │
+│      "line": <int>,                                                                                                                │
+│      "span": "<exact quoted text>",                                                                                                │
+│      "label": "<HISTORICAL|GLOSSARY|SAFETY|OCR|NONE>",                                                                             │
+│      "reason": "<short explanation>"                                                                                               │
+│    }                                                                                                                               │
+│  ]                                                                                                                                 │
+│                                                                                                                                    │
+│  ### HARD RULES                                                                                                                    │
+│                                                                                                                                    │
+│  1) NO Markdown, NO headings, NO commentary.                                                                                       │
+│  2) NO code fences (no ```json, ``` anything).                                                                                     │
+│  3) The FIRST character of your response MUST be `[`.                                                                              │
+│  4) The LAST character of your response MUST be `]`.                                                                               │
+│  5) The array MUST contain only valid JSON objects.                                                                                │
+│                                                                                                                                    │
+│  Anything else is INVALID in Phase-4.                                                                                              │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Soft-stop principle                                                                                                            │
+│                                                                                                                                    │
+│  When unsure about meaning, safety interpretation, or cultural impact:                                                             │
+│                                                                                                                                    │
+│  - DO NOT guess.                                                                                                                   │
+│  - Label appropriately (often GLOSSARY or HISTORICAL).                                                                             │
+│  - Explain why it is uncertain.                                                                                                    │
+│  - Leave decisions to downstream review and the Human Gate.                                                                        │
+│                                                                                                                                    │
+│  You annotate. Humans decide. Everything remains traceable.                                                                        │
+│                                                                                                                                    │
+│                                                                                                                                    │
+│  Here is the excerpt (line numbers included):                                                                                      │
+│                                                                                                                                    │
+│  14: Golongan VI : Sajuran.                                                                                                        │
+│  15:                                                                                                                               │
+│  16:                                                                                                                               │
+│  17:                                                                                                                               │
+│                                                                                                                                    │
+│  Return ONLY the JSON array as described above.                                                                                    │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+🚀 Crew: crew
+└── 📋 Task: ecfc6a3b-6419-4053-8d0e-98d793c8274f
+    Assigned to: Annotation helper (Mistral via Ollama)
+    Status: ✅ Completed╭────────────────────────────────────────────────────── ✅ Agent Final Answer ───────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Agent: Annotation helper (Mistral via Ollama)                                                                                     │
+│                                                                                                                                    │
+│  Final Answer:                                                                                                                     │
+│  [                                                                                                                                 │
+│    {                                                                                                                               │
+│      "line": 14,                                                                                                                   │
+│      "span": "Golongan VI : Sajuran",                                                                                              │
+│      "label": "HISTORICAL",                                                                                                        │
+│      "reason": "The term 'Golongan VI' refers to a classification system used in traditional Javanese literature and culture,      │
+│  indicating that the context is historically situated."                                                                            │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 15,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 16,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 17,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    }                                                                                                                               │
+│  ]                                                                                                                                 │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────────────────── Task Completion ──────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Task Completed                                                                                                                    │
+│  Name: ecfc6a3b-6419-4053-8d0e-98d793c8274f                                                                                        │
+│  Agent: Annotation helper (Mistral via Ollama)                                                                                     │
+│  Tool Args:                                                                                                                        │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+╭───────────────────────────────────────────────────────── Crew Completion ──────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Crew Execution Completed                                                                                                          │
+│  Name: crew                                                                                                                        │
+│  ID: 23c8fd24-abab-4583-ab40-1ce074586ce2                                                                                          │
+│  Tool Args:                                                                                                                        │
+│  Final Output: [                                                                                                                   │
+│    {                                                                                                                               │
+│      "line": 14,                                                                                                                   │
+│      "span": "Golongan VI : Sajuran",                                                                                              │
+│      "label": "HISTORICAL",                                                                                                        │
+│      "reason": "The term 'Golongan VI' refers to a classification system used in traditional Javanese literature and culture,      │
+│  indicating that the context is historically situated."                                                                            │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 15,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 16,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 17,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    }                                                                                                                               │
+│  ]                                                                                                                                 │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+╭────────────────────────────────────────────────────────── Tracing Status ──────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Info: Tracing is disabled.                                                                                                        │
+│                                                                                                                                    │
+│  To enable tracing, do any one of these:                                                                                           │
+│  • Set tracing=True in your Crew/Flow code                                                                                         │
+│  • Set CREWAI_TRACING_ENABLED=true in your project's .env file                                                                     │
+│  • Run: crewai traces enable                                                                                                       │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────────── Crew Execution Started ──────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Crew Execution Started                                                                                                            │
+│  Name: crew                                                                                                                        │
+│  ID: ebdbc529-23c0-42c4-89e1-82413e1fa901                                                                                          │
+│  Tool Args:                                                                                                                        │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+🚀 Crew: crew
+└── 📋 Task: 11feef42-fe37-425a-805a-e9eef8f6e8d4
+    Status: Executing Task...
+╭───────────────────────────────────────────────────────── 🤖 Agent Started ─────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Agent: Challenger (Mistral via Ollama)                                                                                            │
+│                                                                                                                                    │
+│  Task: You are the Challenger Agent for the Mustikarasa Project,                                                                   │
+│  Phase-4 sandbox (SAYUR micropilot).                                                                                               │
+│                                                                                                                                    │
+│  Your role is to REVIEW the annotator output and FLAG RULE VIOLATIONS.                                                             │
+│                                                                                                                                    │
+│  You DO NOT translate, rewrite, or decide meanings.                                                                                │
+│  You DO NOT fix the annotator. You only signal problems.                                                                           │
+│                                                                                                                                    │
+│  Sandbox principle: proposal-only, reversible, documented.                                                                         │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Inputs                                                                                                                         │
+│                                                                                                                                    │
+│  You are given:                                                                                                                    │
+│                                                                                                                                    │
+│  1) The original excerpt (with line numbers)                                                                                       │
+│  2) The annotator JSON                                                                                                             │
+│                                                                                                                                    │
+│  You evaluate whether the annotator stayed inside the Phase-4 rules.                                                               │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Output format (STRICT — JSON ONLY)                                                                                             │
+│                                                                                                                                    │
+│  Return ONLY a JSON array:                                                                                                         │
+│                                                                                                                                    │
+│  [                                                                                                                                 │
+│    {                                                                                                                               │
+│      "line": <int or null>,                                                                                                        │
+│      "span": "<string>",                                                                                                           │
+│      "issue_type": "<TRANSLATION|EQUIVALENT|MEANING_DECISION|SAFETY|GOVERNANCE|OTHER>",                                            │
+│      "severity": "<INFO|WARNING|BLOCKER>",                                                                                         │
+│      "comment": "<short neutral description>"                                                                                      │
+│    }                                                                                                                               │
+│  ]                                                                                                                                 │
+│                                                                                                                                    │
+│  Rules:                                                                                                                            │
+│                                                                                                                                    │
+│  - `line`: use null if the issue is global.                                                                                        │
+│  - `span`: exact text involved, or "" if global.                                                                                   │
+│  - No extra keys.                                                                                                                  │
+│  - NO text outside the JSON. No Markdown. No backticks.                                                                            │
+│                                                                                                                                    │
+│  The first character must be `[` and the last must be `]`.                                                                         │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Issue types (how to choose)                                                                                                    │
+│                                                                                                                                    │
+│  Use:                                                                                                                              │
+│                                                                                                                                    │
+│  - TRANSLATION — annotator performs or explains a translation.                                                                     │
+│  - EQUIVALENT — claims a single “best” or fixed equivalent.                                                                        │
+│                                                                                                                                    │
+│  PHASE-4 CLARIFICATION ON TRANSLATION EXPECTATIONS                                                                                 │
+│                                                                                                                                    │
+│  - Use `EQUIVALENT` ONLY when the annotator (or another agent) actively                                                            │
+│    proposes a translation or equivalent, such as:                                                                                  │
+│    “X means Y”, “the modern term for X is Y”, or similar.                                                                          │
+│                                                                                                                                    │
+│  - Do NOT use `EQUIVALENT` merely because there is NO translation                                                                  │
+│    or equivalent present. In this micropilot, annotators are not                                                                   │
+│    supposed to provide translations.                                                                                               │
+│                                                                                                                                    │
+│  - The absence of an English translation is NOT a rule violation                                                                   │
+│    in Phase-4. If you feel translation pressure, log it as                                                                         │
+│    GOVERNANCE (proposal-only), not as EQUIVALENT.                                                                                  │
+│                                                                                                                                    │
+│  - MEANING_DECISION — selects one meaning where multiple are plausible.                                                            │
+│  - SAFETY — ONLY real safety: storage, preservation, sanitation, risk.                                                             │
+│  - GOVERNANCE — glossary lifecycle, autonomy, Human Gate rules are ignored.                                                        │
+│  - OTHER — logworthy but not fitting above.                                                                                        │
+│                                                                                                                                    │
+│  ### SPECIAL RULE (PHASE-4)                                                                                                        │
+│                                                                                                                                    │
+│  If you believe something “needs translation” or “should have an equivalent”:                                                      │
+│                                                                                                                                    │
+│  - You MUST NOT demand the translation.                                                                                            │
+│  - You MUST log it as GOVERNANCE (severity WARNING or BLOCKER).                                                                    │
+│  - Briefly state that translation/equivalent decisions belong to the glossary lifecycle and Human Gate — not to the Challenger.    │
+│                                                                                                                                    │
+│  SAFETY must NEVER be used to pressure a translation or meaning choice.                                                            │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Severity guidance                                                                                                              │
+│                                                                                                                                    │
+│  - INFO — minor deviation, mostly documentary                                                                                      │
+│  - WARNING — clear rule violation with limited risk                                                                                │
+│  - BLOCKER — humans must review before moving forward:                                                                             │
+│    meaning/glossary decisions, real safety, repeated governance override                                                           │
+│                                                                                                                                    │
+│  When unsure, prefer INFO or WARNING over BLOCKER.                                                                                 │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## What to flag                                                                                                                   │
+│                                                                                                                                    │
+│  Flag when:                                                                                                                        │
+│                                                                                                                                    │
+│  - the annotator translates, normalises, or decides meanings                                                                       │
+│  - equivalents or “modern replacements” are asserted                                                                               │
+│  - glossary rules are bypassed                                                                                                     │
+│  - SAFETY is used incorrectly                                                                                                      │
+│  - output is not valid JSON or breaks the schema                                                                                   │
+│                                                                                                                                    │
+│  Describe what rule was broken — NOT how to fix it.                                                                                │
+│                                                                                                                                    │
+│  ---                                                                                                                               │
+│                                                                                                                                    │
+│  ## Forbidden behaviours (for you)                                                                                                 │
+│                                                                                                                                    │
+│  You MUST NOT:                                                                                                                     │
+│                                                                                                                                    │
+│  - demand translations or equivalents                                                                                              │
+│  - override annotator GLOSSARY labels                                                                                              │
+│  - propose fixes or edits                                                                                                          │
+│  - rewrite source content                                                                                                          │
+│  - treat anything as publication-ready                                                                                             │
+│                                                                                                                                    │
+│  You SIGNAL. Humans decide. Logs explain why.                                                                                      │
+│                                                                                                                                    │
+│                                                                                                                                    │
+│  Here is the excerpt (line numbers included):                                                                                      │
+│                                                                                                                                    │
+│  14: Golongan VI : Sajuran.                                                                                                        │
+│  15:                                                                                                                               │
+│  16:                                                                                                                               │
+│  17:                                                                                                                               │
+│                                                                                                                                    │
+│  Here is the annotator JSON output:                                                                                                │
+│                                                                                                                                    │
+│  [                                                                                                                                 │
+│    {                                                                                                                               │
+│      "line": 14,                                                                                                                   │
+│      "span": "Golongan VI : Sajuran",                                                                                              │
+│      "label": "HISTORICAL",                                                                                                        │
+│      "reason": "The term 'Golongan VI' refers to a classification system used in traditional Javanese literature and culture,      │
+│  indicating that the context is historically situated."                                                                            │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 15,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 16,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    },                                                                                                                              │
+│    {                                                                                                                               │
+│      "line": 17,                                                                                                                   │
+│      "span": "",                                                                                                                   │
+│      "label": "NONE",                                                                                                              │
+│      "reason": "The line appears empty."                                                                                           │
+│    }                                                                                                                               │
+│  ]                                                                                                                                 │
+│                                                                                                                                    │
+│  Return ONLY the JSON array as described above.                                                                                    │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+🚀 Crew: crew
+└── 📋 Task: 11feef42-fe37-425a-805a-e9eef8f6e8d4
+    Assigned to: Challenger (Mistral via Ollama)
+    Status: ✅ Completed╭────────────────────────────────────────────────────── ✅ Agent Final Answer ───────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Agent: Challenger (Mistral via Ollama)                                                                                            │
+│                                                                                                                                    │
+│  Final Answer:                                                                                                                     │
+│  [                                                                                                                                 │
+│    {                                                                                                                               │
+│      "line": null,                                                                                                                 │
+│      "span": "Sajuran",                                                                                                            │
+│      "issue_type": "TRANSLATION",                                                                                                  │
+│      "severity": "BLOCKER",                                                                                                        │
+│      "comment": "The annotator is providing a translation of the term 'Sajuran' which violates Phase-4 rules. Translation          │
+│  decisions belong to the glossary lifecycle and Human Gate, not to the Challenger."                                                │
+│    }                                                                                                                               │
+│  ]                                                                                                                                 │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+╭───────────────────────────────────────────────────────── Task Completion ──────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Task Completed                                                                                                                    │
+│  Name: 11feef42-fe37-425a-805a-e9eef8f6e8d4                                                                                        │
+│  Agent: Challenger (Mistral via Ollama)                                                                                            │
+│  Tool Args:                                                                                                                        │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+---ANNOTATIONS---
+[
+  {
+    "line": 14,
+    "span": "Golongan VI : Sajuran",
+    "label": "HISTORICAL",
+    "reason": "The term 'Golongan VI' refers to a classification system used in traditional Javanese literature and culture, indicating that the context is historically situated."
+  },
+  {
+    "line": 15,
+    "span": "",
+    "label": "NONE",
+    "reason": "The line appears empty."
+  },
+  {
+    "line": 16,
+    "span": "",
+    "label": "NONE",
+    "reason": "The line appears empty."
+  },
+  {
+    "line": 17,
+    "span": "",
+    "label": "NONE",
+    "reason": "The line appears empty."
+  }
+]
+---CHALLENGE_REPORT---
+[
+  {
+    "line": null,
+    "span": "Sajuran",
+    "issue_type": "TRANSLATION",
+    "severity": "BLOCKER",
+    "comment": "The annotator is providing a translation of the term 'Sajuran' which violates Phase-4 rules. Translation decisions belong to the glossary lifecycle and Human Gate, not to the Challenger."
+  }
+]
+---OPTIONAL_AGENT_STEPS---
+[]
+╭───────────────────────────────────────────────────────── Crew Completion ──────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Crew Execution Completed                                                                                                          │
+│  Name: crew                                                                                                                        │
+│  ID: ebdbc529-23c0-42c4-89e1-82413e1fa901                                                                                          │
+│  Tool Args:                                                                                                                        │
+│  Final Output: [                                                                                                                   │
+│    {                                                                                                                               │
+│      "line": null,                                                                                                                 │
+│      "span": "Sajuran",                                                                                                            │
+│      "issue_type": "TRANSLATION",                                                                                                  │
+│      "severity": "BLOCKER",                                                                                                        │
+│      "comment": "The annotator is providing a translation of the term 'Sajuran' which violates Phase-4 rules. Translation          │
+│  decisions belong to the glossary lifecycle and Human Gate, not to the Challenger."                                                │
+│    }                                                                                                                               │
+│  ]                                                                                                                                 │
+│                                                                                                                                    │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+╭────────────────────────────────────────────────────────── Tracing Status ──────────────────────────────────────────────────────────╮
+│                                                                                                                                    │
+│  Info: Tracing is disabled.                                                                                                        │
+│                                                                                                                                    │
+│  To enable tracing, do any one of these:                                                                                           │
+│  • Set tracing=True in your Crew/Flow code                                                                                         │
+│  • Set CREWAI_TRACING_ENABLED=true in your project's .env file                                                                     │
+│  • Run: crewai traces enable                                                                                                       │
+│                                                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-01-11T11:31:24Z",
+  "git_status": "NOT_A_GIT_REPO",
+  "counts": {
+    "runs": 3,
+    "proposals": 1,
+    "closures": 1
+  },
+  "sample_ids": {
+    "run_id": "RUN_sayur_052_066_20260109T202745",
+    "proposal_id": "P-001",
+    "closure_id": "CL-20260109-P-001"
+  },
+  "env_assumptions": {
+    "OLLAMA_API_BASE": "required for LLM calls if using Ollama",
+    "LITELLM_MODEL": "required to select model for LLM calls"
+  },
+  "runtime_root": "runtime/"
+}

@@ -1,0 +1,2 @@
+This is a small test text. I want to see if CrewAI and Mistral can translate this correctly into Dutch.
+The style should be clear, natural and easy to read.

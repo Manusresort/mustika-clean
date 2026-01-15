@@ -1,0 +1,30 @@
+canonical:
+  - docs/total_project.md
+  - docs/VISION_AND_STRATEGY.md
+  - docs/CONTENT_ROADMAP.md
+  - docs/WORKFLOW.md
+  - docs/AGENTS.md
+  - docs/ANNOTATION_STYLECARD_P4.md
+  - docs/10-governance/
+
+sandbox:
+  - sandbox/crew/
+  - docs/pilots/
+  - docs/P4_CONSOLIDATION_REPORT_SAYUR_SANDBOX.md
+  - docs/P4_HANDOVER_PACK_SAYUR_SANDBOX.md
+
+consolidation_phase5:
+  - docs/AGENT_PROMPT_PATTERN_P5.md
+  - docs/P5_PROMPT_CONSOLIDATION_NOTE.md
+  - docs/pattern_reviews/
+  - docs/P5_TRANSLATION_EXPECTATION_EVIDENCE.md
+  - docs/P5_TODO.md
+  - docs/CODEX_TODO.md
+  - docs/CODEX_SESSION_LOG.md
+
+sources:
+  - data/source_imports/
+
+notes:
+  - "Manifest is guidance — not a policy layer."
+  - "Prefer labeling over moving; structure should reduce ambiguity."

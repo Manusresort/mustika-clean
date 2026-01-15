@@ -1,0 +1,17 @@
+SUMMARY
+overall_status: FAIL
+failed_checks: [REMARKS_SEPARATOR_PRESENT, NO_META_IN_MAIN_TEXT]
+
+CHECK_RESULTS
+check_id: MAIN_TEXT_NONEMPTY
+status: PASS
+evidence: non-empty main text detected
+check_id: NO_GOVERNANCE_TERMS
+status: PASS
+evidence: no matches
+check_id: REMARKS_SEPARATOR_PRESENT
+status: FAIL
+evidence: no matches
+check_id: NO_META_IN_MAIN_TEXT
+status: FAIL
+evidence: Opmerkingen not cleanly separated

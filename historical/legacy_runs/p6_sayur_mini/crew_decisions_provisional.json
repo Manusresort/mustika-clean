@@ -1,0 +1,10 @@
+[
+  {
+    "term_id": "sajuran@line14",
+    "source_span": "Golongan VI : Sajuran.",
+    "decision_status": "CREW_PROVISIONAL",
+    "decision_origin": "crew",
+    "rationale": "Annotator marked HISTORICAL based on the classification phrasing; challenger issued an EQUIVALENT/WARNING signal, treated as bias-signal without escalation.",
+    "ready_for_human_review": false
+  }
+]

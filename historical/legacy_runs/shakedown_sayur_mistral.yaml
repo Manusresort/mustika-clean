@@ -1,0 +1,34 @@
+# Single-agent crew-ai config for shakedown of Mistral via Ollama.
+# This file does NOT run anything by itself; it is used by a local crew runner.
+
+crew:
+  name: shakedown_sayur_mistral
+  description: "Single-agent shakedown on SAJUR-A excerpt (annotation only)."
+  tasks:
+    - id: shakedown_annotate_sayur
+      description: >
+        Classify 3–5 lines of SAJUR-A into annotation labels
+        using the annotation stylecard. No translation, no decisions.
+      agent: annotator_mistral
+      expected_output: >
+        JSON array of {span, label, reason} for the input text.
+
+agents:
+  annotator_mistral:
+    role: "Annotation helper (Mistral via Ollama)"
+    goal: "Label possible annotations in SAJUR-A excerpt without changing the text."
+    backstory: >
+      Works on the Mustikarasa project. Knows about HISTORICAL / GLOSSARY /
+      SAFETY / OCR labels and the need to preserve ambiguity and traceability.
+    llm:
+      provider: "ollama"
+      model: "mistral"
+      # Let your crew-ai / Codex integration fill in host/port/settings.
+    prompt:
+      system: "sandbox/crew/prompts/shakedown_sayur_mistral_system.md"
+    tools: []
+    constraints:
+      - "Read-only: cannot modify files."
+      - "No web access."
+      - "No glossary decisions."
+      - "Max output: 40 items."

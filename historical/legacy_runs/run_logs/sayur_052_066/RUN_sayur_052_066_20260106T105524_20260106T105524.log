@@ -1,0 +1,14 @@
+mode: excerpt-aware
+excerpt_id: sayur_052_066
+excerpt_source: docs/P6_SAYUR_INTERNAL_WORK_CASE01.md
+excerpt_version: locked-2026-01-05
+run_id: RUN_sayur_052_066_20260106T105524
+started_at: 2026-01-06T10:55:24Z
+status: PENDING
+config_path: sandbox/crew/case01_config.yaml
+cli_config_mismatch: false
+Pre-flight OK. Starting pipeline.
+--- PIPELINE OUTPUT ---
+Config path not found: sandbox/crew/case01_config.yaml
+Pipeline failed or not implemented.
+status: ERROR
