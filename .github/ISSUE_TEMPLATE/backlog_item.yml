@@ -1,0 +1,54 @@
+name: Backlog item
+description: Create a backlog item consistent with repo governance.
+title: "[BACKLOG] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This repo is filesystem-first. GitHub is for tracking only.
+        Do not change runtime/canonical invariants without an explicit architecture decision.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is the item, in one paragraph.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope (in / out)
+      description: Explicitly list what is in scope and out of scope.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (paths)
+      description: List the exact repo paths that prove context or implementation status.
+      placeholder: |
+        - documentation/...
+        - runtime/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: invariants
+    attributes:
+      label: Invariants impacted
+      description: Quote the exact invariant(s) from documentation/system_overview/AS_BUILT_ARCH.md, or write "None".
+    validations:
+      required: true
+
+  - type: textarea
+    id: dod
+    attributes:
+      label: DoD / Acceptance Criteria
+      description: Definition of Done / Acceptance Criteria, measurable.
+    validations:
+      required: true
