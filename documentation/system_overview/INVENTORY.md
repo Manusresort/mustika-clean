@@ -153,7 +153,7 @@ Top-level directories (excluding build artifacts):
   - Reads: `runs/`, `proposals/`, `closures/` (and `sandbox/phase8_runs`, `sandbox/phase9_runs` via adapter)
 
 - `api_server.py`
-  - Start: `uvicorn api_server:app --host 127.0.0.1 --port 8000 --reload`
+- Start: `uvicorn api_server:app --host 127.0.0.1 --port 8010 --reload`
   - Writes: `audit/api_actions.log`, `closures/<closure_id>/closure.json`, `proposals/<proposal_id>/status.json`
   - Reads: `indices/`, `runs/`, `proposals/`, `closures/`
 
