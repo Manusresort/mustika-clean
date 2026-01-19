@@ -160,7 +160,7 @@ Top-level directories (excluding build artifacts):
 - UI dev server (`ui/`)
   - Start: `npm run dev` (from `ui/`)
   - Writes: none to filesystem (read-only)
-  - Reads: API endpoints `/api/*` (proxy to `127.0.0.1:8000`)
+  - Reads: API endpoints `/api/*` (proxy to `127.0.0.1:8010`)
 
 ---
 

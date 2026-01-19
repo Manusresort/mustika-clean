@@ -22,7 +22,7 @@
 - `./scripts/dev_up.sh`
 
 Dit start:
-- backend (`uvicorn api_server:app` op `127.0.0.1:8000`)
+- backend (`uvicorn api_server:app` op `127.0.0.1:8010`)
 - reindex (`indexer.py` → `indices/*`)
 - UI (Vite, meestal `http://localhost:5173`, anders `5174`)
 
@@ -40,8 +40,8 @@ Dit stopt de processen op poorten:
 
 ## Debug (snel)
 
-- Health: `curl http://127.0.0.1:8000/health`
-- Inbox: `curl http://127.0.0.1:8000/inbox`
+- Health: `curl http://127.0.0.1:8010/health`
+- Inbox: `curl http://127.0.0.1:8010/inbox`
 
 Logs:
 - `audit/api_server.log`
@@ -52,7 +52,7 @@ Logs:
 ## Ports
 
 - UI draait op `5173`, of `5174` als `5173` bezet is.
-- API draait op `127.0.0.1:8000`.
+- API draait op `127.0.0.1:8010`.
 
 ---
 

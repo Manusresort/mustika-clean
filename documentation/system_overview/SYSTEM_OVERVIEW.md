@@ -103,7 +103,7 @@ Errors return JSON via exception handlers.
 - **Dashboard**: summary counts + recent activity (via `/inbox`)
 - **Inbox**: list items + links to run/proposal
 - **Run Detail**: review pack fields + warnings
-- UI draait via Vite en proxy’t `/api` naar `http://127.0.0.1:8000`
+- UI draait via Vite en proxy’t `/api` naar `http://127.0.0.1:8010`
 
 UI leest uitsluitend via API; geen direct filesystem access.
 
@@ -129,8 +129,8 @@ Start/Stop:
 - Stop: `./scripts/dev_down.sh`
 
 Health + inbox:
-- `curl http://127.0.0.1:8000/health`
-- `curl http://127.0.0.1:8000/inbox`
+- `curl http://127.0.0.1:8010/health`
+- `curl http://127.0.0.1:8010/inbox`
 
 Logs:
 - `audit/api_server.log`
