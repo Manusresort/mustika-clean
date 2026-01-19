@@ -143,12 +143,12 @@ Top-level directories (excluding build artifacts):
 ## 4. Executables / Entry Points
 
 - `scripts/mustika_run_excerpt.py`
-  - Start: `python3 scripts/mustika_run_excerpt.py --excerpt-id ... --excerpt-source ... --excerpt-version ... --english ... --rough-nl ...`
+  - Start: `runtime/.venv/bin/python scripts/mustika_run_excerpt.py --excerpt-id ... --excerpt-source ... --excerpt-version ... --english ... --rough-nl ...`
   - Writes: `runs/<excerpt_id>/<RUN_...>/` (inputs, outputs, logs, eval, manifest)
   - Reads: input files (`--english`, `--rough-nl`)
 
 - `indexer.py`
-  - Start: `python3 indexer.py`
+  - Start: `runtime/.venv/bin/python indexer.py`
   - Writes: `indices/run_index.json`, `indices/inbox_index.json`, `indices/proposal_index.json`, `indices/closure_index.json`
   - Reads: `runs/`, `proposals/`, `closures/` (and `sandbox/phase8_runs`, `sandbox/phase9_runs` via adapter)
 

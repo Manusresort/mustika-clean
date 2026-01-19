@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+# --- venv guard (mustika_run_excerpt) ---
+import os
+if not os.environ.get('VIRTUAL_ENV'):
+    raise SystemExit(
+        'ERROR: No active venv. Activate runtime/.venv first: '
+        'cd runtime && source .venv/bin/activate'
+    )
+
 """
 CLI entrypoint for Runner V2 - Phase-6 Excerpt-Aware Runner
 

@@ -11,7 +11,7 @@
 ## Vereisten
 
 - macOS
-- Python 3 + `.venv` aanwezig
+- Python 3.11 + `runtime/.venv` (required for CrewAI)
 - Node.js + npm
 - (optioneel) Ollama lokaal voor LLM-tests
 
@@ -33,7 +33,7 @@ Dit start:
 - `./scripts/dev_down.sh`
 
 Dit stopt de processen op poorten:
-- `8000` (API)
+- `8010` (API)
 - `5173` of `5174` (UI)
 
 ---
