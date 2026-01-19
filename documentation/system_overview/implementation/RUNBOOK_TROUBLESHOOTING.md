@@ -9,7 +9,7 @@
 **Diagnosis**:
 ```bash
 # Check if port 8000 is in use
-lsof -i :8000
+lsof -i :8010
 
 # Or try starting and check error message
 python3 api_server.py
@@ -18,7 +18,7 @@ python3 api_server.py
 **Solutions**:
 1. **Port in use**: Kill the process using port 8000:
    ```bash
-   lsof -ti:8000 | xargs kill -9
+   lsof -ti:8010 | xargs kill -9
    ```
 
 2. **Missing dependencies**: Install requirements:
@@ -108,7 +108,7 @@ npm --version
 **Diagnosis**:
 1. Check backend is running:
    ```bash
-   curl http://127.0.0.1:8000/
+   curl http://127.0.0.1:8010/
    ```
 
 2. Check CORS: Backend should allow `localhost:5173`.
@@ -205,7 +205,7 @@ npm run build
 
 ### Check Backend Status
 ```bash
-curl http://127.0.0.1:8000/
+curl http://127.0.0.1:8010/
 ```
 
 ### Check Inbox Index

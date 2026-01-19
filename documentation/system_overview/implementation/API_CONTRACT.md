@@ -2,8 +2,8 @@
 
 ## Base URL
 
-- Development: `http://127.0.0.1:8000`
-- Frontend proxy: `/api` (proxied to `http://127.0.0.1:8000`)
+- Development: `http://127.0.0.1:8010`
+- Frontend proxy: `/api` (proxied to `http://127.0.0.1:8010`)
 
 ## Endpoints
 

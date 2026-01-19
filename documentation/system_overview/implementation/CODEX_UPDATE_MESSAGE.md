@@ -40,7 +40,7 @@ cd "/Users/vwvd/Millway/AI-folder/Crew-AI/cursor/codex cli project repo copy"
 pip3 install -r requirements-ui.txt
 python3 api_server.py
 ```
-→ http://127.0.0.1:8000
+→ http://127.0.0.1:8010
 
 **Frontend:**
 ```bash

@@ -50,7 +50,7 @@ cd "/Users/vwvd/Millway/AI-folder/Crew-AI/cursor/codex cli project repo copy"
 python3 api_server.py
 ```
 
-The API will be available at: http://127.0.0.1:8000
+The API will be available at: http://127.0.0.1:8010
 
 ### 4. Start Frontend Development Server
 
@@ -210,7 +210,7 @@ Attempt to create the same closure again via API:
 
 ```bash
 # Try to create closure again (should fail)
-curl -X POST http://127.0.0.1:8000/closures \
+curl -X POST http://127.0.0.1:8010/closures \
   -H "Content-Type: application/json" \
   -d '{
     "proposal_id": "P-001",

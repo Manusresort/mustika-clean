@@ -14,7 +14,7 @@ The Mustika Rasa Human UI MVP is a local-first, filesystem-based system with a F
        │ HTTP (via Vite proxy)
        ▼
 ┌─────────────┐
-│  FastAPI    │ (http://127.0.0.1:8000)
+│  FastAPI    │ (http://127.0.0.1:8010)
 │   Backend   │
 └──────┬──────┘
        │
@@ -33,7 +33,7 @@ The Mustika Rasa Human UI MVP is a local-first, filesystem-based system with a F
 
 ### Backend (`api_server.py`)
 
-- **FastAPI application** running on `127.0.0.1:8000`
+- **FastAPI application** running on `127.0.0.1:8010`
 - **CORS enabled** for `localhost:5173` and `localhost:3000`
 - **Indexer integration** via `indexer.py` module
 - **Policy enforcement**:

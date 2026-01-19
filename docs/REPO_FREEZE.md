@@ -3,7 +3,7 @@
 Status: ACTIVE
 
 - The canonical system remains in `/Users/vwvd/Millway/AI-folder/Crew-AI`.
-- This clean repo is scaffolding only (no code/data copied yet).
+- This clean repo includes runnable runtime code and state.
 - No cutover until an explicit migration plan is approved.
 
 Rationale:
