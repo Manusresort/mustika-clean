@@ -23,7 +23,7 @@ The UI expects the FastAPI backend to be running on http://127.0.0.1:8010
 Start the backend:
 ```bash
 cd ..
-python -m uvicorn api_server:app --reload --host 127.0.0.1 --port 8000
+python -m uvicorn api_server:app --reload --host 127.0.0.1 --port 8010
 ```
 
 ## Build
