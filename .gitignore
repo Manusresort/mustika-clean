@@ -2,5 +2,32 @@
 .DS_Store
 
 # Runtime-generated state (MVP invariant: filesystem-first, but not versioned)
-runtime/
 indices/
+
+# Runtime state (never commit)
+
+runtime_migrate_full/
+runtime_migrate_strict/
+
+### BEGIN runtime-ignore (managed)
+# Never commit runtime state / generated / local env
+runtime/.venv/
+runtime/ui/node_modules/
+runtime/ui/dist/
+runtime/runs/
+runtime/proposals/
+runtime/closures/
+runtime/indices/
+
+# Never commit runtime audit by default (except explicitly allowed notes)
+runtime/audit/**
+
+# Allow audit notes (docs)
+!runtime/audit/
+!runtime/audit/**/
+!runtime/audit/**/MIGRATION_CLOSEOUT_NOTE.md
+### END runtime-ignore (managed)
+
+# Python caches
+__pycache__/
+*.pyc
