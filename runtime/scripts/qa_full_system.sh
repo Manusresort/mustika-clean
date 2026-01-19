@@ -48,15 +48,15 @@ fi
 
 # B) API readiness
 API_UP="no"
-if curl -s http://127.0.0.1:8000/health | rg -q '"ok"\s*:\s*true'; then
+if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
   API_UP="yes"
   print_summary "api_health" "PASS" "already_running"
 else
   print_summary "api_health" "WARN" "not_running_attempting_start"
-  nohup uvicorn api_server:app --host 127.0.0.1 --port 8000 >"$API_LOG" 2>&1 &
+  nohup uvicorn api_server:app --host 127.0.0.1 --port 8010 >"$API_LOG" 2>&1 &
   for i in {1..15}; do
     sleep 1
-    if curl -s http://127.0.0.1:8000/health | rg -q '"ok"\s*:\s*true'; then
+    if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
       API_UP="yes"
       break
     fi
@@ -82,20 +82,20 @@ done
 
 # D) API endpoints
 if [ "$API_UP" = "yes" ]; then
-  if curl -s http://127.0.0.1:8000/health | rg -q '"ok"\s*:\s*true'; then
+  if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
     print_summary "GET_/health" "PASS" "ok:true"
   else
     print_summary "GET_/health" "FAIL" "unexpected"
   fi
 
-  if curl -s http://127.0.0.1:8000/inbox | rg -q '"items"\s*:\s*\['; then
+  if curl -s http://127.0.0.1:8010/inbox | rg -q '"items"\s*:\s*\['; then
     print_summary "GET_/inbox" "PASS" "items[]"
   else
     print_summary "GET_/inbox" "FAIL" "missing_items"
   fi
 
   PROPOSAL_JSON="$AUDIT_DIR/proposal_P-TEST.json"
-  curl -s http://127.0.0.1:8000/proposals/P-TEST > "$PROPOSAL_JSON"
+  curl -s http://127.0.0.1:8010/proposals/P-TEST > "$PROPOSAL_JSON"
   if rg -q '"proposal_md"' "$PROPOSAL_JSON"; then
     if [ -f "$BASE_DIR/proposals/P-TEST/proposal.md" ]; then
       if rg -q '"proposal_md"\s*:\s*""' "$PROPOSAL_JSON"; then
@@ -124,7 +124,7 @@ if [ "$API_UP" = "yes" ]; then
   mkdir -p "$TEST_PROPOSAL_DIR"
   printf '{ "status": "open", "severity": "info" }' > "$TEST_PROPOSAL_DIR/status.json"
 
-  curl -s -X POST http://127.0.0.1:8000/closures \
+  curl -s -X POST http://127.0.0.1:8010/closures \
     -H 'Content-Type: application/json' \
     -d "{\"proposal_id\":\"$TEST_ID\",\"run_id\":\"RUN_QA_FULL\",\"decision_type\":\"qa_full\",\"rationale\":\"QA full system closure rationale\",\"evidence_paths\":[\"proposals/$TEST_ID/status.json\"],\"sign_off\":true,\"created_by\":\"qa\"}" \
     > "$AUDIT_DIR/closure_${TEST_ID}.json"
@@ -141,7 +141,7 @@ if [ "$API_UP" = "yes" ]; then
     print_summary "proposal_status_closed" "FAIL" "status_not_closed"
   fi
 
-  curl -s -X POST http://127.0.0.1:8000/reindex > "$AUDIT_DIR/reindex.json"
+  curl -s -X POST http://127.0.0.1:8010/reindex > "$AUDIT_DIR/reindex.json"
   if rg -q '"ok"\s*:\s*true' "$AUDIT_DIR/reindex.json"; then
     print_summary "POST_/reindex" "PASS" "ok"
   else

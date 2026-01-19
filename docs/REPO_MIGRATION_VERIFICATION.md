@@ -40,7 +40,7 @@ python3 -m json.tool indices/closure_index.json >/dev/null
 ### 3) Start API + verify endpoints
 ```
 cd /Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/runtime
-python3 -m uvicorn api_server:app --host 127.0.0.1 --port 8000 --reload
+python3 -m uvicorn api_server:app --host 127.0.0.1 --port 8010 --reload
 ```
 Then in a new terminal:
 ```

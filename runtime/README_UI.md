@@ -43,10 +43,10 @@ python api_server.py
 
 Of met uvicorn:
 ```bash
-uvicorn api_server:app --reload --host 127.0.0.1 --port 8000
+uvicorn api_server:app --reload --host 127.0.0.1 --port 8010
 ```
 
-De API draait op http://127.0.0.1:8000
+De API draait op http://127.0.0.1:8010
 
 ### Frontend (React + Vite)
 

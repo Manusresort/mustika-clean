@@ -41,13 +41,13 @@ skip_test() {
 cd "${RUNTIME_ROOT}"
 
 API_UP="no"
-if curl -s http://127.0.0.1:8000/health >/dev/null 2>&1; then
+if curl -s http://127.0.0.1:8010/health >/dev/null 2>&1; then
   API_UP="yes"
 else
   # Attempt to start API (no reload)
-  nohup uvicorn api_server:app --host 127.0.0.1 --port 8000 > "${RUN_DIR}/api_start.log" 2>&1 &
+  nohup uvicorn api_server:app --host 127.0.0.1 --port 8010 > "${RUN_DIR}/api_start.log" 2>&1 &
   for _ in {1..10}; do
-    if curl -s http://127.0.0.1:8000/health >/dev/null 2>&1; then
+    if curl -s http://127.0.0.1:8010/health >/dev/null 2>&1; then
       API_UP="yes"
       break
     fi
@@ -78,15 +78,15 @@ run_test "L1_VALIDATOR_FAIL_SIM" "mkdir -p /tmp/qa_run/eval /tmp/qa_run/outputs 
 skip_test "L1_INDEXER_INBOX_SIM" "SKIP: would require manual run bundle creation under runs/ (not allowed)"
 
 if [[ "${API_UP}" == "yes" ]]; then
-  run_test "L1_REVIEW_PACK_API" "mkdir -p proposals/P-TEST-REVIEW/review_pack && printf \"dummy\" > proposals/P-TEST-REVIEW/review_pack/readme.txt && curl -s http://127.0.0.1:8000/proposals/P-TEST-REVIEW | python3 -m json.tool | rg -n \"review_pack\""
-  run_test "L1_PROPOSAL_API" "mkdir -p proposals/P-TEST && printf \"# P-TEST\\nbody\" > proposals/P-TEST/proposal.md && printf '{ \"status\": \"open\", \"severity\": \"info\" }' > proposals/P-TEST/status.json && curl -s http://127.0.0.1:8000/proposals/P-TEST | python3 -m json.tool | rg -n \"proposal_md|status\""
-  run_test "L1_CLOSURE_API" "mkdir -p proposals/P-TEST-CLOSE && printf '{ \"status\": \"open\", \"severity\": \"info\" }' > proposals/P-TEST-CLOSE/status.json && curl -s -X POST http://127.0.0.1:8000/closures -H 'Content-Type: application/json' -d '{\"proposal_id\":\"P-TEST-CLOSE\",\"run_id\":\"RUN_QA_SUITE_X\",\"decision_type\":\"qa_suite_x\",\"rationale\":\"QA suite X closure rationale\",\"evidence_paths\":[\"proposals/P-TEST-CLOSE/status.json\"],\"sign_off\":true,\"created_by\":\"qa\"}'"
-  run_test "L1_AUDIT_REINDEX" "curl -s -X POST http://127.0.0.1:8000/reindex | python3 -m json.tool | rg -n \"ok|generated_files\""
+  run_test "L1_REVIEW_PACK_API" "mkdir -p proposals/P-TEST-REVIEW/review_pack && printf \"dummy\" > proposals/P-TEST-REVIEW/review_pack/readme.txt && curl -s http://127.0.0.1:8010/proposals/P-TEST-REVIEW | python3 -m json.tool | rg -n \"review_pack\""
+  run_test "L1_PROPOSAL_API" "mkdir -p proposals/P-TEST && printf \"# P-TEST\\nbody\" > proposals/P-TEST/proposal.md && printf '{ \"status\": \"open\", \"severity\": \"info\" }' > proposals/P-TEST/status.json && curl -s http://127.0.0.1:8010/proposals/P-TEST | python3 -m json.tool | rg -n \"proposal_md|status\""
+  run_test "L1_CLOSURE_API" "mkdir -p proposals/P-TEST-CLOSE && printf '{ \"status\": \"open\", \"severity\": \"info\" }' > proposals/P-TEST-CLOSE/status.json && curl -s -X POST http://127.0.0.1:8010/closures -H 'Content-Type: application/json' -d '{\"proposal_id\":\"P-TEST-CLOSE\",\"run_id\":\"RUN_QA_SUITE_X\",\"decision_type\":\"qa_suite_x\",\"rationale\":\"QA suite X closure rationale\",\"evidence_paths\":[\"proposals/P-TEST-CLOSE/status.json\"],\"sign_off\":true,\"created_by\":\"qa\"}'"
+  run_test "L1_AUDIT_REINDEX" "curl -s -X POST http://127.0.0.1:8010/reindex | python3 -m json.tool | rg -n \"ok|generated_files\""
 else
-  skip_test "L1_REVIEW_PACK_API" "SKIP: API not reachable on http://127.0.0.1:8000"
-  skip_test "L1_PROPOSAL_API" "SKIP: API not reachable on http://127.0.0.1:8000"
-  skip_test "L1_CLOSURE_API" "SKIP: API not reachable on http://127.0.0.1:8000"
-  skip_test "L1_AUDIT_REINDEX" "SKIP: API not reachable on http://127.0.0.1:8000"
+  skip_test "L1_REVIEW_PACK_API" "SKIP: API not reachable on http://127.0.0.1:8010"
+  skip_test "L1_PROPOSAL_API" "SKIP: API not reachable on http://127.0.0.1:8010"
+  skip_test "L1_CLOSURE_API" "SKIP: API not reachable on http://127.0.0.1:8010"
+  skip_test "L1_AUDIT_REINDEX" "SKIP: API not reachable on http://127.0.0.1:8010"
 fi
 
 run_test "L1_MIGRATION_DRY_RUN" "./scripts/migrate_to_clean_repo.sh"
