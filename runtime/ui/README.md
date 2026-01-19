@@ -18,7 +18,7 @@ The UI will be available at http://localhost:5173
 
 ## Backend API
 
-The UI expects the FastAPI backend to be running on http://127.0.0.1:8000
+The UI expects the FastAPI backend to be running on http://127.0.0.1:8010
 
 Start the backend:
 ```bash
