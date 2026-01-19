@@ -2,7 +2,7 @@
 set -euo pipefail
 
 RUNTIME_ROOT="/Users/vwvd/Millway/AI-folder/Crew-AI/cursor/codex cli project repo copy"
-API_URL="http://127.0.0.1:8000"
+API_URL="http://127.0.0.1:8010"
 
 cd "${RUNTIME_ROOT}"
 
