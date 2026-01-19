@@ -800,4 +800,4 @@ async def validate_run(run_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("api_server:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("api_server:app", host="127.0.0.1", port=8010, reload=True)
