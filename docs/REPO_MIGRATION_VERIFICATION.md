@@ -44,8 +44,8 @@ python3 -m uvicorn api_server:app --host 127.0.0.1 --port 8000 --reload
 ```
 Then in a new terminal:
 ```
-curl http://127.0.0.1:8000/health
-curl http://127.0.0.1:8000/inbox
+curl http://127.0.0.1:8010/health
+curl http://127.0.0.1:8010/inbox
 ```
 Extract a run_id and test:
 ```
@@ -55,7 +55,7 @@ with open('indices/run_index.json','r') as f:
     runs = json.load(f).get('runs',[])
 print(runs[0]['run_id'] if runs else '')
 PY
-curl http://127.0.0.1:8000/runs/<run_id>
+curl http://127.0.0.1:8010/runs/<run_id>
 ```
 If proposals exist:
 ```
@@ -65,7 +65,7 @@ with open('indices/proposal_index.json','r') as f:
     items = json.load(f).get('proposals',[])
 print(items[0]['proposal_id'] if items else '')
 PY
-curl http://127.0.0.1:8000/proposals/<proposal_id>
+curl http://127.0.0.1:8010/proposals/<proposal_id>
 ```
 If closures exist:
 ```
@@ -75,11 +75,11 @@ with open('indices/closure_index.json','r') as f:
     items = json.load(f).get('closures',[])
 print(items[0]['closure_id'] if items else '')
 PY
-curl http://127.0.0.1:8000/closures/<closure_id>
+curl http://127.0.0.1:8010/closures/<closure_id>
 ```
 Reindex via API:
 ```
-curl -X POST http://127.0.0.1:8000/reindex
+curl -X POST http://127.0.0.1:8010/reindex
 ```
 
 ### 4) Start UI + verify
@@ -111,7 +111,7 @@ Manual checks:
 ## D) Troubleshooting
 
 **Port already in use**
-- `lsof -i :8000`
+- `lsof -i :8010`
 - `lsof -i :5173`
 
 **Missing venv / uvicorn**
