@@ -31,3 +31,13 @@ runtime/audit/**
 # Python caches
 __pycache__/
 *.pyc
+
+### BEGIN sandbox-ignore (managed)
+# Ignore sandbox scratch by default, but allow tooling scripts
+sandbox/
+!sandbox/
+sandbox/*
+!sandbox/tools/
+sandbox/tools/*
+!sandbox/tools/*.sh
+### END sandbox-ignore (managed)
