@@ -11,7 +11,12 @@ fi
 
 set -euo pipefail
 
-RUNTIME_ROOT="/Users/vwvd/Millway/AI-folder/Crew-AI/cursor/codex cli project repo copy"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RUNTIME_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+if [[ ! -f "${RUNTIME_ROOT}/api_server.py" || ! -f "${RUNTIME_ROOT}/indexer.py" ]]; then
+  echo "ERROR: runtime root missing api_server.py or indexer.py: ${RUNTIME_ROOT}" >&2
+  exit 1
+fi
 API_URL="http://127.0.0.1:8010"
 
 cd "${RUNTIME_ROOT}"

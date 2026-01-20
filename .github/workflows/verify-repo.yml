@@ -12,16 +12,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Block runtime or indices tracking
+      - name: Block runtime state tracking (allow runtime code)
         run: |
           set -e
-          if git ls-files | grep -E '^(runtime/|indices/)' >/dev/null; then
-            echo "ERROR: runtime/ or indices/ paths are tracked in git, which violates repo invariants." >&2
-            echo "Tracked paths:" >&2
-            git ls-files | grep -E '^(runtime/|indices/)' >&2
+          # runtime is a tracked surface; state inside runtime/* is generated and must not be committed
+          if git ls-files | grep -E '^(indices/|runtime/(indices|runs|audit|proposals|closures)/|runtime/\.venv|runtime/\.venv_)' >/dev/null; then
+            echo "ERROR: tracked runtime state or indices detected (forbidden by repo invariants)." >&2
+            echo "Tracked paths (matches):" >&2
+            git ls-files | grep -E '^(indices/|runtime/(indices|runs|audit|proposals|closures)/|runtime/\.venv|runtime/\.venv_)' >&2
             exit 1
           fi
-          echo "OK: no runtime/ or indices/ paths tracked."
+          echo "OK: runtime code tracked; no runtime state or indices tracked."
 
       - name: Ensure governance docs exist
         run: |

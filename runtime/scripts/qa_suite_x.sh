@@ -13,7 +13,13 @@ fi
 
 set -uo pipefail
 
-RUNTIME_ROOT="/Users/vwvd/Millway/AI-folder/Crew-AI/cursor/codex cli project repo copy"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RUNTIME_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$RUNTIME_ROOT/.." && pwd)"
+if [[ ! -f "${RUNTIME_ROOT}/api_server.py" || ! -f "${RUNTIME_ROOT}/indexer.py" ]]; then
+  echo "ERROR: runtime root missing api_server.py or indexer.py: ${RUNTIME_ROOT}" >&2
+  exit 1
+fi
 QA_ROOT="${RUNTIME_ROOT}/audit/qa"
 TS="$(date +%Y%m%dT%H%M%S)"
 RUN_DIR="${QA_ROOT}/runs/${TS}"
@@ -68,18 +74,18 @@ else
 fi
 
 ## L0 checks (contracts / entrypoints)
-run_test "L0_OCR_CONTRACTS" "rg -n \"page_sources/ocr_txt|page_sources/ocr_tsv|OCR Correction Contract\" /Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/documentation/operator"
-run_test "L0_OCR_CORRECTION_CONTRACT" "rg -n \"page_ocr_corrected|manifests/<page_id>.json\" /Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/documentation/operator/OCR_CORRECTION_CONTRACT.md"
-run_test "L0_DEFINITIVE_SOURCE_CONTRACT" "rg -n \"definitive_source|builds/<BUILD_ID>/source_nl.txt\" /Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/documentation/operator/DEFINITIVE_SOURCE_BUILD_CONTRACT.md"
-run_test "L0_TRANSLATION_ENTRYPOINTS" "rg -n \"run_pipeline|Translation → Readability → Fidelity\" test_multi_agent_fidelity.py mustikarasa_codex_cli.py"
-run_test "L0_RUNNER_V2_CONTRACT" "rg -n \"create_run_directory|outputs/final.txt|output_contract_checks.txt\" src/runner_v2/runner.py"
-run_test "L0_VALIDATOR_CONTRACT" "rg -n \"overall_status|CHECK_RESULTS|PASS|FAIL\" sandbox/tools/phase8_output_contract_validator.sh"
-run_test "L0_INDEXER_RULES" "rg -n \"validator_fail|blocking_gate|challenger_issues|proposal_open|required_closure\" indexer.py"
-run_test "L0_REVIEW_PACK_API" "rg -n \"review_pack\" api_server.py"
-run_test "L0_PROPOSAL_SCHEMA" "rg -n \"proposal.md|status.json|required_closure.json\" indexer.py"
-run_test "L0_CLOSURE_SCHEMA" "rg -n \"class ClosureCreate|create_closure\" api_server.py"
-run_test "L0_AUDIT_LOGS" "rg -n \"ensure_audit_log\" api_server.py"
-run_test "L0_MIGRATION_SCRIPT" "rg -n \"DRY_RUN|migration_reports\" scripts/migrate_to_clean_repo.sh"
+run_test "L0_OCR_CONTRACTS" "rg -n 'page_sources/ocr_txt|page_sources/ocr_tsv|OCR Correction Contract' \"${REPO_ROOT}/documentation/operator\""
+run_test "L0_OCR_CORRECTION_CONTRACT" "rg -n 'page_ocr_corrected|manifests/<page_id>.json' \"${REPO_ROOT}/documentation/operator/OCR_CORRECTION_CONTRACT.md\""
+run_test "L0_DEFINITIVE_SOURCE_CONTRACT" "rg -n 'definitive_source|builds/<BUILD_ID>/source_nl.txt' \"${REPO_ROOT}/documentation/operator/DEFINITIVE_SOURCE_BUILD_CONTRACT.md\""
+run_test "L0_TRANSLATION_ENTRYPOINTS" "rg -n 'run_pipeline|Translation → Readability → Fidelity' test_multi_agent_fidelity.py mustikarasa_codex_cli.py"
+run_test "L0_RUNNER_V2_CONTRACT" "rg -n 'create_run_directory|outputs/final.txt|output_contract_checks.txt' src/runner_v2/runner.py"
+run_test "L0_VALIDATOR_CONTRACT" "rg -n 'overall_status|CHECK_RESULTS|PASS|FAIL' sandbox/tools/phase8_output_contract_validator.sh"
+run_test "L0_INDEXER_RULES" "rg -n 'validator_fail|blocking_gate|challenger_issues|proposal_open|required_closure' indexer.py"
+run_test "L0_REVIEW_PACK_API" "rg -n 'review_pack' api_server.py"
+run_test "L0_PROPOSAL_SCHEMA" "rg -n 'proposal.md|status.json|required_closure.json' indexer.py"
+run_test "L0_CLOSURE_SCHEMA" "rg -n 'class ClosureCreate|create_closure' api_server.py"
+run_test "L0_AUDIT_LOGS" "rg -n 'ensure_audit_log' api_server.py"
+run_test "L0_MIGRATION_SCRIPT" "rg -n 'DRY_RUN|migration_reports' scripts/migrate_to_clean_repo.sh"
 
 ## L1 checks (smoke)
 run_test "L1_TRANSLATION_PIPELINE" "printf \"EN test\" > /tmp/qa_en.txt && printf \"NL test\" > /tmp/qa_nl.txt && python3 test_multi_agent_fidelity.py --english /tmp/qa_en.txt --rough-nl /tmp/qa_nl.txt"
@@ -90,8 +96,8 @@ run_test "L1_VALIDATOR_FAIL_SIM" "mkdir -p /tmp/qa_run/eval /tmp/qa_run/outputs 
 skip_test "L1_INDEXER_INBOX_SIM" "SKIP: would require manual run bundle creation under runs/ (not allowed)"
 
 if [[ "${API_UP}" == "yes" ]]; then
-  run_test "L1_REVIEW_PACK_API" "mkdir -p proposals/P-TEST-REVIEW/review_pack && printf \"dummy\" > proposals/P-TEST-REVIEW/review_pack/readme.txt && curl -s http://127.0.0.1:8010/proposals/P-TEST-REVIEW | python3 -m json.tool | rg -n \"review_pack\""
-  run_test "L1_PROPOSAL_API" "mkdir -p proposals/P-TEST && printf \"# P-TEST\\nbody\" > proposals/P-TEST/proposal.md && printf '{ \"status\": \"open\", \"severity\": \"info\" }' > proposals/P-TEST/status.json && curl -s http://127.0.0.1:8010/proposals/P-TEST | python3 -m json.tool | rg -n \"proposal_md|status\""
+  run_test "L1_REVIEW_PACK_API" "mkdir -p proposals/P-TEST-REVIEW/review_pack && printf \"dummy\" > proposals/P-TEST-REVIEW/review_pack/readme.txt && curl -s http://127.0.0.1:8010/proposals/P-TEST-REVIEW | python3 -m json.tool | rg -n 'review_pack'"
+  run_test "L1_PROPOSAL_API" "mkdir -p proposals/P-TEST && printf \"# P-TEST\\nbody\" > proposals/P-TEST/proposal.md && printf '{ \"status\": \"open\", \"severity\": \"info\" }' > proposals/P-TEST/status.json && curl -s http://127.0.0.1:8010/proposals/P-TEST | python3 -m json.tool | rg -n 'proposal_md|status'"
   run_test "L1_CLOSURE_API" "mkdir -p proposals/P-TEST-CLOSE && printf '{ \"status\": \"open\", \"severity\": \"info\" }' > proposals/P-TEST-CLOSE/status.json && curl -s -X POST http://127.0.0.1:8010/closures -H 'Content-Type: application/json' -d '{\"proposal_id\":\"P-TEST-CLOSE\",\"run_id\":\"RUN_QA_SUITE_X\",\"decision_type\":\"qa_suite_x\",\"rationale\":\"QA suite X closure rationale\",\"evidence_paths\":[\"proposals/P-TEST-CLOSE/status.json\"],\"sign_off\":true,\"created_by\":\"qa\"}'"
   run_test "L1_AUDIT_REINDEX" "curl -s -X POST http://127.0.0.1:8010/reindex | python3 -m json.tool | rg -n \"ok|generated_files\""
 else

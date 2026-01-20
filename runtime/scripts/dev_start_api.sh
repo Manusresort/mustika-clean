@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+API_HOST="${API_HOST:-127.0.0.1}"
 API_PORT="${API_PORT:-8010}"
 
 if [[ -f "$ROOT/.venv/bin/activate" ]]; then
@@ -24,13 +25,12 @@ if command -v lsof >/dev/null 2>&1; then
   fi
 fi
 
-echo "Starting API on http://localhost:${API_PORT} ..."
-nohup python -m uvicorn api_server:app --host ::1 --port "$API_PORT" \
-  > "$ROOT/audit/api_server.log" 2>&1 &
+echo "Starting API on http://${API_HOST}:${API_PORT} ..."
+nohup python -m uvicorn api_server:app --host "$API_HOST" --port "$API_PORT" > "$ROOT/audit/api_server.log" 2>&1 &
 echo $! > "$ROOT/audit/api_server.pid"
 echo "API PID: $(cat "$ROOT/audit/api_server.pid")"
 
 if command -v curl >/dev/null 2>&1; then
-  health="$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:${API_PORT}/health" || true)"
-  echo "Health check: http://localhost:${API_PORT}/health => ${health}"
+  health="$(curl -s -o /dev/null -w "%{http_code}" "http://${API_HOST}:${API_PORT}/health" || true)"
+  echo "Health check: http://${API_HOST}:${API_PORT}/health => ${health}"
 fi
