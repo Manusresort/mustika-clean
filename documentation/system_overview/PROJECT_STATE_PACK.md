@@ -11,7 +11,7 @@
 - Excerpt registry is complete for all chapters with stable IDs/versions; chapter→excerpt alignment is complete for listed chapters.
 - Ingest artifacts with provenance exist for hoofdstuk_01 and hoofdstuk_02 under `runtime/data/ingest/chapters/`.
 - Review packs exist as derived artefacts under `runtime/proposals/<proposal_id>/review_pack/` (exposed in proposal API response).
-- Excerpt coverage validation is ACTIVE via `python3 runtime/scripts/validate_excerpt_coverage.py` and outputs `runtime/audit/coverage_report_latest.md`.
+- Excerpt coverage validation is ACTIVE via `runtime/.venv/bin/python runtime/scripts/validate_excerpt_coverage.py` and outputs `runtime/audit/coverage_report_latest.md`.
 - Proposal/closure review artefacts are standardized and human-reviewable, with batch consistency validated across P-001..P-004.
 - Milestone 2 (excerpt-level run orchestration) is DONE; per-chapter batch scripting is out of scope for M2.
 
@@ -60,16 +60,15 @@ Start API (recommended script):
 Start UI (recommended script):
 - `runtime/scripts/dev_start_ui.sh`
 
-Stop dev processes (ports 8000/5173/5174):
+Stop dev processes (ports 8010/5173/5174):
 - `runtime/scripts/dev_down.sh`
 
 Reindex (runtime root):
 - `runtime/scripts/reindex_runtime.sh`
-- `python3 runtime/indexer.py --base-path runtime`
+- `runtime/.venv/bin/python runtime/indexer.py --base-path runtime`
 
 Python note:
-- If `runtime/.venv` exists, activate it before running scripts.
-- Otherwise use `python3` for all commands and ensure dependencies are installed.
+- `runtime/.venv` (Python 3.11) is required for RunnerV2 + CrewAI.
 
 ## Current invariants (non-negotiable)
 - `runtime/canonical/` is read-only (no direct writes).
@@ -183,7 +182,7 @@ Indices:
 
 ### Excerpt coverage validation (as-built)
 
-- Excerpt coverage validation is runnable via `python3 runtime/scripts/validate_excerpt_coverage.py`.
+- Excerpt coverage validation is runnable via `runtime/.venv/bin/python runtime/scripts/validate_excerpt_coverage.py`.
 - Output artifact: `runtime/audit/coverage_report_latest.md` (derived; regenerable).
 
 ### As-built architecture documentation

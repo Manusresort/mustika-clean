@@ -1,5 +1,7 @@
 # Mustika Rasa Human UI - Setup & Usage
 
+Authoritative environment setup: `documentation/system_overview/ENVIRONMENT.md` (this file is UI-specific).
+
 ## Overview
 
 De Human UI is een local-first interface voor het beheren van de Mustika Rasa governance workflow. Het biedt een MVP met:
@@ -18,7 +20,7 @@ Zie `docs/DEV_WORKFLOW.md` voor de volledige dev-flow.
 TL;DR:
 ```bash
 cd /path/to/repo
-source .venv/bin/activate   # optional if scripts handle venv
+source .venv/bin/activate   # required (Python 3.11, CrewAI)
 ./scripts/dev_up.sh
 ```
 Open `http://localhost:5173` (of `http://localhost:5174` als 5173 bezet is).
@@ -31,12 +33,12 @@ Docs:
 
 ### Backend (FastAPI)
 
-1. Installeer dependencies:
+1. Installeer dependencies (includes CrewAI):
 ```bash
 pip install -r requirements-ui.txt
 ```
 
-2. Start de API server:
+2. Start de API server (runtime venv required):
 ```bash
 python api_server.py
 ```
@@ -80,7 +82,7 @@ De UI is beschikbaar op http://localhost:5173
 
 2. Genereer indices:
    - Via de UI: klik op "Reindex" in het Dashboard
-   - Via CLI: `python indexer.py`
+   - Via CLI: `./scripts/reindex_runtime.sh`
 
 3. Start beide servers (backend en frontend)
 

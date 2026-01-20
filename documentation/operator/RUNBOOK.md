@@ -9,15 +9,15 @@
 - `runtime/scripts/dev_start_ui.sh`
 
 Notes:
-- If `runtime/.venv` exists, activate it before running scripts.
-- Use `python3` if `python` is not available.
+- `runtime/.venv` (Python 3.11) is required for RunnerV2 + CrewAI; scripts enforce it.
+- Environment (authoritative): `documentation/system_overview/ENVIRONMENT.md`.
 
 ## Run a new excerpt job (Runner v2)
 
 Template command:
 
 ```bash
-python3 runtime/scripts/mustika_run_excerpt.py \
+runtime/.venv/bin/python runtime/scripts/mustika_run_excerpt.py \
   --excerpt-id <excerpt_id> \
   --excerpt-source <path_to_source_text> \
   --excerpt-version <version_tag> \
@@ -32,7 +32,7 @@ Outputs will land in:
 
 CLI reindex (filesystem → indices):
 - `runtime/scripts/reindex_runtime.sh`
-- `python3 runtime/indexer.py --base-path runtime`
+- `runtime/.venv/bin/python runtime/indexer.py --base-path runtime`
 Generates:
 - `runtime/indices/page_sources_coverage_index.json`
 
@@ -45,7 +45,7 @@ Purpose:
 - Checks registry entries against alignment entries and reports run coverage per excerpt.
 
 Command:
-- `python3 runtime/scripts/validate_excerpt_coverage.py`
+- `runtime/.venv/bin/python runtime/scripts/validate_excerpt_coverage.py`
 
 Preconditions:
 - `documentation/system_overview/EXCERPT_REGISTRY.md` exists.
@@ -71,12 +71,11 @@ Non-goals:
   - If UI does not start on the default port, it will try the next available.
   - Stop existing processes with `runtime/scripts/dev_down.sh`.
 
-- `uvicorn` missing:
-  - Ensure the runtime venv is active or install dependencies.
-  - Use `python3 -m uvicorn` (scripts already do this).
+- `uvicorn` / `crewai` missing:
+  - Ensure `runtime/.venv` (Python 3.11) is active and dependencies installed.
 
-- `python` vs `python3`:
-  - Use `python3` explicitly to avoid PATH issues.
+- Stub mode:
+  - If `mustikarasa_agents` is missing, the pipeline returns a stub with remarks.
 
 - Logs:
   - Run logs: `runtime/runs/*/logs/run.log`
@@ -86,8 +85,8 @@ ADDED: See `documentation/system_overview/PROJECT_STATE_PACK.md` (DoD — Run lo
 ## Run output regression check
 
 Command:
-- `python3 runtime/scripts/regression_check_run_outputs.py <baseline_run_dir> <candidate_run_dir>`
-- `python3 runtime/scripts/regression_check_indices.py`
+- `runtime/.venv/bin/python runtime/scripts/regression_check_run_outputs.py <baseline_run_dir> <candidate_run_dir>`
+- `runtime/.venv/bin/python runtime/scripts/regression_check_indices.py`
 
 Output:
 - `runtime/audit/run_regression_<baseline_id>_vs_<candidate_id>.md`

@@ -2,18 +2,19 @@
 
 This checklist validates that the clean repo works end‑to‑end **after** a
 copy migration (DRY_RUN=0). It does not modify the source repo.
+Authoritative environment setup: `documentation/system_overview/ENVIRONMENT.md`.
 
 ---
 
 ## A) Preconditions (minimal)
 
-- **Python**: 3.x available (venv in `runtime/.venv` preferred)
+- **Python**: 3.11 in `runtime/.venv` (required for runtime + CrewAI)
 - **Node/npm**: installed for UI (`runtime/ui/`)
 - **Env (if using local models):**
   - `LITELLM_MODEL` (if required by your setup)
   - `OLLAMA_API_BASE` (if using Ollama)
 - **Ports:**
-  - API: `8000`
+  - API: `8010`
   - UI: `5173` (fallback `5174`)
 
 ---
@@ -27,20 +28,21 @@ ls runtime/src runtime/scripts runtime/ui runtime/indexer.py runtime/api_server.
 ls runtime/runs runtime/proposals runtime/closures runtime/canonical runtime/indices runtime/audit
 ```
 
-### 2) Run indexer + validate JSON
+### 2) Activate venv + run indexer + validate JSON
 ```
 cd /Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/runtime
-python3 indexer.py
-python3 -m json.tool indices/run_index.json >/dev/null
-python3 -m json.tool indices/inbox_index.json >/dev/null
-python3 -m json.tool indices/proposal_index.json >/dev/null
-python3 -m json.tool indices/closure_index.json >/dev/null
+source .venv/bin/activate
+./scripts/reindex_runtime.sh
+python -m json.tool indices/run_index.json >/dev/null
+python -m json.tool indices/inbox_index.json >/dev/null
+python -m json.tool indices/proposal_index.json >/dev/null
+python -m json.tool indices/closure_index.json >/dev/null
 ```
 
 ### 3) Start API + verify endpoints
 ```
 cd /Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/runtime
-python3 -m uvicorn api_server:app --host 127.0.0.1 --port 8010 --reload
+./scripts/dev_start_api.sh
 ```
 Then in a new terminal:
 ```
@@ -114,11 +116,11 @@ Manual checks:
 - `lsof -i :8010`
 - `lsof -i :5173`
 
-**Missing venv / uvicorn**
-- Activate venv or install deps in `runtime/.venv`.
+**Missing venv / CrewAI / uvicorn**
+- Recreate `runtime/.venv` (Python 3.11) and install `requirements-ui.txt` (includes CrewAI).
 
 **Missing indices**
-- Run `python3 indexer.py` and recheck `indices/*.json`.
+- Run `./scripts/reindex_runtime.sh` and recheck `indices/*.json`.
 
 **API errors**
 - Check `runtime/audit/api_actions.log` and API console output.

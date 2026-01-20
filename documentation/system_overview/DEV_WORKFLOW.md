@@ -3,15 +3,16 @@
 ## TL;DR
 
 - `cd /path/to/repo`
-- `./scripts/dev_up.sh`
+- `cd runtime && ./scripts/dev_up.sh`
 - open `http://localhost:5173` (or `http://localhost:5174` if 5173 is busy)
+- Environment (authoritative): `documentation/system_overview/ENVIRONMENT.md`
 
 ---
 
 ## Vereisten
 
 - macOS
-- Python 3 + `.venv` aanwezig
+- Python 3.11 + `runtime/.venv` (required for CrewAI)
 - Node.js + npm
 - (optioneel) Ollama lokaal voor LLM-tests
 
@@ -19,7 +20,7 @@
 
 ## Start
 
-- `./scripts/dev_up.sh`
+- `cd runtime && ./scripts/dev_up.sh`
 
 Dit start:
 - backend (`uvicorn api_server:app` op `127.0.0.1:8010`)
@@ -30,10 +31,10 @@ Dit start:
 
 ## Stop
 
-- `./scripts/dev_down.sh`
+- `cd runtime && ./scripts/dev_down.sh`
 
 Dit stopt de processen op poorten:
-- `8000` (API)
+- `8010` (API)
 - `5173` of `5174` (UI)
 
 ---
@@ -58,5 +59,5 @@ Logs:
 
 ## Veelvoorkomende problemen
 
-- **/health 404** → je draait de verkeerde server → `./scripts/dev_down.sh` + `./scripts/dev_up.sh`
-- **/inbox 500** → run `./scripts/dev_up.sh` (reindex) + check `audit/api_server.log`
+- **/health 404** → je draait de verkeerde server → `cd runtime && ./scripts/dev_down.sh` + `cd runtime && ./scripts/dev_up.sh`
+- **/inbox 500** → run `cd runtime && ./scripts/dev_up.sh` (reindex) + check `audit/api_server.log`

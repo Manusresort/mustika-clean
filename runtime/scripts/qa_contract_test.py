@@ -4,6 +4,15 @@ import sys
 from pathlib import Path
 import tempfile
 
+
+# --- venv guard (qa_contract_test) ---
+import os
+if not os.environ.get('VIRTUAL_ENV'):
+    raise SystemExit(
+        'ERROR: No active venv. Activate runtime/.venv first: '
+        'cd runtime && source .venv/bin/activate'
+    )
+
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 

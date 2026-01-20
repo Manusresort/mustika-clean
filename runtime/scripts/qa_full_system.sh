@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure runtime venv is active (avoid PATH python mismatches)
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -f "$ROOT/.venv/bin/activate" ]; then
+  # shellcheck disable=SC1090
+  source "$ROOT/.venv/bin/activate"
+else
+  echo "ERROR: missing runtime/.venv. Create it under runtime/.venv (Python 3.11) and install deps."
+  exit 1
+fi
+
 set -u
 
 BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
