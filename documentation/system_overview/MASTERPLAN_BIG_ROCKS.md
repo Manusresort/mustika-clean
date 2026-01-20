@@ -143,7 +143,9 @@ Scripts, venv, ports, basic smoke tests.
 
 **To-do checklist**
 - [x] Harmoniseer API host/port in scripts + docs (localhost/127.0.0.1/::1). (evidence: `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_full_system.sh`)
+- [x] dev_start_api healthcheck retry/backoff (removes transient 000). (evidence: `runtime/scripts/dev_start_api.sh`)
 - [x] QA scripts herpointen naar runtime (geen frozen snapshot). (evidence: `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`)
+- [x] QA validator contract path corrected (runtime suite uses repo-root validator). (evidence: `runtime/scripts/qa_suite_x.sh`, `sandbox/tools/phase8_output_contract_validator.sh`)
 - [ ] Venv + deps vastleggen in single source-of-truth doc. (evidence: `documentation/system_overview/DEV_WORKFLOW.md`)
 - [x] CI invariant oplossen (runtime tracked vs workflow). (evidence: `.github/workflows/verify-repo.yml`)
 - [ ] `runtime/canonical/` directory status beslissen (maken of policy aanpassen). (UNKNOWN)
@@ -370,6 +372,7 @@ Runbooks, troubleshooting, env checks.
 - 2026-01-20 — MASTERPLAN_BIG_ROCKS.md updated to fact-first masterplan with blockers, contracts, and patch plan. (evidence: `documentation/system_overview/MASTERPLAN_BIG_ROCKS.md`)
 - 2026-01-20 — CI workflow allows runtime, forbids runtime state; API host canon 127.0.0.1; QA scripts no snapshot. (evidence: `.github/workflows/verify-repo.yml`, `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`, `documentation/system_overview/DEV_WORKFLOW.md`)
 - 2026-01-20 — Scope correction: reverted unintended edits to runner/pipeline files back to HEAD; Phase 1 fixes remain limited to workflow + scripts + docs.
+- 2026-01-20 — QA validator path fix + dev_start_api retry/backoff. (evidence: `runtime/scripts/qa_suite_x.sh`, `sandbox/tools/phase8_output_contract_validator.sh`, `runtime/scripts/dev_start_api.sh`, `runtime/audit/qa/runs/20260120T125537/summary.tsv`)
 
 ### Session Closeout — 2026-01-20
 Done:
