@@ -2,15 +2,28 @@
 
 This document is the source of truth for local dev/runtime environment setup.
 
-## Mac (Apple Silicon) — quick setup
+## Python venv (required)
 
 ```bash
 cd runtime
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
+```
+
+## Python deps install
+
+`runtime/requirements-ui.txt` contains backend/runtime deps plus translation pipeline deps (incl. `crewai`).
+
+```bash
+cd runtime
 pip install -r requirements-ui.txt
-cd ui
+```
+
+## UI deps install
+
+```bash
+cd runtime/ui
 npm install
 ```
 
@@ -19,6 +32,12 @@ npm install
 ```bash
 cd runtime && ./scripts/dev_up.sh
 cd runtime && ./scripts/dev_down.sh
+```
+
+## QA (full system)
+
+```bash
+cd runtime && ./scripts/qa_full_system.sh
 ```
 
 ## Health checks
@@ -48,6 +67,6 @@ curl http://127.0.0.1:8010/inbox
 
 ## Troubleshooting
 
-- No active venv → `source runtime/.venv/bin/activate`
-- `crewai` missing → `pip install -r runtime/requirements-ui.txt`
+- No active venv → `cd runtime && source .venv/bin/activate`
+- `crewai` missing → `cd runtime && pip install -r requirements-ui.txt`
 - Wrong Python version → recreate venv with Python 3.11

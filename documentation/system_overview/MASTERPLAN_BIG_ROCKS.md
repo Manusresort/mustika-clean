@@ -146,7 +146,7 @@ Scripts, venv, ports, basic smoke tests.
 - [x] dev_start_api healthcheck retry/backoff (removes transient 000). (evidence: `runtime/scripts/dev_start_api.sh`)
 - [x] QA scripts herpointen naar runtime (geen frozen snapshot). (evidence: `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`)
 - [x] QA validator contract path corrected (runtime suite uses repo-root validator). (evidence: `runtime/scripts/qa_suite_x.sh`, `sandbox/tools/phase8_output_contract_validator.sh`)
-- [ ] Venv + deps vastleggen in single source-of-truth doc. (evidence: `documentation/system_overview/DEV_WORKFLOW.md`)
+- [x] Venv + deps vastleggen in single source-of-truth doc. (evidence: `documentation/system_overview/ENVIRONMENT.md`)
 - [x] CI invariant oplossen (runtime tracked vs workflow). (evidence: `.github/workflows/verify-repo.yml`)
 - [ ] `runtime/canonical/` directory status beslissen (maken of policy aanpassen). (UNKNOWN)
 
@@ -215,7 +215,7 @@ Policy docs in monorepo vs runtime, stub-mode signals.
 **To-do checklist**
 - [ ] Policy pointers consolidated to canonical docs. (evidence: `docs/OPERATOR_ENTRYPOINT.md` pointer)
 - [ ] Human gate checklist visible in runtime docs. (evidence: `documentation/system_overview/GOVERNANCE.md`)
-- [ ] Explicit stub-mode note (CrewAI missing) in runbook. (evidence: `runtime/test_multi_agent_fidelity.py`)
+- [x] Explicit stub-mode note (CrewAI missing) in runbook. (evidence: `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`, `runtime/test_multi_agent_fidelity.py`)
 
 **Done means**
 - Operator can find canonical gate rules in 1 hop. (evidence: doc link)
@@ -258,7 +258,7 @@ Runbooks, troubleshooting, env checks.
 **To-do checklist**
 - [x] Single source-of-truth runbook (dev up + QA). (evidence: `documentation/system_overview/DEV_WORKFLOW.md`)
 - [x] Troubleshooting matrix (ports, venv, API). (evidence: `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`)
-- [ ] Clarify Python version + CrewAI dependency in runbook. (evidence: `runtime/requirements-ui.txt`)
+- [x] Clarify Python version + CrewAI dependency in runbook. (evidence: `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`, `runtime/requirements-ui.txt`)
 
 **Done means**
 - New operator can start system in <10 min. (FACT REQUEST)
@@ -377,6 +377,7 @@ Runbooks, troubleshooting, env checks.
 - 2026-01-20 — Session closeout: QA Suite X green + validator path resolved + dev_start_api retry/backoff. (evidence: `runtime/audit/qa/runs/20260120T131807/summary.tsv`, `sandbox/tools/phase8_output_contract_validator.sh`, `runtime/scripts/dev_start_api.sh`)
 - 2026-01-20 — Fase 5: sandbox/tools/*.sh bevestigd tracked + .gitignore allowlist voor sandbox/tools/*.sh. (evidence: `git ls-files sandbox/tools`, `.gitignore`)
 - 2026-01-20 — Fase 6: DEV_WORKFLOW canonicalized (dev_up + qa_full_system) + troubleshooting matrix added. (evidence: `documentation/system_overview/DEV_WORKFLOW.md`, `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`)
+- 2026-01-20 — Fase 6: ENVIRONMENT + RUNBOOK updated (venv/deps, CrewAI, stub-mode) with evidence. (evidence: `documentation/system_overview/ENVIRONMENT.md`, `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`, `runtime/requirements-ui.txt`, `runtime/test_multi_agent_fidelity.py`, `runtime/src/pipeline_fidelity.py`)
 
 ### Session Closeout — 2026-01-20
 Done:

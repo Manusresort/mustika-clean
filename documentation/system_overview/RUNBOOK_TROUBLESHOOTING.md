@@ -11,8 +11,24 @@
 
 ## Venv / Python
 
-- Python 3.11 + `runtime/.venv` (see `documentation/system_overview/ENVIRONMENT.md`).
+- Python 3.11 + `runtime/.venv` is required for runtime scripts (see `documentation/system_overview/ENVIRONMENT.md`).
 - Activate: `cd runtime && source .venv/bin/activate`.
+
+## CrewAI dependency
+
+- `crewai==1.8.1` is part of runtime deps (see `runtime/requirements-ui.txt`).
+
+## Stub-mode wanneer CrewAI ontbreekt
+
+Observable (agents missing): `runtime/test_multi_agent_fidelity.py` prints: mustikarasa_agents missing; running stub mode.
+
+Behavior (CrewAI/agents missing): `runtime/src/pipeline_fidelity.py` skips agent processing and returns stub output using the provided rough NL, with remarks starting with STUB: (e.g. STUB: crewai not installed; returned rough_nl without agent processing.).
+
+Fix: `cd runtime && source .venv/bin/activate && pip install -r requirements-ui.txt`
+
+## Env vars (LLM)
+
+- LLM/keys/model env vars staan in `documentation/system_overview/ENVIRONMENT.md` (OPENAI_API_KEY, OPENAI_MODEL/LITELLM_MODEL, optional base URL).
 
 ## API checks
 
