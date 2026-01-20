@@ -1,5 +1,7 @@
 # Mustika Rasa Human UI - Setup & Usage
 
+Authoritative environment setup: `documentation/system_overview/ENVIRONMENT.md` (this file is UI-specific).
+
 ## Overview
 
 De Human UI is een local-first interface voor het beheren van de Mustika Rasa governance workflow. Het biedt een MVP met:

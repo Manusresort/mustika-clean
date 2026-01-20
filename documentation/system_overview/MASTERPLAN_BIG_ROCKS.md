@@ -370,3 +370,33 @@ Runbooks, troubleshooting, env checks.
 - 2026-01-20 — MASTERPLAN_BIG_ROCKS.md updated to fact-first masterplan with blockers, contracts, and patch plan. (evidence: `documentation/system_overview/MASTERPLAN_BIG_ROCKS.md`)
 - 2026-01-20 — CI workflow allows runtime, forbids runtime state; API host canon 127.0.0.1; QA scripts no snapshot. (evidence: `.github/workflows/verify-repo.yml`, `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`, `documentation/system_overview/DEV_WORKFLOW.md`)
 - 2026-01-20 — Scope correction: reverted unintended edits to runner/pipeline files back to HEAD; Phase 1 fixes remain limited to workflow + scripts + docs.
+
+### Session Closeout — 2026-01-20
+Done:
+- [x] CI invariant updated: workflow allows tracked `runtime/` while forbidding tracked runtime state (`runtime/{indices,runs,audit,proposals,closures}/`, `runtime/.venv*`) and top-level `indices/`, with explicit match reporting.
+- [x] Canonical API host/port aligned to `127.0.0.1:8010` in `runtime/scripts/dev_start_api.sh` and documented in `documentation/system_overview/DEV_WORKFLOW.md`.
+- [x] QA scripts re-pointed to active `runtime/` via script-derived root (removed frozen snapshot paths; guards added).
+- [x] `documentation/system_overview/issues/` now tracked with README + evidence notes.
+Next:
+- [x] Venv + deps single source-of-truth doc (Fase 1 remaining).
+- [ ] Pipeline boundary cleanup (runner imports test module) (Phase 2/3 prep).
+Blockers:
+- None known inside `mustika-rasa-clean` (verify CI green after push).
+Evidence:
+- Commit `1d06a4e`
+- `.github/workflows/verify-repo.yml`
+- `runtime/scripts/dev_start_api.sh`
+- `runtime/scripts/qa_suite_x.sh`
+- `runtime/scripts/qa_verify_inbox.sh`
+- `documentation/system_overview/DEV_WORKFLOW.md`
+- `documentation/system_overview/MASTERPLAN_BIG_ROCKS.md`
+- `documentation/system_overview/issues/README.md`
+- `documentation/system_overview/issues/20260120_runtime_pipeline_status.md`
+- `documentation/system_overview/issues/ENV_VENV_CREWAI_MISMATCH.md`
+- `documentation/system_overview/ENVIRONMENT.md`
+- `documentation/system_overview/DEV_WORKFLOW.md`
+- `documentation/operator/RUNBOOK.md`
+- `docs/REPO_MIGRATION_VERIFICATION.md`
+- `runtime/README_UI.md`
+- `documentation/system_overview/issues/ENV_VENV_CREWAI_MISMATCH.md`
+- `runtime/requirements-ui.txt`

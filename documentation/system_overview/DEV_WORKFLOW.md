@@ -5,6 +5,7 @@
 - `cd /path/to/repo`
 - `cd runtime && ./scripts/dev_up.sh`
 - open `http://localhost:5173` (or `http://localhost:5174` if 5173 is busy)
+- Environment (authoritative): `documentation/system_overview/ENVIRONMENT.md`
 
 ---
 

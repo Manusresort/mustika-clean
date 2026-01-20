@@ -31,7 +31,7 @@
 
 ### 3) CrewAI is not declared for runtime, but runtime code expects it
 
-* `runtime/requirements-ui.txt` does **not** list `crewai`
+* `runtime/requirements-ui.txt` now pins `crewai==1.8.1`
   **Evidence:** `runtime/requirements-ui.txt`
 * `runtime/src/runner_v2/llm_client.py` imports `crewai` and raises “CrewAI not installed…”
   **Evidence:** `runtime/src/runner_v2/llm_client.py:25–32`
@@ -70,5 +70,7 @@ Is it `runtime/.venv`, monorepo-root `.venv`, or something else?
 ## Context
 
 * Repo currently has untracked copies of `test_multi_agent_fidelity.py` under `runtime/` and repo root (created during local debugging), but the core mismatch exists regardless: scripts + docs are inconsistent about which Python is used.
+
+2026-01-20: Updated to reflect current dependency declaration in `runtime/requirements-ui.txt`.
 
 Thanks — once the intended environment is confirmed, we can align entrypoints/QA or dependency declarations accordingly.

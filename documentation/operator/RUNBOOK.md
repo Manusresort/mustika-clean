@@ -10,6 +10,7 @@
 
 Notes:
 - `runtime/.venv` (Python 3.11) is required for RunnerV2 + CrewAI; scripts enforce it.
+- Environment (authoritative): `documentation/system_overview/ENVIRONMENT.md`.
 
 ## Run a new excerpt job (Runner v2)
 
