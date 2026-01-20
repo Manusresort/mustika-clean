@@ -60,13 +60,14 @@ skip_test() {
 }
 
 cd "${RUNTIME_ROOT}"
+export PYTHONPATH="${RUNTIME_ROOT}/src"
 
 API_UP="no"
 if curl -s http://127.0.0.1:8010/health >/dev/null 2>&1; then
   API_UP="yes"
 else
   # Attempt to start API (no reload)
-  nohup uvicorn api_server:app --host 127.0.0.1 --port 8010 > "${RUN_DIR}/api_start.log" 2>&1 &
+  nohup "$PYTHON_BIN" -m uvicorn api_server:app --host 127.0.0.1 --port 8010 > "${RUN_DIR}/api_start.log" 2>&1 &
   for _ in {1..10}; do
     if curl -s http://127.0.0.1:8010/health >/dev/null 2>&1; then
       API_UP="yes"

@@ -2,7 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from test_multi_agent_fidelity import run_pipeline
+from pipeline_fidelity import run_pipeline
 
 
 def format_result_for_output(result) -> str:

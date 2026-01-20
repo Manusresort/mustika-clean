@@ -145,8 +145,8 @@ class RunnerV2:
         """
         try:
             # Import pipeline function
-            sys.path.insert(0, str(self.base_path))
-            from test_multi_agent_fidelity import run_pipeline
+            sys.path.insert(0, str(self.base_path / "src"))
+            from pipeline_fidelity import run_pipeline
             
             self.append_log(log_path, f"[{datetime.utcnow().isoformat()}] Starting pipeline...")
             
