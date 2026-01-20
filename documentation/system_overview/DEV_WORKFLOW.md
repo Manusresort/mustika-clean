@@ -6,6 +6,7 @@
 - `cd runtime && ./scripts/dev_up.sh`
 - open `http://localhost:5173` (or `http://localhost:5174` if 5173 is busy)
 - Environment (authoritative): `documentation/system_overview/ENVIRONMENT.md`
+- Install steps (Python + UI deps) are in ENVIRONMENT.md; this doc only summarizes commands.
 
 ---
 
@@ -29,6 +30,14 @@ Dit start:
 
 ---
 
+## QA (full system)
+
+- `cd runtime && ./scripts/qa_full_system.sh`
+
+Dit draait end-to-end smoke checks (API/indexer/UI).
+
+---
+
 ## Stop
 
 - `cd runtime && ./scripts/dev_down.sh`
@@ -45,8 +54,12 @@ Dit stopt de processen op poorten:
 - Inbox: `curl http://127.0.0.1:8010/inbox`
 
 Logs:
-- `audit/api_server.log`
-- `audit/ui_dev.log`
+- `runtime/audit/api_server.log`
+- `runtime/audit/ui_dev.log`
+
+---
+
+Voor uitgebreide troubleshooting: `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`
 
 ---
 
@@ -60,4 +73,4 @@ Logs:
 ## Veelvoorkomende problemen
 
 - **/health 404** → je draait de verkeerde server → `cd runtime && ./scripts/dev_down.sh` + `cd runtime && ./scripts/dev_up.sh`
-- **/inbox 500** → run `cd runtime && ./scripts/dev_up.sh` (reindex) + check `audit/api_server.log`
+- **/inbox 500** → run `cd runtime && ./scripts/dev_up.sh` (reindex) + check `runtime/audit/api_server.log`

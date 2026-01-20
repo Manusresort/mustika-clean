@@ -237,7 +237,7 @@ qa_full_system.sh, qa_suite_x.sh, CI invariants.
 - [ ] CI rule: runtime state ignored or workflow updated. (evidence: `.github/workflows/verify-repo.yml`)
 - [ ] QA suite produces deterministic audit logs. (evidence: `runtime/scripts/qa_full_system.sh`)
 - [ ] L0/L1 checks in Suite X align with runtime path. (evidence: `runtime/scripts/qa_suite_x.sh`)
-- [ ] Ensure `sandbox/tools` scripts are tracked (ignore rules). (evidence: `.gitignore`, `sandbox/tools/*.sh`)
+- [x] Ensure `sandbox/tools` scripts are tracked (ignore rules). (evidence: `.gitignore`, `sandbox/tools/*.sh`)
 
 **Done means**
 - CI passes on main. (FACT REQUEST)
@@ -256,8 +256,8 @@ Runbooks, troubleshooting, env checks.
 - Troubleshooting checklist
 
 **To-do checklist**
-- [ ] Single source-of-truth runbook (dev up + QA). (evidence: `documentation/system_overview/DEV_WORKFLOW.md`)
-- [ ] Troubleshooting matrix (ports, venv, API). (evidence: `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`)
+- [x] Single source-of-truth runbook (dev up + QA). (evidence: `documentation/system_overview/DEV_WORKFLOW.md`)
+- [x] Troubleshooting matrix (ports, venv, API). (evidence: `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`)
 - [ ] Clarify Python version + CrewAI dependency in runbook. (evidence: `runtime/requirements-ui.txt`)
 
 **Done means**
@@ -374,6 +374,9 @@ Runbooks, troubleshooting, env checks.
 - 2026-01-20 — Scope correction: reverted unintended edits to runner/pipeline files back to HEAD; Phase 1 fixes remain limited to workflow + scripts + docs.
 - 2026-01-20 — QA validator path fix + dev_start_api retry/backoff. (evidence: `runtime/scripts/qa_suite_x.sh`, `sandbox/tools/phase8_output_contract_validator.sh`, `runtime/scripts/dev_start_api.sh`, `runtime/audit/qa/runs/20260120T125537/summary.tsv`)
 - 2026-01-20 — Pipeline boundary fixed: canonical pipeline moved to `runtime/src/pipeline_fidelity.py`; RunnerV2/CLI no longer import `test_multi_agent_fidelity`. (evidence: `runtime/src/pipeline_fidelity.py`, `runtime/src/runner_v2/runner.py`, `runtime/mustikarasa_codex_cli.py`, `runtime/test_multi_agent_fidelity.py`, `runtime/audit/qa/latest/summary.tsv`)
+- 2026-01-20 — Session closeout: QA Suite X green + validator path resolved + dev_start_api retry/backoff. (evidence: `runtime/audit/qa/runs/20260120T131807/summary.tsv`, `sandbox/tools/phase8_output_contract_validator.sh`, `runtime/scripts/dev_start_api.sh`)
+- 2026-01-20 — Fase 5: sandbox/tools/*.sh bevestigd tracked + .gitignore allowlist voor sandbox/tools/*.sh. (evidence: `git ls-files sandbox/tools`, `.gitignore`)
+- 2026-01-20 — Fase 6: DEV_WORKFLOW canonicalized (dev_up + qa_full_system) + troubleshooting matrix added. (evidence: `documentation/system_overview/DEV_WORKFLOW.md`, `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`)
 
 ### Session Closeout — 2026-01-20
 Done:
@@ -382,7 +385,6 @@ Done:
 - [x] QA scripts re-pointed to active `runtime/` via script-derived root (removed frozen snapshot paths; guards added).
 - [x] `documentation/system_overview/issues/` now tracked with README + evidence notes.
 Next:
-- [x] Venv + deps single source-of-truth doc (Fase 1 remaining).
 - [x] Pipeline boundary cleanup (runner imports test module) (Phase 2/3 prep).
 Blockers:
 - None known inside `mustika-rasa-clean` (verify CI green after push).
