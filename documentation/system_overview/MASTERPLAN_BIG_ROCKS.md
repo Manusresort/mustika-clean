@@ -373,6 +373,7 @@ Runbooks, troubleshooting, env checks.
 - 2026-01-20 — CI workflow allows runtime, forbids runtime state; API host canon 127.0.0.1; QA scripts no snapshot. (evidence: `.github/workflows/verify-repo.yml`, `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`, `documentation/system_overview/DEV_WORKFLOW.md`)
 - 2026-01-20 — Scope correction: reverted unintended edits to runner/pipeline files back to HEAD; Phase 1 fixes remain limited to workflow + scripts + docs.
 - 2026-01-20 — QA validator path fix + dev_start_api retry/backoff. (evidence: `runtime/scripts/qa_suite_x.sh`, `sandbox/tools/phase8_output_contract_validator.sh`, `runtime/scripts/dev_start_api.sh`, `runtime/audit/qa/runs/20260120T125537/summary.tsv`)
+- 2026-01-20 — Pipeline boundary fixed: canonical pipeline moved to `runtime/src/pipeline_fidelity.py`; RunnerV2/CLI no longer import `test_multi_agent_fidelity`. (evidence: `runtime/src/pipeline_fidelity.py`, `runtime/src/runner_v2/runner.py`, `runtime/mustikarasa_codex_cli.py`, `runtime/test_multi_agent_fidelity.py`, `runtime/audit/qa/latest/summary.tsv`)
 
 ### Session Closeout — 2026-01-20
 Done:
@@ -382,7 +383,7 @@ Done:
 - [x] `documentation/system_overview/issues/` now tracked with README + evidence notes.
 Next:
 - [x] Venv + deps single source-of-truth doc (Fase 1 remaining).
-- [ ] Pipeline boundary cleanup (runner imports test module) (Phase 2/3 prep).
+- [x] Pipeline boundary cleanup (runner imports test module) (Phase 2/3 prep).
 Blockers:
 - None known inside `mustika-rasa-clean` (verify CI green after push).
 Evidence:

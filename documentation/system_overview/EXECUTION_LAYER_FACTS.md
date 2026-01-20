@@ -113,8 +113,8 @@ Not enforced in code (observed):
 
 ## Current limitations / gaps (facts-only)
 
-- Validator script path referenced (`runtime/sandbox/tools/phase8_output_contract_validator.sh`) is not present in repo.
-- Runner pipeline imports `test_multi_agent_fidelity` module, not present in runtime tree.
+- Validator path mismatch: RunnerV2 references `runtime/sandbox/tools/phase8_output_contract_validator.sh`, but validator exists at `sandbox/tools/phase8_output_contract_validator.sh`.
+- Pipeline boundary violation: RunnerV2 imports `test_multi_agent_fidelity` (test-named module); file exists in runtime but should not be imported by runtime core.
 - No batch runner/orchestrator for chapter-level runs.
 - No run intent metadata beyond excerpt metadata, command.txt, and log header.
 
