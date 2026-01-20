@@ -68,5 +68,5 @@ curl http://127.0.0.1:8010/inbox
 ## Troubleshooting
 
 - No active venv → `cd runtime && source .venv/bin/activate`
-- `crewai` missing → `cd runtime && pip install -r requirements-ui.txt`
+- `crewai` missing → `cd runtime && source .venv/bin/activate && pip install -r requirements-ui.txt`
 - Wrong Python version → recreate venv with Python 3.11
