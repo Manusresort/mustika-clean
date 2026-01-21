@@ -40,15 +40,21 @@ run_test() {
   echo "== ${test_id} ==" | tee -a "${log_path}"
   echo "CMD: ${cmd}" | tee -a "${log_path}"
   echo "START: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" | tee -a "${log_path}"
+  cmd_one_line="$(perl -pe 's/
+/\n/g' <<<"$cmd")"
   if bash -lc "${cmd}" >> "${log_path}" 2>&1; then
     echo "END: PASS" | tee -a "${log_path}"
-    echo -e "${test_id}\tPASS\t${cmd}\t${log_path}" >> "${SUMMARY}"
+    printf "%s	%s	%s	%s
+" "${test_id}" "PASS" "${cmd_one_line}" "${log_path}" >> "${SUMMARY}"
   else
     echo "END: FAIL" | tee -a "${log_path}"
-    echo -e "${test_id}\tFAIL\t${cmd}\t${log_path}" >> "${SUMMARY}"
+    printf "%s	%s	%s	%s
+" "${test_id}" "FAIL" "${cmd_one_line}" "${log_path}" >> "${SUMMARY}"
   fi
   return 0
 }
+
+
 
 skip_test() {
   local test_id="$1"
@@ -56,8 +62,11 @@ skip_test() {
   local log_path="${RUN_DIR}/${test_id}.log"
   echo "== ${test_id} ==" > "${log_path}"
   echo "SKIPPED: ${reason}" >> "${log_path}"
-  echo -e "${test_id}\tSKIPPED\t-\t${log_path}" >> "${SUMMARY}"
+  printf "%s	%s	%s	%s
+" "${test_id}" "SKIPPED" "-" "${log_path}" >> "${SUMMARY}"
 }
+
+
 
 cd "${RUNTIME_ROOT}"
 export PYTHONPATH="${RUNTIME_ROOT}/src"
