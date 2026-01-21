@@ -40,8 +40,8 @@ run_test() {
   echo "== ${test_id} ==" | tee -a "${log_path}"
   echo "CMD: ${cmd}" | tee -a "${log_path}"
   echo "START: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" | tee -a "${log_path}"
-  cmd_one_line="$(perl -pe 's/
-/\n/g' <<<"$cmd")"
+  local cmd_one_line="${cmd//$'
+'/\n}"
   if bash -lc "${cmd}" >> "${log_path}" 2>&1; then
     echo "END: PASS" | tee -a "${log_path}"
     printf "%s	%s	%s	%s
@@ -56,6 +56,7 @@ run_test() {
 
 
 
+
 skip_test() {
   local test_id="$1"
   local reason="$2"
@@ -65,6 +66,7 @@ skip_test() {
   printf "%s	%s	%s	%s
 " "${test_id}" "SKIPPED" "-" "${log_path}" >> "${SUMMARY}"
 }
+
 
 
 
