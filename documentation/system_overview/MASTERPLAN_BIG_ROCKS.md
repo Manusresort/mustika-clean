@@ -361,15 +361,15 @@ Runbooks, troubleshooting, env checks.
   - Command/file: `documentation/system_overview/DEV_WORKFLOW.md` vs `docs/REPO_MIGRATION_VERIFICATION.md`.
   - Unlocks: doc single source of truth.
 
-- [ ] Vraag: status van `runtime/canonical/` (bestaat of niet)?
+- [x] Vraag: status van `runtime/canonical/` (bestaat of niet)?
   - Command/file: `runtime/api_server.py`, filesystem check. 
   - Unlocks: canonical write policy clarity.
 
-- [ ] Vraag: expected run layouts (runner_v2 vs phase8/phase9)?
+- [x] Vraag: expected run layouts (runner_v2 vs phase8/phase9)?
   - Command/file: `runtime/src/runner_v2/run_layout_adapter.py`.
   - Unlocks: indexer determinism.
 
-- [ ] Vraag: CrewAI version pin + model env vars (OPENAI_MODEL/LITELLM_MODEL)?
+- [x] Vraag: CrewAI version pin + model env vars (OPENAI_MODEL/LITELLM_MODEL)?
   - Command/file: `runtime/src/mustikarasa_agents.py`, `runtime/requirements-ui.txt`.
   - Unlocks: stable pipeline execution.
 
@@ -387,6 +387,9 @@ Runbooks, troubleshooting, env checks.
 - Verified /reindex response includes `base_path_used` (evidence: `runtime/api_server.py`, QA PASS line below).
 - Verified Phase 3 verification script exists and is executable (evidence: `runtime/scripts/qa_verify_phase3_contracts.sh`).
 - Verified closure_needed rule is guarded for closed proposals (evidence: `runtime/indexer.py`, guard comment + `not is_closed`).
+- Verified runtime/canonical/ exists and is empty; policy remains read-only/no writes. Evidence: filesystem listing; documentation/operator/BACKUP_AND_RESTORE_RUNTIME.md safety note; documentation/operator/AGENT_USAGE_CONTRACT_PAGE_SOURCES.md invariants.
+- Verified run layout expectations: RunnerV2 runs/<excerpt_id>/<RUN_...>/ and Phase-8 sandbox/phase8_runs/P8_RUN_<timestamp>/; indexer reconstructs paths for runner_v2 and phase8/phase9 via RunLayoutAdapter. Evidence: runtime/src/runner_v2/run_layout_adapter.py, runtime/indexer.py.
+- Verified CrewAI pin + model env vars: runtime/requirements-ui.txt pins crewai==0.11.2; agents require LITELLM_MODEL or OPENAI_MODEL and support OPENAI_API_KEY, LITELLM_BASE_URL/OPENAI_BASE_URL. Evidence: runtime/requirements-ui.txt, runtime/src/mustikarasa_agents.py.
 
 ### 2026-01-21
 - QA: `runtime/scripts/qa_verify_phase3_contracts.sh`

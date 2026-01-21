@@ -16,7 +16,7 @@
 
 ## CrewAI dependency
 
-- `crewai==1.8.1` is part of runtime deps (see `runtime/requirements-ui.txt`).
+- `crewai==0.11.2` is part of runtime deps (see `runtime/requirements-ui.txt`).
 
 ## Stub-mode wanneer CrewAI ontbreekt
 

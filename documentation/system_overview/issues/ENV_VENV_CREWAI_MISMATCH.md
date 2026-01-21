@@ -31,7 +31,8 @@
 
 ### 3) CrewAI is not declared for runtime, but runtime code expects it
 
-* `runtime/requirements-ui.txt` now pins `crewai==1.8.1`
+* `runtime/requirements-ui.txt` now pins `crewai==0.11.2`
+  (note: earlier docs referenced `1.8.1`; current repo pin is `0.11.2`). Evidence: `runtime/requirements-ui.txt`
   **Evidence:** `runtime/requirements-ui.txt`
 * `runtime/src/runner_v2/llm_client.py` imports `crewai` and raises “CrewAI not installed…”
   **Evidence:** `runtime/src/runner_v2/llm_client.py:25–32`
