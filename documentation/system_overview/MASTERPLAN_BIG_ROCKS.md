@@ -208,7 +208,7 @@ Indexer, API endpoints, UI data mapping.
 - [x] UI contract check: `proposal_md` mapping in UI. (evidence: `runtime/api_server.py`, `runtime/ui/src/components/ReviewPackViewer.tsx`)
 - [x] Verify API `/reindex` uses correct base_path. (evidence: `runtime/api_server.py`)
 - [x] Ensure indices deterministic across two runs. (evidence: `runtime/indexer.py`, commit `ae37211`; reindex x2 produced no diffs for indices/{inbox,run,proposal,closure}_index.json (generated_at-only diffs ignored).)
-- [ ] Document run layout adapter behavior. (evidence: `runtime/src/runner_v2/run_layout_adapter.py`)
+- [x] Document run layout adapter behavior. (evidence: `runtime/src/runner_v2/run_layout_adapter.py`)
 
 **Done means**
 - UI shows proposal content for existing `proposal.md`. (evidence: `runtime/api_server.py`, `runtime/ui/src`)
@@ -397,6 +397,10 @@ Runbooks, troubleshooting, env checks.
   PASS: /proposals/P-001 contains proposal_md
   PASS: no closure_needed for closed proposal P-001
   PASS: Phase 3 contracts OK
+
+### 2026-01-21
+- Documented RunLayoutAdapter behavior in `documentation/system_overview/RUN_LAYOUT_ADAPTER.md`.
+- Evidence: `runtime/src/runner_v2/run_layout_adapter.py`, `runtime/src/runner_v2/runner.py`, `documentation/system_overview/RUN_LAYOUT_ADAPTER.md`.
 
 - 2026-01-20 — MASTERPLAN_BIG_ROCKS.md updated to fact-first masterplan with blockers, contracts, and patch plan. (evidence: `documentation/system_overview/MASTERPLAN_BIG_ROCKS.md`)
 - 2026-01-20 — CI workflow allows runtime, forbids runtime state; API host canon 127.0.0.1; QA scripts no snapshot. (evidence: `.github/workflows/verify-repo.yml`, `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`, `documentation/system_overview/DEV_WORKFLOW.md`)
