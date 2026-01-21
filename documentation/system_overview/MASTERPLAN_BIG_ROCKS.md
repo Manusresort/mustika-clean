@@ -227,8 +227,8 @@ Policy docs in monorepo vs runtime, stub-mode signals.
 - Human gate checklists
 
 **To-do checklist**
-- [ ] Policy pointers consolidated to canonical docs. (evidence: `docs/OPERATOR_ENTRYPOINT.md` pointer)
-- [ ] Human gate checklist visible in runtime docs. (evidence: `documentation/system_overview/GOVERNANCE.md`)
+- [x] Policy pointers consolidated to canonical docs. (evidence: `docs/OPERATOR_ENTRYPOINT.md` pointer)
+- [x] Human gate checklist visible in runtime docs. (evidence: `documentation/system_overview/GOVERNANCE.md`)
 - [x] Explicit stub-mode note (CrewAI missing) in runbook. (evidence: `documentation/system_overview/RUNBOOK_TROUBLESHOOTING.md`, `runtime/test_multi_agent_fidelity.py`)
 
 **Done means**
@@ -401,6 +401,10 @@ Runbooks, troubleshooting, env checks.
 ### 2026-01-21
 - Documented RunLayoutAdapter behavior in `documentation/system_overview/RUN_LAYOUT_ADAPTER.md`.
 - Evidence: `runtime/src/runner_v2/run_layout_adapter.py`, `runtime/src/runner_v2/runner.py`, `documentation/system_overview/RUN_LAYOUT_ADAPTER.md`.
+
+### 2026-01-21
+- OPERATOR_ENTRYPOINT points to in-repo canonical docs (no absolute path). (evidence: `docs/OPERATOR_ENTRYPOINT.md`)
+- GOVERNANCE.md includes human gate checklist and aligns required_closure/closure_needed to runtime behavior. (evidence: `documentation/system_overview/GOVERNANCE.md`, `runtime/api_server.py`, `runtime/indexer.py`)
 
 - 2026-01-20 — MASTERPLAN_BIG_ROCKS.md updated to fact-first masterplan with blockers, contracts, and patch plan. (evidence: `documentation/system_overview/MASTERPLAN_BIG_ROCKS.md`)
 - 2026-01-20 — CI workflow allows runtime, forbids runtime state; API host canon 127.0.0.1; QA scripts no snapshot. (evidence: `.github/workflows/verify-repo.yml`, `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`, `documentation/system_overview/DEV_WORKFLOW.md`)

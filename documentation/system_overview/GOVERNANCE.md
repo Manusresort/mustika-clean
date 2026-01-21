@@ -30,12 +30,27 @@ ADDED: “Reproduceerbaar” betekent hier dat artefacten audit- en vergelijkbaa
 
 Deze items vereisen expliciete menselijke review of expliciete deferral.
 
+## Human gate checklist (as-built)
+
+review_required
+- Open de proposal en lees `proposal.md`. (evidence: `runtime/api_server.py`)
+- Controleer gates en linked runs in de UI/API-response. (evidence: `runtime/api_server.py`, `runtime/ui/src/components/ReviewPackViewer.tsx`)
+- Kies: accepteer, vraag wijzigingen, of defer (menselijk besluit; geen automatische status). (evidence: `runtime/api_server.py`)
+
+closure_needed
+- Controleer `required_closure.json` (presence-based) en `status.json`. (evidence: `runtime/indexer.py`)
+- Als besluit genomen: maak closure via `POST /closures` (writes `closures/<id>/closure.json`). (evidence: `runtime/api_server.py`)
+- Verify dat `status.json` naar `closed` is bijgewerkt en reindex is uitgevoerd. (evidence: `runtime/api_server.py`)
+
+incident / gate
+- `incident` of blocking gate verschijnt als signaal in inbox. (evidence: `runtime/indexer.py`)
+- Review run logs en validator output (`eval/output_contract_checks.txt`). (evidence: `runtime/indexer.py`, `sandbox/tools/phase8_output_contract_validator.sh`)
+
 ### Required closure — as-built lifecycle consequence
 
 - `required_closure.json` is presence-based.
-- Zolang het bestand bestaat, verschijnt `closure_needed` in de inbox.
-- Het bestaan van een closure verwijdert dit item niet automatisch.
-- Beheer van dit bestand is operationele verantwoordelijkheid.
+- `closure_needed` wordt alleen uitgegeven als `required_closure.json` bestaat én status != `closed` én proposal_id niet in closure_lookup. (evidence: `runtime/indexer.py`)
+- `POST /closures` schrijft `closures/<closure_id>/closure.json`, zet `proposals/<proposal_id>/status.json` naar `closed`, en triggert reindex. (evidence: `runtime/api_server.py`)
 
 ADDED: Dit markeert de Decision-fasegrens; required closures documenteren een besluit zonder publicatie of canonical status te impliceren.
 
