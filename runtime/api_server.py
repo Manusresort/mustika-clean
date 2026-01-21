@@ -263,6 +263,7 @@ async def reindex():
             "stdout": stdout,
             "stderr": stderr,
             "generated_files": generated_files,
+            "base_path_used": str(BASE_PATH),
             "timestamp": datetime.utcnow().isoformat(),
         }
         

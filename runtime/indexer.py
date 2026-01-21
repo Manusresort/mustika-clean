@@ -483,6 +483,7 @@ class Indexer:
                     item_keys_seen.add(item_key)
             
             # Rule 5: required_closure.json present → kind="closure_needed", severity="medium"
+            # Guard: do not emit closure_needed for closed proposals (MASTERPLAN Phase 3 rule).
             if requires_closure and not is_closed and proposal_id not in closure_lookup:
                 item_key = ("proposal", proposal_id, "closure_needed")
                 if item_key not in item_keys_seen:

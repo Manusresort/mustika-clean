@@ -204,9 +204,9 @@ Indexer, API endpoints, UI data mapping.
 - UI shows proposal_md, run detail, closure creation
 
 **To-do checklist**
-- [ ] Verify proposal/closure inbox rules (no closure_needed for closed). (evidence: `runtime/indexer.py`)
-- [ ] UI contract check: `proposal_md` mapping in UI. (evidence: `runtime/api_server.py`, `runtime/ui/src/components/ReviewPackViewer.tsx`)
-- [ ] Verify API `/reindex` uses correct base_path. (evidence: `runtime/api_server.py`)
+- [x] Verify proposal/closure inbox rules (no closure_needed for closed). (evidence: `runtime/indexer.py`)
+- [x] UI contract check: `proposal_md` mapping in UI. (evidence: `runtime/api_server.py`, `runtime/ui/src/components/ReviewPackViewer.tsx`)
+- [x] Verify API `/reindex` uses correct base_path. (evidence: `runtime/api_server.py`)
 - [x] Ensure indices deterministic across two runs. (evidence: `runtime/indexer.py`, commit `ae37211`; reindex x2 produced no diffs for indices/{inbox,run,proposal,closure}_index.json (generated_at-only diffs ignored).)
 - [ ] Document run layout adapter behavior. (evidence: `runtime/src/runner_v2/run_layout_adapter.py`)
 
@@ -382,6 +382,21 @@ Runbooks, troubleshooting, env checks.
   - Unlocks: avoid QA drift.
 
 ## 9) Status log (append-only)
+
+### 2026-01-21
+- Verified /reindex response includes `base_path_used` (evidence: `runtime/api_server.py`, QA PASS line below).
+- Verified Phase 3 verification script exists and is executable (evidence: `runtime/scripts/qa_verify_phase3_contracts.sh`).
+- Verified closure_needed rule is guarded for closed proposals (evidence: `runtime/indexer.py`, guard comment + `not is_closed`).
+
+### 2026-01-21
+- QA: `runtime/scripts/qa_verify_phase3_contracts.sh`
+- Output lines:
+  PASS: /health HTTP 200
+  PASS: /reindex base_path_used=/Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/runtime
+  PASS: proposal_id=P-001
+  PASS: /proposals/P-001 contains proposal_md
+  PASS: no closure_needed for closed proposal P-001
+  PASS: Phase 3 contracts OK
 
 - 2026-01-20 — MASTERPLAN_BIG_ROCKS.md updated to fact-first masterplan with blockers, contracts, and patch plan. (evidence: `documentation/system_overview/MASTERPLAN_BIG_ROCKS.md`)
 - 2026-01-20 — CI workflow allows runtime, forbids runtime state; API host canon 127.0.0.1; QA scripts no snapshot. (evidence: `.github/workflows/verify-repo.yml`, `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`, `documentation/system_overview/DEV_WORKFLOW.md`)
