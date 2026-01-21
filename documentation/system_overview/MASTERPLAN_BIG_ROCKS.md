@@ -169,7 +169,15 @@ Pipeline prompts, validator, output files.
 
 **To-do checklist**
 - [x] Versterk output discipline in pipeline prompts. (evidence: `runtime/test_multi_agent_fidelity.py`)
-- [ ] Documenteer validator scope (wat is “PASS/FAIL”). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+- [x] Documenteer validator scope (wat is “PASS/FAIL”). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+  Validator scope (as-is):
+  - Input: `run_dir` argument; only checks `run_dir/outputs/final.txt` if present. (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+  - Invocation: `phase8_output_contract_validator.sh <run_dir>` writes `eval/output_contract_checks.txt`. (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+  - PASS: `final.txt` does not contain the word “definitieve” (case-insensitive). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+  - FAIL: `final.txt` contains “definitieve”; exit code 1; `overall_status: FAIL`. (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+  - Limitations / non-goals:
+    - Does not validate language, structure, or completeness beyond the single keyword check. (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+    - Does not fail if `final.txt` is missing (status remains PASS). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
 - [x] Check “final.txt” is always produced. (evidence: `runtime/src/runner_v2/runner.py`)
 - [x] Define “remarks” format policy (consistent with UI). (evidence: `runtime/src/runner_v2/runner.py`)
   Remarks format policy:
