@@ -3,6 +3,8 @@
 This checklist validates that the clean repo works end‑to‑end **after** a
 copy migration (DRY_RUN=0). It does not modify the source repo.
 Authoritative environment setup: `documentation/system_overview/ENVIRONMENT.md`.
+Note: this is a post‑migration verification checklist, not the day‑to‑day dev runbook.
+For canonical start/stop/dev commands, see `documentation/system_overview/DEV_WORKFLOW.md`.
 
 ---
 
