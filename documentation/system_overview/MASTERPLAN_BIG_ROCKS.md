@@ -168,8 +168,8 @@ Pipeline prompts, validator, output files.
 - Validator rules aligned met output contract
 
 **To-do checklist**
-- [ ] Versterk output discipline in pipeline prompts. (evidence: `runtime/test_multi_agent_fidelity.py`)
-- [ ] Documenteer validator scope (wat is “PASS/FAIL”). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+- [x] Versterk output discipline in pipeline prompts. (evidence: `runtime/test_multi_agent_fidelity.py`)
+- [x] Documenteer validator scope (wat is “PASS/FAIL”). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
 - [ ] Check “final.txt” is always produced. (evidence: `runtime/src/runner_v2/runner.py`)
 - [ ] Define “remarks” format policy (consistent with UI). (evidence: `runtime/src/runner_v2/runner.py`)
 
