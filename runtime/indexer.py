@@ -7,21 +7,11 @@ Idempotent: can be run multiple times safely.
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-
-
-# Ensure runtime/src is importable (filesystem-first runtime)
-BASE_DIR = Path(__file__).resolve().parent
-import sys
-sys.path.insert(0, str(BASE_DIR / "src"))
-# Ensure runtime/src is importable (filesystem-first runtime)
-BASE_DIR = Path(__file__).resolve().parent
-import sys
-sys.path.insert(0, str(BASE_DIR / "src"))
 from typing import Dict, List, Any, Optional
 import os
 import sys
 
-# Add src to path for run layout adapter
+# Ensure runtime/src is importable (filesystem-first runtime)
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR / "src"))
 
@@ -31,6 +21,33 @@ try:
 except ImportError:
     ADAPTER_AVAILABLE = False
 
+def _strip_generated_at(obj: Any) -> Any:
+    """Return a deep copy-like structure with generated_at removed for stable comparisons."""
+    if isinstance(obj, dict):
+        return {k: _strip_generated_at(v) for k, v in obj.items() if k != "generated_at"}
+    if isinstance(obj, list):
+        return [_strip_generated_at(v) for v in obj]
+    return obj
+
+
+def _write_index_json_if_changed(path: Path, payload: Dict[str, Any]) -> bool:
+    """Idempotent write: ignore generated_at-only diffs."""
+    new_core = _strip_generated_at(payload)
+
+    if path.exists():
+        try:
+            old = json.loads(path.read_text(encoding="utf-8"))
+            old_core = _strip_generated_at(old)
+            if old_core == new_core:
+                return False
+        except json.JSONDecodeError:
+            # If file is unreadable/corrupt, rewrite it
+            pass
+        except Exception:
+            pass
+
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return True
 
 class Indexer:
     """Scans filesystem and generates indices for UI consumption."""
@@ -507,25 +524,23 @@ class Indexer:
         inbox_index = self.build_inbox_index()
         
         # Write indices
-        (self.indices_path / "run_index.json").write_text(
-            json.dumps({"generated_at": datetime.now(timezone.utc).isoformat(), "runs": runs}, indent=2),
-            encoding="utf-8"
-        )
-        
-        (self.indices_path / "proposal_index.json").write_text(
-            json.dumps({"generated_at": datetime.now(timezone.utc).isoformat(), "proposals": proposals}, indent=2),
-            encoding="utf-8"
-        )
-        
-        (self.indices_path / "closure_index.json").write_text(
-            json.dumps({"generated_at": datetime.now(timezone.utc).isoformat(), "closures": closures}, indent=2),
-            encoding="utf-8"
-        )
-        
-        (self.indices_path / "inbox_index.json").write_text(
-            json.dumps(inbox_index, indent=2),
-            encoding="utf-8"
-        )
+        run_payload = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "runs": runs,
+        }
+        proposal_payload = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "proposals": proposals,
+        }
+        closure_payload = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "closures": closures,
+        }
+
+        _write_index_json_if_changed(self.indices_path / "run_index.json", run_payload)
+        _write_index_json_if_changed(self.indices_path / "proposal_index.json", proposal_payload)
+        _write_index_json_if_changed(self.indices_path / "closure_index.json", closure_payload)
+        _write_index_json_if_changed(self.indices_path / "inbox_index.json", inbox_index)
         
         return {
             "runs": len(runs),
