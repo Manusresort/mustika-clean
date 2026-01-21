@@ -21,6 +21,26 @@ UI_LOG="$AUDIT_DIR/ui_build.log"
 
 mkdir -p "$AUDIT_DIR"
 
+normalize_summary() {
+  if [ ! -f "$SUMMARY" ]; then
+    return 0
+  fi
+  SUMMARY_NORMALIZED="${AUDIT_DIR}/summary.normalized.tsv"
+  SUMMARY_PATH="$SUMMARY" SUMMARY_NORMALIZED_PATH="$SUMMARY_NORMALIZED" python3 - <<'PY'
+import re
+from pathlib import Path
+import os
+
+src = Path(os.environ["SUMMARY_PATH"])
+dst = Path(os.environ["SUMMARY_NORMALIZED_PATH"])
+text = src.read_text(encoding="utf-8", errors="replace")
+text = re.sub(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", "<TS>", text)
+text = re.sub(r"\b\d{6,}\b", "<N>", text)
+dst.write_text(text, encoding="utf-8")
+PY
+}
+trap normalize_summary EXIT
+
 print_summary() {
   printf '%s\t%s\t%s\n' "$1" "$2" "$3" | tee -a "$SUMMARY" >/dev/null
 }
@@ -35,6 +55,8 @@ passfail() {
 
 : > "$SUMMARY"
 print_summary "CHECK" "RESULT" "NOTES"
+
+cd "$BASE_DIR"
 
 # A) Preflight
 python3 --version >/tmp/qa_full_python.txt 2>&1
@@ -62,10 +84,8 @@ fi
 API_UP="no"
 if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
   API_UP="yes"
-  print_summary "api_health" "PASS" "already_running"
 else
-  print_summary "api_health" "WARN" "not_running_attempting_start"
-  nohup uvicorn api_server:app --host 127.0.0.1 --port 8010 >"$API_LOG" 2>&1 &
+  nohup python3 -m uvicorn api_server:app --host 127.0.0.1 --port 8010 >"$API_LOG" 2>&1 &
   for i in {1..15}; do
     sleep 1
     if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
@@ -73,16 +93,17 @@ else
       break
     fi
   done
-  if [ "$API_UP" = "yes" ]; then
-    print_summary "api_health_after_start" "PASS" "api_started"
-  else
-    print_summary "api_health_after_start" "FAIL" "api_not_healthy"
-  fi
+fi
+if [ "$API_UP" = "yes" ]; then
+  print_summary "api_health" "PASS" "ok"
+else
+  print_summary "api_health" "FAIL" "not_healthy"
 fi
 
 # C) Indexer checks
-python3 indexer.py >/tmp/qa_full_indexer.txt 2>&1
-print_summary "indexer_run" "$(passfail $?)" "python3 indexer.py"
+indexer_rc=0
+python3 indexer.py >/tmp/qa_full_indexer.txt 2>&1 || indexer_rc=$?
+print_summary "indexer_run" "$(passfail $indexer_rc)" "python3 indexer.py"
 
 for idx in run_index.json proposal_index.json closure_index.json inbox_index.json; do
   if [ -f "$BASE_DIR/indices/$idx" ]; then
@@ -199,10 +220,13 @@ fi
 
 # F) UI build sanity
 if command -v npm >/dev/null 2>&1; then
-  (cd "$BASE_DIR/ui" && npm install && npm run build) >"$UI_LOG" 2>&1
-  print_summary "ui_build" "$(passfail $?)" "npm run build"
+  ui_rc=0
+  (cd "$BASE_DIR/ui" && npm install && npm run build) >"$UI_LOG" 2>&1 || ui_rc=$?
+  print_summary "ui_build" "$(passfail $ui_rc)" "npm run build"
 else
   print_summary "ui_build" "SKIP" "npm_missing"
 fi
 
 printf '\nSummary written to %s\n' "$SUMMARY"
+normalize_summary
+printf 'Normalized summary written to %s\n' "${AUDIT_DIR}/summary.normalized.tsv"

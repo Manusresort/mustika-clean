@@ -15,13 +15,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git update-index -q --refresh
-          if ! git diff --quiet --; then
-            echo "Tracked files changed (unexpected)."
-            git diff --stat -- .
+          echo "Checking tracked files for forbidden runtime state paths..."
+          # runtime is tracked; state inside runtime/* is generated and must not be committed
+          forbidden='^(indices/|runtime/(runs|indices|proposals|closures|audit|\.venv))'
+          allow='^runtime/audit/.+/MIGRATION_CLOSEOUT_NOTE\.md$'
+          offenders="$(git ls-files | rg "${forbidden}" | rg -v "${allow}" || true)"
+          if [ -n "${offenders}" ]; then
+            echo "ERROR: forbidden tracked runtime/state paths detected:"
+            echo "${offenders}"
             exit 1
           fi
-          echo "OK: no tracked changes"
+          echo "OK: no forbidden runtime/state paths tracked."
 
 
       - name: Ensure governance docs exist

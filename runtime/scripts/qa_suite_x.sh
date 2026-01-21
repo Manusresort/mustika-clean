@@ -92,7 +92,7 @@ fi
 run_test "L0_OCR_CONTRACTS" "rg -n 'page_sources/ocr_txt|page_sources/ocr_tsv|OCR Correction Contract' \"${REPO_ROOT}/documentation/operator\""
 run_test "L0_OCR_CORRECTION_CONTRACT" "rg -n 'page_ocr_corrected|manifests/<page_id>.json' \"${REPO_ROOT}/documentation/operator/OCR_CORRECTION_CONTRACT.md\""
 run_test "L0_DEFINITIVE_SOURCE_CONTRACT" "rg -n 'definitive_source|builds/<BUILD_ID>/source_nl.txt' \"${REPO_ROOT}/documentation/operator/DEFINITIVE_SOURCE_BUILD_CONTRACT.md\""
-run_test "L0_TRANSLATION_ENTRYPOINTS" "rg -n 'run_pipeline|Translation → Readability → Fidelity' test_multi_agent_fidelity.py mustikarasa_codex_cli.py"
+run_test "L0_TRANSLATION_ENTRYPOINTS" "rg -n 'run_pipeline|Translation → Readability → Fidelity' \"${RUNTIME_ROOT}/test_multi_agent_fidelity.py\" \"${RUNTIME_ROOT}/mustikarasa_codex_cli.py\""
 run_test "L0_RUNNER_V2_CONTRACT" "rg -n 'create_run_directory|outputs/final.txt|output_contract_checks.txt' src/runner_v2/runner.py"
 run_test "L0_VALIDATOR_CONTRACT" "rg -n 'overall_status|CHECK_RESULTS|PASS|FAIL' \"${REPO_ROOT}/sandbox/tools/phase8_output_contract_validator.sh\""
 run_test "L0_INDEXER_RULES" "rg -n 'validator_fail|blocking_gate|challenger_issues|proposal_open|required_closure' indexer.py"

@@ -248,9 +248,9 @@ qa_full_system.sh, qa_suite_x.sh, CI invariants.
 - Runtime state excluded from git
 
 **To-do checklist**
-- [ ] CI rule: runtime state ignored or workflow updated. (evidence: `.github/workflows/verify-repo.yml`)
-- [ ] QA suite produces deterministic audit logs. (evidence: `runtime/scripts/qa_full_system.sh`)
-- [ ] L0/L1 checks in Suite X align with runtime path. (evidence: `runtime/scripts/qa_suite_x.sh`)
+- [x] CI rule: runtime state ignored or workflow updated. (evidence: `.github/workflows/verify-repo.yml`)
+- [x] QA suite produces deterministic audit logs. (evidence: `runtime/scripts/qa_full_system.sh`, `runtime/audit/qa/latest_full/summary.normalized.tsv`)
+- [x] L0/L1 checks in Suite X align with runtime path. (evidence: `runtime/scripts/qa_suite_x.sh`)
 - [x] Ensure `sandbox/tools` scripts are tracked (ignore rules). (evidence: `.gitignore`, `sandbox/tools/*.sh`)
 
 **Done means**
@@ -405,6 +405,12 @@ Runbooks, troubleshooting, env checks.
 ### 2026-01-21
 - OPERATOR_ENTRYPOINT points to in-repo canonical docs (no absolute path). (evidence: `docs/OPERATOR_ENTRYPOINT.md`)
 - GOVERNANCE.md includes human gate checklist and aligns required_closure/closure_needed to runtime behavior. (evidence: `documentation/system_overview/GOVERNANCE.md`, `runtime/api_server.py`, `runtime/indexer.py`)
+
+### 2026-01-21
+- CI workflow guard updated to block tracked runtime state, allow runtime code. (evidence: `.github/workflows/verify-repo.yml`)
+- qa_full_system produces normalized summary and stable checks. (evidence: `runtime/scripts/qa_full_system.sh`, `runtime/audit/qa/latest_full/summary.normalized.tsv`)
+- Suite X L0/L1 translation entrypoints use runtime-root paths; L0_TRANSLATION_ENTRYPOINTS PASS. (evidence: `runtime/scripts/qa_suite_x.sh`)
+- Note: runtime/audit outputs are generated and not committed; evidence comes from script outputs.
 
 - 2026-01-20 — MASTERPLAN_BIG_ROCKS.md updated to fact-first masterplan with blockers, contracts, and patch plan. (evidence: `documentation/system_overview/MASTERPLAN_BIG_ROCKS.md`)
 - 2026-01-20 — CI workflow allows runtime, forbids runtime state; API host canon 127.0.0.1; QA scripts no snapshot. (evidence: `.github/workflows/verify-repo.yml`, `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`, `documentation/system_overview/DEV_WORKFLOW.md`)
