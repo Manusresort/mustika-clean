@@ -35,6 +35,7 @@ Dit start:
 - `cd runtime && ./scripts/qa_full_system.sh`
 
 Dit draait end-to-end smoke checks (API/indexer/UI).
+DEV_WORKFLOW.md is the authoritative source for day-to-day QA commands; other docs should defer to this section for QA procedures.
 
 ---
 
