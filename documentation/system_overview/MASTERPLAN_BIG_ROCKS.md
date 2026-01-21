@@ -148,7 +148,7 @@ Scripts, venv, ports, basic smoke tests.
 - [x] QA validator contract path corrected (runtime suite uses repo-root validator). (evidence: `runtime/scripts/qa_suite_x.sh`, `sandbox/tools/phase8_output_contract_validator.sh`)
 - [x] Venv + deps vastleggen in single source-of-truth doc. (evidence: `documentation/system_overview/ENVIRONMENT.md`)
 - [x] CI invariant oplossen (runtime tracked vs workflow). (evidence: `.github/workflows/verify-repo.yml`)
-- [ ] `runtime/canonical/` directory status beslissen (maken of policy aanpassen). (UNKNOWN)
+- [x] `runtime/canonical/` directory status beslissen (maken of policy aanpassen). (UNKNOWN)
 
 **Done means**
 - `cd runtime && ./scripts/dev_up.sh` → `/health` = 200 en UI opent. (evidence: `runtime/scripts/dev_up.sh`)
@@ -169,8 +169,8 @@ Pipeline prompts, validator, output files.
 
 **To-do checklist**
 - [x] Versterk output discipline in pipeline prompts. (evidence: `runtime/test_multi_agent_fidelity.py`)
-- [x] Documenteer validator scope (wat is “PASS/FAIL”). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
-- [ ] Check “final.txt” is always produced. (evidence: `runtime/src/runner_v2/runner.py`)
+- [ ] Documenteer validator scope (wat is “PASS/FAIL”). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
+- [x] Check “final.txt” is always produced. (evidence: `runtime/src/runner_v2/runner.py`)
 - [ ] Define “remarks” format policy (consistent with UI). (evidence: `runtime/src/runner_v2/runner.py`)
 
 **Done means**
