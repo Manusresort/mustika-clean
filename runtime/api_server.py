@@ -17,9 +17,6 @@ BASE_DIR = Path(__file__).resolve().parent
 import sys
 sys.path.insert(0, str(BASE_DIR / "src"))
 # Ensure runtime/src is importable (filesystem-first runtime)
-BASE_DIR = Path(__file__).resolve().parent
-import sys
-sys.path.insert(0, str(BASE_DIR / "src"))
 from typing import Dict, List, Any, Optional
 import os
 import getpass
