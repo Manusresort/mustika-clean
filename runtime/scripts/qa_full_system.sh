@@ -14,7 +14,7 @@ fi
 set -u
 
 BASE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-AUDIT_DIR="$BASE_DIR/audit/qa/latest"
+AUDIT_DIR="$BASE_DIR/audit/qa/latest_full"
 SUMMARY="$AUDIT_DIR/summary.tsv"
 API_LOG="$AUDIT_DIR/api.log"
 UI_LOG="$AUDIT_DIR/ui_build.log"

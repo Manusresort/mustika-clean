@@ -26,7 +26,7 @@ fi
 QA_ROOT="${RUNTIME_ROOT}/audit/qa"
 TS="$(date +%Y%m%dT%H%M%S)"
 RUN_DIR="${QA_ROOT}/runs/${TS}"
-LATEST_DIR="${QA_ROOT}/latest"
+LATEST_DIR="${QA_ROOT}/latest_suite_x"
 SUMMARY="${RUN_DIR}/summary.tsv"
 
 mkdir -p "${RUN_DIR}"
