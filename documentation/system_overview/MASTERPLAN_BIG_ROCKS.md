@@ -12,10 +12,10 @@
    - Evidence: `runtime/scripts/dev_start_api.sh` (host `::1`), `runtime/scripts/qa_full_system.sh` (curl `127.0.0.1:8010`).
    - Owner-action: kies canonical host/port en update scripts + docs.
 
-3) **QA scripts wijzen naar frozen snapshot i.p.v. runtime**
-   - Impact: QA meet niet de actieve runtime; regressies blijven onzichtbaar.
-   - Evidence: `runtime/scripts/qa_suite_x.sh` + `runtime/scripts/qa_verify_inbox.sh` (RUNTIME_ROOT = cursor snapshot).
-   - Owner-action: herpoint QA naar `runtime/` of expliciet frozen-snapshot regime vastleggen.
+3) **QA scripts wijzen naar frozen snapshot i.p.v. runtime** — RESOLVED
+   - Impact: QA meet niet de actieve runtime; regressies blijven onzichtbaar. (historical)
+   - Evidence: `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh` (RUNTIME_ROOT derived from script dir; guards on api_server.py/indexer.py).
+   - Owner-action: closed; QA targets runtime via script-derived root.
 
 ## 1) Doel en werkwijze
 
@@ -121,10 +121,10 @@
    - Evidence: `runtime/indexer.py` (meerdere BASE_DIR/sys.path insert blokken).
    - Next decision / fix target: single insertion, duidelijke comment.
 
-7) **QA scripts target frozen snapshot**
-   - Impact: QA tests lopen niet tegen runtime; regressies onzichtbaar.
-   - Evidence: `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh` (RUNTIME_ROOT naar cursor snapshot).
-   - Next decision / fix target: RUNTIME_ROOT → `runtime/` of expliciete “frozen snapshot QA” policy.
+7) **QA scripts target frozen snapshot** — RESOLVED
+   - Impact: QA tests lopen niet tegen runtime; regressies onzichtbaar. (historical)
+   - Evidence: `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh` (RUNTIME_ROOT derived from script dir; guards on api_server.py/indexer.py).
+   - Next decision / fix target: closed; QA targets runtime via script-derived root.
 
 ## 5) Big Rocks Roadmap (6 fases)
 
@@ -353,7 +353,7 @@ Runbooks, troubleshooting, env checks.
   - Command/file: `runtime/scripts/dev_start_api.sh`, `runtime/scripts/qa_full_system.sh`.
   - Unlocks: consistent health checks.
 
-- [ ] Vraag: QA target pad is runtime of frozen snapshot?
+- [x] Vraag: QA target pad is runtime of frozen snapshot?
   - Command/file: `runtime/scripts/qa_suite_x.sh`, `runtime/scripts/qa_verify_inbox.sh`.
   - Unlocks: accurate QA results.
 
@@ -392,6 +392,7 @@ Runbooks, troubleshooting, env checks.
 - Verified CrewAI pin + model env vars: runtime/requirements-ui.txt pins crewai==0.11.2; agents require LITELLM_MODEL or OPENAI_MODEL and support OPENAI_API_KEY, LITELLM_BASE_URL/OPENAI_BASE_URL. Evidence: runtime/requirements-ui.txt, runtime/src/mustikarasa_agents.py.
 - Canonical API is 127.0.0.1:8010 (dev_start_api + DEV_WORKFLOW); Vite proxy normalized to match; REPO_MIGRATION_VERIFICATION clarified as post‑migration checklist pointing to DEV_WORKFLOW. Evidence: runtime/scripts/dev_start_api.sh, runtime/scripts/qa_full_system.sh, runtime/ui/vite.config.ts, documentation/system_overview/DEV_WORKFLOW.md, docs/REPO_MIGRATION_VERIFICATION.md.
 - Defined DEV_WORKFLOW.md as authoritative for day-to-day QA commands; REPO_MIGRATION_VERIFICATION remains post-migration verification-only and defers to DEV_WORKFLOW for QA procedure. Evidence: documentation/system_overview/DEV_WORKFLOW.md, docs/REPO_MIGRATION_VERIFICATION.md.
+- Verified QA target root is active runtime/ (no frozen snapshot): both QA scripts derive RUNTIME_ROOT from script directory and guard for api_server.py/indexer.py. Evidence: runtime/scripts/qa_suite_x.sh, runtime/scripts/qa_verify_inbox.sh.
 
 ### 2026-01-21
 - QA: `runtime/scripts/qa_verify_phase3_contracts.sh`
