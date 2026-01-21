@@ -137,11 +137,11 @@ class RunnerV2:
         english_text: str,
         rough_nl_text: str,
         log_path: Path,
-    ) -> tuple[bool, str]:
+    ) -> tuple[bool, str, str]:
         """
         Run the 3-phase pipeline (Translation → Readability → Fidelity).
         
-        Returns: (success, output_text)
+        Returns: (success, output_text, remarks)
         """
         try:
             # Import pipeline function
@@ -153,41 +153,41 @@ class RunnerV2:
             result = run_pipeline(english_text, rough_nl_text)
             
             # Handle both string and dict results
+            output_text = ""
+            remarks = ""
             if isinstance(result, dict):
-                output_text = result.get("text", "")
-                remarks = result.get("remarks", "")
-                if remarks:
-                    output_text = f"{output_text}\n\nOpmerkingen:\n{remarks}\n"
+                output_text = str(result.get("text", "")).strip()
+                remarks = str(result.get("remarks", "")).strip()
             else:
                 output_text = str(result)
+                remarks_start = output_text.find("\n\nOpmerkingen:")
+                if remarks_start >= 0:
+                    remarks = output_text[remarks_start + 2 :].strip()
+                    output_text = output_text[:remarks_start].strip()
             
             self.append_log(log_path, f"[{datetime.utcnow().isoformat()}] Pipeline completed")
             
-            return True, output_text
+            return True, output_text, remarks
             
         except Exception as e:
             error_msg = f"Pipeline failed: {str(e)}"
             self.append_log(log_path, f"[{datetime.utcnow().isoformat()}] ERROR: {error_msg}")
-            return False, error_msg
+            return False, error_msg, ""
     
     def create_output_files(
         self,
         run_dir: Path,
         metadata: Dict[str, Any],
-        pipeline_output: str,
+        pipeline_text: str,
+        remarks: str,
         log_path: Path,
     ) -> None:
         """Create required output files (JSON + text)."""
         outputs_dir = run_dir / "outputs"
         
-        # Extract main text and remarks
-        remarks_start = pipeline_output.find("\n\nOpmerkingen:")
-        if remarks_start >= 0:
-            main_text = pipeline_output[:remarks_start].strip()
-            remarks_section = pipeline_output[remarks_start + 2:].strip()
-        else:
-            main_text = pipeline_output.strip()
-            remarks_section = ""
+        # main text and remarks are handled upstream
+        main_text = (pipeline_text or "").strip()
+        remarks_section = (remarks or "").strip()
         
         # annotator_primary.json (main structured output)
         annotator_output = {
@@ -239,7 +239,7 @@ class RunnerV2:
         )
         
         # final.txt (for validator compatibility)
-        (outputs_dir / "final.txt").write_text(pipeline_output, encoding="utf-8")
+        (outputs_dir / "final.txt").write_text(main_text, encoding="utf-8")
         
         # review_notes.md (template)
         review_template = f"""# Review Notes
@@ -371,16 +371,16 @@ class RunnerV2:
             (run_dir / "inputs" / "rough_nl.txt").write_text(rough_nl_text, encoding="utf-8")
             
             # Run pipeline
-            pipeline_success, pipeline_output = self.run_pipeline(
+            pipeline_success, pipeline_text, pipeline_remarks = self.run_pipeline(
                 run_dir, english_text, rough_nl_text, log_path
             )
             
             if not pipeline_success:
-                self.write_log_header(log_path, metadata, status="FAILED", stop_reason=pipeline_output)
-                return False, run_dir, pipeline_output
+                self.write_log_header(log_path, metadata, status="FAILED", stop_reason=pipeline_text)
+                return False, run_dir, pipeline_text
             
             # Create output files
-            self.create_output_files(run_dir, metadata, pipeline_output, log_path)
+            self.create_output_files(run_dir, metadata, pipeline_text, pipeline_remarks, log_path)
             
             # Run validator
             validator_success, validator_report = self.run_validator(run_dir, log_path)
