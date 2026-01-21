@@ -160,7 +160,7 @@ if [ "$API_UP" = "yes" ]; then
     print_summary "POST_/reindex" "FAIL" "not_ok"
   fi
 
-  if python3 - <<'PY'
+  if python3 - <<'PY' >/dev/null 2>&1
 import json
 p='indices/inbox_index.json'
 try:
