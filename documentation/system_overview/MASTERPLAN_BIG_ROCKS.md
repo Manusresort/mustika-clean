@@ -207,7 +207,7 @@ Indexer, API endpoints, UI data mapping.
 - [ ] Verify proposal/closure inbox rules (no closure_needed for closed). (evidence: `runtime/indexer.py`)
 - [ ] UI contract check: `proposal_md` mapping in UI. (evidence: `runtime/api_server.py`, `runtime/ui/src/components/ReviewPackViewer.tsx`)
 - [ ] Verify API `/reindex` uses correct base_path. (evidence: `runtime/api_server.py`)
-- [ ] Ensure indices deterministic across two runs. (evidence: `runtime/indexer.py`)
+- [x] Ensure indices deterministic across two runs. (evidence: `runtime/indexer.py`, commit `ae37211`; reindex x2 produced no diffs for indices/{inbox,run,proposal,closure}_index.json (generated_at-only diffs ignored).)
 - [ ] Document run layout adapter behavior. (evidence: `runtime/src/runner_v2/run_layout_adapter.py`)
 
 **Done means**
