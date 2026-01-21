@@ -171,7 +171,13 @@ Pipeline prompts, validator, output files.
 - [x] Versterk output discipline in pipeline prompts. (evidence: `runtime/test_multi_agent_fidelity.py`)
 - [ ] Documenteer validator scope (wat is “PASS/FAIL”). (evidence: `sandbox/tools/phase8_output_contract_validator.sh`)
 - [x] Check “final.txt” is always produced. (evidence: `runtime/src/runner_v2/runner.py`)
-- [ ] Define “remarks” format policy (consistent with UI). (evidence: `runtime/src/runner_v2/runner.py`)
+- [x] Define “remarks” format policy (consistent with UI). (evidence: `runtime/src/runner_v2/runner.py`)
+  Remarks format policy:
+  - remarks is optional string.
+  - If present, must start with a category prefix: STUB:, WARNING:, NOTE:.
+  - Remarks are NL-only, except the prefix token itself (e.g., STUB:).
+  - Max 5 bullet points OR one short sentence.
+  - No duplication of main text.
 
 **Done means**
 - Pipeline output is 100% NL and one-block (manual smoke). (evidence: `runtime/test_multi_agent_fidelity.py`)
