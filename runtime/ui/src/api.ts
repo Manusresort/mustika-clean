@@ -14,8 +14,15 @@ export interface InboxItem {
   path: string
 }
 
+export interface InboxCounts {
+  total: number
+  by_kind: Record<string, number>
+  by_status: Record<string, number>
+}
+
 export interface InboxResponse {
   generated_at: string
+  counts: InboxCounts
   items: InboxItem[]
 }
 
@@ -90,7 +97,20 @@ export const api = {
       }
       throw new Error(`Failed to fetch inbox: ${response.status} ${response.statusText} - ${bodyText}`)
     }
-    return response.json()
+    const payload = await response.json()
+    const items: InboxItem[] = payload.items ?? []
+    const counts: InboxCounts =
+      payload.counts ?? {
+        total: items.length,
+        by_kind: {},
+        by_status: {},
+      }
+
+    return {
+      generated_at: payload.generated_at ?? '',
+      counts,
+      items,
+    }
   },
 
   async getRun(runId: string): Promise<Run> {

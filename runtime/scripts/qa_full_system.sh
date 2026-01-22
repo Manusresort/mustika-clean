@@ -121,10 +121,31 @@ if [ "$API_UP" = "yes" ]; then
     print_summary "GET_/health" "FAIL" "unexpected"
   fi
 
-  if curl -s http://127.0.0.1:8010/inbox | rg -q '"items"\s*:\s*\['; then
+  INBOX_JSON="$AUDIT_DIR/inbox.json"
+  curl -s http://127.0.0.1:8010/inbox > "$INBOX_JSON"
+  if rg -q '"items"\s*:\s*\[' "$INBOX_JSON"; then
     print_summary "GET_/inbox" "PASS" "items[]"
   else
     print_summary "GET_/inbox" "FAIL" "missing_items"
+  fi
+
+  if INBOX_JSON_PATH="$INBOX_JSON" python3 - <<'PY'
+import json, os, sys
+path = os.environ["INBOX_JSON_PATH"]
+try:
+    data = json.load(open(path))
+    items = data.get("items", [])
+    counts = data.get("counts", {})
+    if counts.get("total") != len(items):
+        print(f"counts mismatch: total={counts.get('total')} items={len(items)}")
+        raise SystemExit(1)
+except Exception:
+    raise
+PY
+  then
+    print_summary "GET_/inbox_counts" "PASS" "total_matches_items"
+  else
+    print_summary "GET_/inbox_counts" "FAIL" "counts_total_mismatch"
   fi
 
   PROPOSAL_JSON="$AUDIT_DIR/proposal_P-TEST.json"

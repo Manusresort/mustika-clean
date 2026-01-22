@@ -11,7 +11,7 @@
 ### 1.1 API↔UI schema unification (NEW)
 - **Problem**: UI expects `InboxResponse.counts` even though API returns only `generated_at` + `items`, creating contract drift (BOOK_MANIFEST_SPEC.md:50; UI/api.ts:17-41).  
 - **Tasks**: align API response to include `counts`, update UI client to consume canonical shape, add regression in QA suite for `/inbox`.  
-- **DoD**: `/inbox` returns consistent shape (counts derived from list) verified by QA script hitting `/inbox`; UI fetch still works without runtime errors.  
+- **DoD**: `/inbox` now emits `{ generated_at, counts, items }` with counts derived server-side from `indices` before responding, UI fetch continues to succeed, and the QA `GET_/inbox_counts` touchpoint verifies the totals match the listed items (`runtime/api_server.py:314-360`; `runtime/scripts/qa_full_system.sh:124-149`).  
 - **Risks**: inconsistent reruns if counts logic differs between API and UI.
 
 ### 1.2 Inbox index normalization + contract tests (NEW)

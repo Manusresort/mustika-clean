@@ -156,6 +156,22 @@ def ensure_audit_log(message: str, metadata: Dict[str, Any] = None):
         f.write(json.dumps(log_entry) + "\n")
 
 
+def derive_inbox_counts(items: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Derive counts summary from inbox items."""
+    by_kind: Dict[str, int] = {}
+    by_status: Dict[str, int] = {}
+    for item in items:
+        kind = item.get("type") or item.get("kind") or "unknown"
+        status = item.get("status") or "unknown"
+        by_kind[kind] = by_kind.get(kind, 0) + 1
+        by_status[status] = by_status.get(status, 0) + 1
+    return {
+        "total": len(items),
+        "by_kind": by_kind,
+        "by_status": by_status,
+    }
+
+
 def check_canonical_write(path: Path) -> bool:
     """Check if path is within canonical/ - returns True if write should be denied."""
     canonical_path = BASE_PATH / "canonical"
@@ -307,6 +323,11 @@ async def get_inbox():
                 status_code=200,
                 content={
                     "generated_at": None,
+                    "counts": {
+                        "total": 0,
+                        "by_kind": {},
+                        "by_status": {},
+                    },
                     "items": [],
                 }
             )
@@ -333,7 +354,10 @@ async def get_inbox():
                 "generated_at": None,
                 "items": [],
             }
-        
+        # Always include counts derived from items
+        normalized_counts = derive_inbox_counts(normalized["items"])
+        normalized["counts"] = normalized_counts
+
         return JSONResponse(status_code=200, content=normalized)
         
     except Exception as e:
