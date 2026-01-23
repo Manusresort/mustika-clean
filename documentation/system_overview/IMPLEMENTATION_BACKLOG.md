@@ -47,10 +47,10 @@
 ## 2) Phase 2 — Editorialize (chapter workflow)
 
 ### 2.1 Indexer: generate `chapter_manifest.json` (NEW)
-- **Problem**: CHAPTER_MANIFEST_SPEC notes no runtime manifest yet (CHAPTER_MANIFEST_SPEC.md:5-50).  
+-- **Problem**: CHAPTER_MANIFEST_SPEC notes no runtime manifest yet (CHAPTER_MANIFEST_SPEC.md:5-50).  
 - **Tasks**: extend indexer to read runs/proposals/closures, emit `runtime/manifests/chapter_manifest.json`, and update indices. NEW decision: prefer single file vs per-chapter files.  
-- **DoD**: files appear under `runtime/manifests/`, `indices/run_index.json` gains `chapter_plan` reference, reindex command writes `generated_at` entry to audit log.  
-- **Risks**: manifest growth/performance.
+- **DoD**: `runtime/manifests/chapter_manifest.json` exists (descriptor tracked via `.gitkeep`), indexer run writes the derived manifest with `generated_at`, and QA guard confirms the file and `generated_at` (see `reports/audit/evidence/session_20260123-1510/qa/summary.tsv`).  
+- **Risks**: manifest growth/performance.  
 
 ### 2.2 Chapter registry + chapter-level indices (NEW)
 - **Problem**: no aggregated chapter registry currently exists (NOT FOUND in spec discovery).  
