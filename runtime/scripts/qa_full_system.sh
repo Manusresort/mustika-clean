@@ -105,6 +105,30 @@ indexer_rc=0
 python3 indexer.py >/tmp/qa_full_indexer.txt 2>&1 || indexer_rc=$?
 print_summary "indexer_run" "$(passfail $indexer_rc)" "python3 indexer.py"
 
+MANIFEST_PATH="$BASE_DIR/manifests/chapter_manifest.json"
+if [ -f "$MANIFEST_PATH" ]; then
+  print_summary "chapter_manifest_exists" "PASS" "file exists"
+  if python3 - <<PY
+import json
+path = "${MANIFEST_PATH}"
+try:
+    data = json.load(open(path))
+    if 'generated_at' not in data:
+        print('chapter_manifest_error: missing generated_at key')
+        raise SystemExit(1)
+except Exception as exc:
+    print(f'chapter_manifest_error: {exc}')
+    raise
+PY
+  then
+    print_summary "chapter_manifest_has_generated_at" "PASS" "has key"
+  else
+    print_summary "chapter_manifest_has_generated_at" "FAIL" "missing key"
+  fi
+else
+  print_summary "chapter_manifest_exists" "FAIL" "missing"
+fi
+
 for idx in run_index.json proposal_index.json closure_index.json inbox_index.json; do
   if [ -f "$BASE_DIR/indices/$idx" ]; then
     print_summary "index_$idx" "PASS" "exists"
