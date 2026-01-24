@@ -609,6 +609,19 @@ else
   print_summary "inbox_after_closure" "FAIL" "api_not_running"
 fi
 
+### B9 — Exporter skeleton (presence only)
+if [ -x "$BASE_DIR/scripts/book_export.py" ]; then
+  print_summary "exporter_script_exists" "PASS" "present"
+  if python3 "$BASE_DIR/scripts/book_export.py" --help >/dev/null 2>&1; then
+    print_summary "exporter_help_runs" "PASS" "ok"
+  else
+    print_summary "exporter_help_runs" "WARN" "help_failed"
+  fi
+else
+  print_summary "exporter_script_exists" "WARN" "missing"
+  print_summary "exporter_help_runs" "WARN" "missing"
+fi
+
 # F) UI build sanity
 if command -v npm >/dev/null 2>&1; then
   ui_rc=0
