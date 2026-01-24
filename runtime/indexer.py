@@ -738,6 +738,130 @@ class Indexer:
             },
         }
 
+    def load_build_manifest_entries(self) -> List[Dict[str, Any]]:
+        exports_root = self.base_path / "exports" / "books"
+        entries: List[Dict[str, Any]] = []
+        if not exports_root.exists():
+            return entries
+        for path in sorted(exports_root.glob("*/builds/latest/build_manifest.json")):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, IOError):
+                continue
+            book_id = data.get("book_id")
+            if not isinstance(book_id, str) or not book_id.strip():
+                book_id = path.parents[2].name
+            rel = self._relative_path(path) or path.as_posix()
+            entries.append({
+                "book_id": book_id,
+                "path": rel,
+                "data": data,
+            })
+        return entries
+
+    def build_book_manifest_payload(
+        self,
+        chapter_manifest: Dict[str, Any],
+        book_rollup_payload: Dict[str, Any],
+        build_manifest_entries: List[Dict[str, Any]],
+        closure_index_ids: List[str],
+    ) -> Dict[str, Any]:
+        def _unique_sorted(entries: List[str]) -> List[str]:
+            return sorted(dict.fromkeys([e for e in entries if isinstance(e, str) and e]))
+
+        chapters_raw = chapter_manifest.get("chapters", [])
+        chapters_by_id = {c.get("chapter_id"): c for c in chapters_raw if isinstance(c, dict)}
+        closure_index_set = set(closure_index_ids)
+
+        build_by_book: Dict[str, List[Dict[str, Any]]] = {}
+        for entry in build_manifest_entries:
+            book_id = entry.get("book_id")
+            if not isinstance(book_id, str) or not book_id:
+                continue
+            build_by_book.setdefault(book_id, []).append(entry)
+
+        rollup_books = book_rollup_payload.get("books", [])
+        book_entries: List[Dict[str, Any]] = []
+        for book in sorted(rollup_books, key=lambda b: b.get("book_id", "")):
+            book_id = book.get("book_id")
+            if not isinstance(book_id, str) or not book_id:
+                continue
+            chapter_ids = _unique_sorted(book.get("chapter_ids", []))
+            closure_ids = _unique_sorted(book.get("closure_ids", []))
+
+            chapters = []
+            for chapter_id in chapter_ids:
+                if chapter_id not in chapters_by_id:
+                    continue
+                chapters.append({
+                    "chapter_id": chapter_id,
+                    "plan": "manifests/chapter_manifest.json",
+                })
+
+            exports = []
+            for entry in sorted(build_by_book.get(book_id, []), key=lambda e: e.get("path", "")):
+                data = entry.get("data", {})
+                exports_block = data.get("exports", {}) if isinstance(data, dict) else {}
+                files = exports_block.get("files", []) if isinstance(exports_block, dict) else []
+                exports.append({
+                    "build_manifest": entry.get("path"),
+                    "built_at": data.get("generated_at"),
+                    "files": _unique_sorted(files),
+                    "sha256": data.get("sha256", {}) if isinstance(data.get("sha256"), dict) else {},
+                    "tool_versions": data.get("tool_versions", {}) if isinstance(data.get("tool_versions"), dict) else {},
+                    "input_closure_ids": _unique_sorted(data.get("closure_ids", [])),
+                })
+
+            provenance = [
+                "manifests/chapter_manifest.json",
+                "indices/book_closure_rollup.json",
+                "indices/chapter_closure_rollup.json",
+            ]
+            for entry in exports:
+                bm = entry.get("build_manifest")
+                if isinstance(bm, str) and bm:
+                    provenance.append(bm)
+            for closure_id in closure_ids:
+                closure_path = self.base_path / "closures" / closure_id / "closure.json"
+                rel = self._relative_path(closure_path)
+                if rel:
+                    provenance.append(rel)
+
+            status = "draft"
+            if closure_ids:
+                if all(cid in closure_index_set for cid in closure_ids):
+                    status = "reviewable"
+
+            book_entries.append({
+                "book_id": book_id,
+                "chapters": chapters,
+                "required_closures": closure_ids,
+                "status": status,
+                "exports": exports,
+                "provenance": _unique_sorted(provenance),
+                "mapping_mode": (book_rollup_payload.get("mapping") or {}).get("mode"),
+            })
+
+        generated_at = datetime.now(timezone.utc).isoformat()
+        if len(book_entries) == 1:
+            manifest = {
+                "generated_at": generated_at,
+                **book_entries[0],
+            }
+        else:
+            manifest = {
+                "generated_at": generated_at,
+                "books": book_entries,
+            }
+
+        manifest["sources"] = {
+            "chapter_manifest": "manifests/chapter_manifest.json",
+            "book_closure_rollup": "indices/book_closure_rollup.json",
+            "chapter_closure_rollup": "indices/chapter_closure_rollup.json",
+            "build_manifest_root": "exports/books",
+        }
+        return manifest
+
     def reindex(self) -> Dict[str, Any]:
         """Generate all indices and return summary."""
         print("Scanning runs...")
@@ -787,6 +911,17 @@ class Indexer:
         )
         _write_index_json_if_changed(self.indices_path / "book_closure_rollup.json", book_rollup_payload)
         _write_index_json_if_changed(self.indices_path / "glossary_evidence_index.json", glossary_entries)
+
+        # B9: book manifest (derived)
+        build_manifest_entries = self.load_build_manifest_entries()
+        book_manifest_payload = self.build_book_manifest_payload(
+            chapter_manifest=chapter_manifest,
+            book_rollup_payload=book_rollup_payload,
+            build_manifest_entries=build_manifest_entries,
+            closure_index_ids=closure_index_ids,
+        )
+        (self.base_path / "manifests").mkdir(parents=True, exist_ok=True)
+        _write_index_json_if_changed(self.base_path / "manifests" / "book_manifest.json", book_manifest_payload)
         
         return {
             "runs": len(runs),

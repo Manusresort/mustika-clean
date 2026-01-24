@@ -147,6 +147,71 @@ else
   print_summary "book_build_manifest_has_generated_at" "SKIP" "no_books_found"
 fi
 
+# B9) book manifest generation
+BOOK_MANIFEST_GEN_RC=0
+python3 scripts/build_book_manifest.py > "$AUDIT_DIR/book_manifest.stdout.txt" 2>&1 || BOOK_MANIFEST_GEN_RC=$?
+if [ "$BOOK_MANIFEST_GEN_RC" -eq 0 ]; then
+  print_summary "build_book_manifest_json" "PASS" "book_manifest.json"
+else
+  print_summary "build_book_manifest_json" "FAIL" "rc=$BOOK_MANIFEST_GEN_RC"
+fi
+
+BM_JSON_PATH="$BASE_DIR/manifests/book_manifest.json"
+if [ -f "$BM_JSON_PATH" ]; then
+  print_summary "book_manifest_exists" "PASS" "exists"
+  if rg -q '"generated_at"\s*:' "$BM_JSON_PATH"; then
+    print_summary "book_manifest_has_generated_at" "PASS" "has key"
+  else
+    print_summary "book_manifest_has_generated_at" "FAIL" "missing key"
+  fi
+  if python3 - <<'PY'
+import json
+p = "manifests/book_manifest.json"
+d = json.load(open(p, "r", encoding="utf-8"))
+books = d.get("books")
+if isinstance(books, list):
+    entries = books
+else:
+    entries = [d]
+for entry in entries:
+    assert isinstance(entry.get("required_closures"), list)
+print("ok")
+PY
+  then
+    print_summary "book_manifest_has_required_closures" "PASS" "list present"
+  else
+    print_summary "book_manifest_has_required_closures" "FAIL" "missing/invalid"
+  fi
+  if python3 - <<'PY'
+import json
+p = "manifests/book_manifest.json"
+d = json.load(open(p, "r", encoding="utf-8"))
+books = d.get("books")
+if isinstance(books, list):
+    entries = books
+else:
+    entries = [d]
+for entry in entries:
+    exports = entry.get("exports", [])
+    assert isinstance(exports, list)
+    for exp in exports:
+        assert isinstance(exp, dict)
+        bm = exp.get("build_manifest")
+        assert isinstance(bm, str) and bm
+print("ok")
+PY
+  then
+    print_summary "book_manifest_exports_reference_build_manifest" "PASS" "exports linked"
+  else
+    print_summary "book_manifest_exports_reference_build_manifest" "FAIL" "missing build_manifest"
+  fi
+else
+  print_summary "book_manifest_exists" "FAIL" "missing"
+  print_summary "book_manifest_has_generated_at" "SKIP" "missing"
+  print_summary "book_manifest_has_required_closures" "SKIP" "missing"
+  print_summary "book_manifest_exports_reference_build_manifest" "SKIP" "missing"
+fi
+
 # B8a) book closure rollup
 if [ -f "$BASE_DIR/indices/book_closure_rollup.json" ]; then
   print_summary "book_closure_rollup_exists" "PASS" "exists"

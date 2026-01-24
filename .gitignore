@@ -44,6 +44,7 @@ sandbox/tools/*
 
 # derived outputs
 runtime/manifests/chapter_manifest.json
+runtime/manifests/book_manifest.json
 
 # local/demo tooling
 runtime/scripts/run_full_demo.py
