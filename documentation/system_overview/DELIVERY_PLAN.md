@@ -6,8 +6,8 @@
 
 - ## 1) Current phase marker
 - CURRENT_PHASE: **Phase 2 — Editorialize**, with `PROJECT_STATUS.md` as the authoritative source.
-- CURRENT_BATCH: **B4 — Chapter closure rollups** (DONE; evidence: `reports/audit/evidence/session_20260124-0911/qa/summary.tsv`).
-- LAST_COMPLETED: **B4 — Chapter closure rollups + QA guard** (QA summary at `mustika-rasa-clean/runtime/audit/qa/latest_full/summary.tsv`).
+- CURRENT_BATCH: **B8a — Book closure rollup (derived)** (DONE; evidence: `reports/audit/evidence/session_20260124-1912/qa/summary.tsv`).
+- LAST_COMPLETED: **B8a — Book closure rollup + QA guard** (QA summary at `mustika-rasa-clean/runtime/audit/qa/latest_full/summary.tsv`).
 - NEXT_BATCH: **B5 — Glossary lifecycle gates** (see `PROJECT_STATUS.md`).
 
 ## 2) Batch model
@@ -21,6 +21,7 @@
 | B5 (NEW) | Glossary lifecycle gates | Link glossary decisions to closures evidence. | `glossary` references in chapter manifest entries and `book_manifest.provenance`. | Closure creation, proposal metadata reads. | QA ensures glossary evidence paths recorded. | Each chapter entry references glossary evidence (see `BOOK_TRANSLATION_SYSTEM_SPEC.md`). | Evidence drift. |
 | B6 (NEW) | Review pack bundling | Bundle per-chapter review packs and surface them via API. | `proposals/<id>/review_pack/` manifest plus book manifest provenance. | `/proposals/{id}` + UI review view. | QA validates review_pack entries exist. | API returns `review_pack_files`, QA verifies (see `IMPLEMENTATION_BACKLOG.md`). | Manual pack maintenance. |
 | B7 (NEW) | Book manifest generation | Aggregate chapter manifests, closures, exports. | `runtime/manifests/book_manifest.json`, `book_manifest.exports`. | `POST /reindex`, indexer. | Reindex run and audit log entries (api_server logging). | File contains chapters, required closures, exports, provenance (see `BOOK_MANIFEST_SPEC.md`). | Data drift when chapters change mid-export. |
+| B8a (NEW) | Book closure rollup (derived) | Aggregate chapter closure rollups into a book-level view. | `indices/book_closure_rollup.json` derived from `chapter_registry` + `chapter_closure_rollup`. | `POST /reindex`, indexer. | QA ensures `book_closure_rollup.json` exists and includes `generated_at` (see `reports/audit/evidence/session_20260124-1912/qa/summary.tsv`). | Rollup file lists chapters + closures per book ID with counts. | Mis-mapped book IDs when metadata is missing. |
 | B8 (NEW) | Build manifest generator | Record export metadata (checksums, tools, closure inputs). | `runtime/exports/<book>/<build>/build_manifest.json`. | Export script (planned), QA verifying existence. | Build manifest referenced in `book_manifest.exports`. | Build manifest includes format, path, sha256, tool versions, closure IDs (see `BOOK_MANIFEST_SPEC.md`). | Tool-version mismatch. |
 | B9 (NEW) | Exporter skeleton | Provide script packaging deterministic outputs. | `runtime/scripts/book_export.sh`, exports dir. | Export script, `qa_full_system.sh` optional release step. | QA optionally runs exporter (ensures not failing if missing). | Exporter writes runtime/exports and build manifest; QA optional call recorded (see `IMPLEMENTATION_BACKLOG.md`). | Env dependencies. |
 | B10 (NEW) | Book closure object | Represent book-level decision via closures. | New `closures/BOOK-.../closure.json`, book manifest status gating. | `POST /closures`. | Closure creation + reindex. | Book manifest transitions to `locked/exported` when closure exists (see `BOOK_MANIFEST_SPEC.md` and `runtime/api_server.py`). | Duplicate closure IDs. |
@@ -34,7 +35,8 @@
 | B1 | DONE | Counts authority documented in ADR-003 and enforced by QA guard (`runtime/scripts/qa_full_system.sh`). | QA ensures `/inbox` totals match `items`. |
 | B2 | DONE | `runtime/manifests/chapter_manifest.json` emitted and QA guard passes (see `reports/audit/evidence/session_20260123-1510/qa/summary.tsv`). | Indexer work completed for manifest derivation; QA guard and evidence recorded. |
 | B3 | NOT_STARTED | No registry yet; concept described in backlog (`IMPLEMENTATION_BACKLOG.md`). | UI filters pending. |
-| B4 | NOT_STARTED | Rollup logic defined but not implemented (`BOOK_MANIFEST_SPEC.md`). | Need closure aggregation. |
+| B4 | DONE | `indices/chapter_closure_rollup.json` emitted; QA guard passes (see `reports/audit/evidence/session_20260124-0911/qa/summary.tsv`). | Chapter rollups present. |
+| B8a | DONE | `indices/book_closure_rollup.json` emitted; QA guard passes (see `reports/audit/evidence/session_20260124-1912/qa/summary.tsv`). | Book rollup derived from chapter registry + rollup. |
 | B5 | NOT_STARTED | Glossary integration described in spec/backlog (`BOOK_TRANSLATION_SYSTEM_SPEC.md`, `IMPLEMENTATION_BACKLOG.md`). | Evidence paths missing. |
 | B6 | NOT_STARTED | Review pack bundling concept exists in backlog (`IMPLEMENTATION_BACKLOG.md`). | Bundles missing. |
 | B7 | NOT_STARTED | Book manifest spec describes required fields, no runtime file (`BOOK_MANIFEST_SPEC.md`). | File absent. |
