@@ -41,3 +41,12 @@ sandbox/*
 sandbox/tools/*
 !sandbox/tools/*.sh
 ### END sandbox-ignore (managed)
+
+# derived outputs
+runtime/manifests/chapter_manifest.json
+
+# local/demo tooling
+runtime/scripts/run_full_demo.py
+
+# avoid split-authority docs
+documentation/system_overview/
