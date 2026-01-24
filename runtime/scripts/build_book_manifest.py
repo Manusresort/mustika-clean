@@ -38,15 +38,19 @@ def main() -> int:
     build_manifest_entries = indexer.load_build_manifest_entries()
     closure_index_ids = indexer.load_closure_index()
 
+    closures = indexer.scan_closures()
+    proposals = indexer.scan_proposals()
     glossary_entries = indexer.build_glossary_evidence_index(
         chapter_manifest, indexer.load_closure_index_objects()
     )
+    review_pack_index = indexer.build_review_pack_index(proposals, closures)
     payload = indexer.build_book_manifest_payload(
         chapter_manifest=chapter_manifest,
         book_rollup_payload=book_rollup,
         build_manifest_entries=build_manifest_entries,
         closure_index_ids=closure_index_ids,
         glossary_entries=glossary_entries,
+        review_pack_index=review_pack_index,
     )
 
     out_path = RUNTIME_ROOT / "manifests" / "book_manifest.json"

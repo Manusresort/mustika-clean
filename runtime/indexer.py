@@ -835,12 +835,23 @@ class Indexer:
         build_manifest_entries: List[Dict[str, Any]],
         closure_index_ids: List[str],
         glossary_entries: Dict[str, Any],
+        review_pack_index: Dict[str, Any],
     ) -> Dict[str, Any]:
         def _unique_sorted(entries: List[str]) -> List[str]:
             return sorted(dict.fromkeys([e for e in entries if isinstance(e, str) and e]))
 
         chapters_raw = chapter_manifest.get("chapters", [])
         chapters_by_id = {c.get("chapter_id"): c for c in chapters_raw if isinstance(c, dict)}
+        proposal_to_chapter: Dict[str, str] = {}
+        for chapter in chapters_raw:
+            if not isinstance(chapter, dict):
+                continue
+            chapter_id = chapter.get("chapter_id")
+            if not chapter_id:
+                continue
+            for proposal_id in chapter.get("proposal_ids", []) or []:
+                if isinstance(proposal_id, str):
+                    proposal_to_chapter[proposal_id] = chapter_id
         closure_index_set = set(closure_index_ids)
 
         build_by_book: Dict[str, List[Dict[str, Any]]] = {}
@@ -903,6 +914,21 @@ class Indexer:
                     status = "reviewable"
 
             glossary_summary = self._collect_glossary_summary(glossary_entries)
+            review_pack_entries = []
+            for entry in review_pack_index.get("proposals", []) if isinstance(review_pack_index, dict) else []:
+                if not isinstance(entry, dict):
+                    continue
+                proposal_id = entry.get("proposal_id")
+                if not proposal_id:
+                    continue
+                chapter_id = proposal_to_chapter.get(proposal_id)
+                if chapter_id and chapter_id not in chapter_ids:
+                    continue
+                review_pack_entries.append({
+                    "proposal_id": proposal_id,
+                    "chapter_id": chapter_id,
+                    "review_pack_files": entry.get("review_pack_files", []),
+                })
             book_entries.append({
                 "book_id": book_id,
                 "chapters": chapters,
@@ -912,6 +938,11 @@ class Indexer:
                 "provenance": {
                     "paths": _unique_sorted(provenance_paths),
                     "glossary": glossary_summary,
+                    "review_packs": {
+                        "generated_at": review_pack_index.get("generated_at") if isinstance(review_pack_index, dict) else None,
+                        "source": "indices/review_pack_index.json",
+                        "entries": review_pack_entries,
+                    },
                 },
                 "mapping_mode": (book_rollup_payload.get("mapping") or {}).get("mode"),
             })
@@ -970,6 +1001,7 @@ class Indexer:
         chapter_rollup_payload = self.build_chapter_closure_rollup(chapter_manifest, closure_index_ids)
         glossary_entries = self.build_glossary_evidence_index(chapter_manifest, self.load_closure_index_objects())
         chapter_manifest_glossary = self.build_chapter_manifest_with_glossary(chapter_manifest, glossary_entries)
+        review_pack_index = self.build_review_pack_index(proposals, closures)
 
         _write_index_json_if_changed(self.indices_path / "run_index.json", run_payload)
         _write_index_json_if_changed(self.indices_path / "proposal_index.json", proposal_payload)
@@ -986,6 +1018,7 @@ class Indexer:
         )
         _write_index_json_if_changed(self.indices_path / "book_closure_rollup.json", book_rollup_payload)
         _write_index_json_if_changed(self.indices_path / "glossary_evidence_index.json", glossary_entries)
+        _write_index_json_if_changed(self.indices_path / "review_pack_index.json", review_pack_index)
 
         # B9: book manifest (derived)
         build_manifest_entries = self.load_build_manifest_entries()
@@ -995,6 +1028,7 @@ class Indexer:
             build_manifest_entries=build_manifest_entries,
             closure_index_ids=closure_index_ids,
             glossary_entries=glossary_entries,
+            review_pack_index=review_pack_index,
         )
         (self.base_path / "manifests").mkdir(parents=True, exist_ok=True)
         _write_index_json_if_changed(self.base_path / "manifests" / "book_manifest.json", book_manifest_payload)

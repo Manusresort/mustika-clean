@@ -381,6 +381,53 @@ else
   print_summary "book_manifest_glossary_lifecycle" "SKIP" "missing_manifest"
 fi
 
+# B6) review pack bundling
+REVIEW_PACK_INDEX_PATH="$BASE_DIR/indices/review_pack_index.json"
+if [ -f "$REVIEW_PACK_INDEX_PATH" ]; then
+  print_summary "review_pack_index_exists" "PASS" "exists"
+  if python3 - <<PY
+import json
+path = "$REVIEW_PACK_INDEX_PATH"
+try:
+    data = json.load(open(path))
+    if 'generated_at' not in data:
+        raise SystemExit('missing generated_at key')
+except Exception as exc:
+    print(f'review_pack_index_error: {exc}')
+    raise
+PY
+  then
+    print_summary "review_pack_index_has_generated_at" "PASS" "has key"
+  else
+    print_summary "review_pack_index_has_generated_at" "FAIL" "missing key"
+  fi
+else
+  print_summary "review_pack_index_exists" "FAIL" "missing"
+fi
+
+if [ -f "$BASE_DIR/manifests/book_manifest.json" ]; then
+  if python3 - <<'PY'
+import json
+p = "manifests/book_manifest.json"
+d = json.load(open(p, "r", encoding="utf-8"))
+entries = d.get("books")
+entries = entries if isinstance(entries, list) else [d]
+for entry in entries:
+    prov = entry.get("provenance", {})
+    rp = prov.get("review_packs", {})
+    assert isinstance(rp, dict)
+    assert "entries" in rp
+print("ok")
+PY
+  then
+    print_summary "book_manifest_review_packs" "PASS" "present"
+  else
+    print_summary "book_manifest_review_packs" "FAIL" "missing/invalid"
+  fi
+else
+  print_summary "book_manifest_review_packs" "SKIP" "missing_manifest"
+fi
+
 # D) API endpoints
 if [ "$API_UP" = "yes" ]; then
   if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
@@ -449,10 +496,34 @@ PY
   else
     print_summary "GET_/proposals/P-TEST" "FAIL" "proposal_md_missing"
   fi
+
+  # B6) review_pack_files include name + path
+  TEST_REVIEW_PACK_ID="P-TEST-REVIEW"
+  TEST_REVIEW_PACK_DIR="$BASE_DIR/proposals/$TEST_REVIEW_PACK_ID/review_pack"
+  mkdir -p "$TEST_REVIEW_PACK_DIR"
+  printf "dummy" > "$TEST_REVIEW_PACK_DIR/readme.txt"
+  REVIEW_PACK_JSON="$AUDIT_DIR/proposal_${TEST_REVIEW_PACK_ID}.json"
+  curl -s http://127.0.0.1:8010/proposals/$TEST_REVIEW_PACK_ID > "$REVIEW_PACK_JSON"
+  if python3 - <<'PY'
+import json
+p = "audit/qa/latest_full/proposal_P-TEST-REVIEW.json"
+data = json.load(open(p, "r", encoding="utf-8"))
+files = data.get("review_pack_files", [])
+if files:
+    assert isinstance(files[0], dict)
+    assert "name" in files[0] and "path" in files[0]
+print("ok")
+PY
+  then
+    print_summary "review_pack_files_have_name" "PASS" "name+path"
+  else
+    print_summary "review_pack_files_have_name" "FAIL" "missing name"
+  fi
 else
-  print_summary "GET_/health" "SKIP" "api_not_running"
-  print_summary "GET_/inbox" "SKIP" "api_not_running"
-  print_summary "GET_/proposals/P-TEST" "SKIP" "api_not_running"
+  print_summary "GET_/health" "FAIL" "api_not_running"
+  print_summary "GET_/inbox" "FAIL" "api_not_running"
+  print_summary "GET_/proposals/P-TEST" "FAIL" "api_not_running"
+  print_summary "review_pack_files_have_name" "FAIL" "api_not_running"
 fi
 
 # E) Closure contract
@@ -519,10 +590,10 @@ PY
     print_summary "inbox_after_closure" "FAIL" "read_error"
   fi
 else
-  print_summary "POST_/closures" "SKIP" "api_not_running"
-  print_summary "proposal_status_closed" "SKIP" "api_not_running"
-  print_summary "POST_/reindex" "SKIP" "api_not_running"
-  print_summary "inbox_after_closure" "SKIP" "api_not_running"
+  print_summary "POST_/closures" "FAIL" "api_not_running"
+  print_summary "proposal_status_closed" "FAIL" "api_not_running"
+  print_summary "POST_/reindex" "FAIL" "api_not_running"
+  print_summary "inbox_after_closure" "FAIL" "api_not_running"
 fi
 
 # F) UI build sanity
