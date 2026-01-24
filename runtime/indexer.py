@@ -576,6 +576,73 @@ class Indexer:
             "source_manifest": "manifests/chapter_manifest.json",
         }
 
+    def build_glossary_evidence_index(self, manifest: Dict[str, Any], closures: List[Dict[str, Any]]) -> Dict[str, Any]:
+        def _unique_sorted(entries: List[str]) -> List[str]:
+            return sorted(dict.fromkeys(entries))
+
+        chapter_map = {}
+        for chapter in manifest.get("chapters", []):
+            chapter_id = chapter.get("chapter_id")
+            if chapter_id:
+                for closure_id in chapter.get("closure_ids", []):
+                    if isinstance(closure_id, str):
+                        chapter_map[closure_id] = chapter_id
+
+        def _extract_paths(entry: Dict[str, Any]) -> List[str]:
+            paths = entry.get("evidence_paths") or []
+            return [p for p in paths if isinstance(p, str)]
+
+        chapters = {}
+        unassigned_paths = []
+        unassigned_sources = []
+
+        for closure in closures:
+            closure_id = closure.get("closure_id")
+            evidence_paths = [_ for _ in _extract_paths(closure) if "glossary" in _ or "woordenlijst" in _]
+            if not evidence_paths:
+                continue
+            target = chapter_map.get(closure_id)
+            if target:
+                chapters.setdefault(target, {"glossary_evidence_paths": [], "source_closure_ids": []})
+                chapters[target]["glossary_evidence_paths"].extend(evidence_paths)
+                chapters[target]["source_closure_ids"].append(closure_id)
+            else:
+                unassigned_paths.extend(evidence_paths)
+                unassigned_sources.append(closure_id)
+
+        return {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "chapters": [
+                {
+                    "chapter_id": cid,
+                    "glossary_evidence_paths": _unique_sorted(details["glossary_evidence_paths"]),
+                    "source_closure_ids": _unique_sorted(details["source_closure_ids"]),
+                }
+                for cid, details in sorted(chapters.items())
+            ],
+            "unassigned": {
+                "glossary_evidence_paths": _unique_sorted(unassigned_paths),
+                "source_closure_ids": _unique_sorted(unassigned_sources),
+            },
+            "heuristic": {
+                "match_rules": ["path_contains:glossary", "path_contains:woordenlijst"],
+            },
+            "sources": {
+                "chapter_manifest": "manifests/chapter_manifest.json",
+                "closure_index": "indices/closure_index.json",
+            },
+        }
+
+    def load_closure_index_objects(self) -> List[Dict[str, Any]]:
+        closure_index_path = self.indices_path / "closure_index.json"
+        if not closure_index_path.exists():
+            return []
+        try:
+            data = json.loads(closure_index_path.read_text(encoding="utf-8"))
+            return data.get("closures", []) if isinstance(data, dict) else []
+        except (json.JSONDecodeError, IOError):
+            return []
+
     def build_chapter_closure_rollup(self, manifest: Dict[str, Any], closure_index_ids: List[str]) -> Dict[str, Any]:
         chapters_raw = manifest.get("chapters", [])
         rollup_chapters = []
@@ -642,6 +709,7 @@ class Indexer:
         chapter_registry_payload = self.build_chapter_registry_payload(chapter_manifest)
         closure_index_ids = self.load_closure_index()
         chapter_rollup_payload = self.build_chapter_closure_rollup(chapter_manifest, closure_index_ids)
+        glossary_entries = self.build_glossary_evidence_index(chapter_manifest, self.load_closure_index_objects())
 
         _write_index_json_if_changed(self.indices_path / "run_index.json", run_payload)
         _write_index_json_if_changed(self.indices_path / "proposal_index.json", proposal_payload)
@@ -649,6 +717,7 @@ class Indexer:
         _write_index_json_if_changed(self.indices_path / "inbox_index.json", inbox_index)
         _write_index_json_if_changed(self.indices_path / "chapter_registry.json", chapter_registry_payload)
         _write_index_json_if_changed(self.indices_path / "chapter_closure_rollup.json", chapter_rollup_payload)
+        _write_index_json_if_changed(self.indices_path / "glossary_evidence_index.json", glossary_entries)
         
         return {
             "runs": len(runs),
