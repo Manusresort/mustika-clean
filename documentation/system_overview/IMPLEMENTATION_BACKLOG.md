@@ -71,12 +71,6 @@
 - **Risks**: partial chapter completion.  
 - **Implementation note**: `runtime/indexer.py` now emits `indices/chapter_closure_rollup.json` (see submodule commit `50011e1`), and `scripts/qa_full_system.sh` asserts the rollup file exists with `generated_at`.  
 
-### 2.4a Book closure rollup (derived index) — B8a (NEW)
-- **Problem**: governance needs a book-level view before full book manifest generation (BOOK_MANIFEST_SPEC.md:40-76).  
-- **Tasks**: derive `indices/book_closure_rollup.json` by aggregating `chapter_registry` + `chapter_closure_rollup` outputs.  
-- **DoD**: `indices/book_closure_rollup.json` exists with `generated_at`, per-book `chapter_ids` + `closure_ids` counts, and QA guards in `qa_full_system.sh` verify existence + `generated_at` (evidence: `reports/audit/evidence/session_20260124-1912/qa/summary.tsv`).  
-- **Risks**: book ID mapping ambiguity when chapter metadata lacks book identifiers.  
-
 ### 2.5 Glossary lifecycle integration gates (NEW)
 - **Problem**: Glossary decisions currently documented but not tied to manifests (BOOK_TRANSLATION_SYSTEM_SPEC.md:28-39).  
 - **Tasks**: tie `glossary_decision.md` to `closures`, include evidence paths in `chapter_manifest` entries.  
@@ -131,7 +125,6 @@
 
 - [ ] `runtime/manifests/chapter_manifest.json` present and derived from `runs/` + proposals + closures (indexer output).  
 - [ ] `/inbox`, `/runs/{id}`, `/proposals/{id}` continue to behave while new manifest files exist (QA hits via `qa_full_system.sh`).  
-- [ ] `indices/book_closure_rollup.json` present and derived from chapter registry + rollup (indexer output + QA).  
 - [ ] `book_manifest.json` reflects `required_closures` and `exports` with checksums (derived file).  
 - [ ] All new automation runs are recorded in `audit/api_actions.log` (API ensure_audit_log helper).  
 - [ ] Build manifests exist alongside exports and match `book_manifest.exports` (filesystem check).  
