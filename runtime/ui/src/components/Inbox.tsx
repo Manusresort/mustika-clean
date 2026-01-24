@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { api, InboxItem } from '../api'
+import { api, InboxItem, ChapterRegistryChapter } from '../api'
 import './Inbox.css'
 
 export default function Inbox() {
@@ -8,6 +8,8 @@ export default function Inbox() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
+  const [chapters, setChapters] = useState<ChapterRegistryChapter[]>([])
+  const [chapterFilter, setChapterFilter] = useState('all')
   const filter = searchParams.get('filter') || 'all'
 
   useEffect(() => {
@@ -20,6 +22,12 @@ export default function Inbox() {
       const data = await api.getInbox()
       setItems(data.items)
       setError(null)
+      try {
+        const registry = await api.getChapters()
+        setChapters(registry.chapters ?? [])
+      } catch {
+        setChapters([])
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load inbox')
     } finally {
@@ -27,9 +35,16 @@ export default function Inbox() {
     }
   }
 
-  const filteredItems = filter === 'all'
+  const filteredByKind = filter === 'all'
     ? items
     : items.filter(item => item.kind === filter)
+  const filteredItems = chapterFilter === 'all'
+    ? filteredByKind
+    : filteredByKind.filter(item =>
+        chapterFilter === 'unassigned'
+          ? item.chapter_id == null
+          : item.chapter_id === chapterFilter
+      )
 
   const getItemLink = (item: InboxItem) => {
     if (item.source_type === 'proposal') {
@@ -94,6 +109,22 @@ export default function Inbox() {
         >
           Incidents ({items.filter(i => i.kind === 'incident').length})
         </button>
+        <div className="chapter-filter">
+          <label htmlFor="chapter-filter" className="screen-reader-only">Chapter</label>
+          <select
+            id="chapter-filter"
+            value={chapterFilter}
+            onChange={(event) => setChapterFilter(event.target.value)}
+          >
+            <option value="all">All chapters</option>
+            <option value="unassigned">Unassigned</option>
+            {chapters.map((chapter) => (
+              <option key={chapter.chapter_id} value={chapter.chapter_id}>
+                {chapter.chapter_id}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="inbox-table">

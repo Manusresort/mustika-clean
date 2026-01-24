@@ -12,6 +12,7 @@ export interface InboxItem {
   source_id: string
   reasons: string[]
   path: string
+  chapter_id?: string | null
 }
 
 export interface InboxCounts {
@@ -24,6 +25,21 @@ export interface InboxResponse {
   generated_at: string
   counts: InboxCounts
   items: InboxItem[]
+}
+
+export interface ChapterRegistryChapter {
+  chapter_id: string
+  title: string | null
+}
+
+export interface ChapterRegistry {
+  generated_at: string
+  chapters: ChapterRegistryChapter[]
+  unassigned: {
+    run_ids: string[]
+    proposal_ids: string[]
+    closure_ids: string[]
+  }
 }
 
 export interface Run {
@@ -111,6 +127,14 @@ export const api = {
       counts,
       items,
     }
+  },
+
+  async getChapters(): Promise<ChapterRegistry> {
+    const response = await fetch(`${API_BASE}/chapters`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch chapters: ${response.statusText}`)
+    }
+    return response.json()
   },
 
   async getRun(runId: string): Promise<Run> {
