@@ -509,7 +509,58 @@ class Indexer:
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "items": inbox_items,
         }
-    
+
+    def load_chapter_manifest(self) -> Dict[str, Any]:
+        manifest_path = self.base_path / "manifests" / "chapter_manifest.json"
+        if not manifest_path.exists():
+            return {}
+
+        try:
+            return json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, IOError):
+            return {}
+
+    def build_chapter_registry_payload(self, manifest: Dict[str, Any]) -> Dict[str, Any]:
+        chapters_raw = manifest.get("chapters", [])
+        unassigned_raw = manifest.get("unassigned", {})
+
+        def _unique_sorted(entries: List[str]) -> List[str]:
+            return sorted(dict.fromkeys(entries))
+
+        chapters = []
+        for chapter in sorted(chapters_raw, key=lambda c: c.get("chapter_id", "")):
+            chapter_id = chapter.get("chapter_id")
+            if not chapter_id:
+                continue
+            run_ids = _unique_sorted(chapter.get("run_ids", []))
+            proposal_ids = _unique_sorted(chapter.get("proposal_ids", []))
+            closure_ids = _unique_sorted(chapter.get("closure_ids", []))
+            chapters.append({
+                "chapter_id": chapter_id,
+                "title": chapter.get("title") if chapter.get("title") else None,
+                "counts": {
+                    "runs": len(run_ids),
+                    "proposals": len(proposal_ids),
+                    "closures": len(closure_ids),
+                },
+                "run_ids": run_ids,
+                "proposal_ids": proposal_ids,
+                "closure_ids": closure_ids,
+            })
+
+        unassigned = {
+            "run_ids": _unique_sorted(unassigned_raw.get("run_ids", [])),
+            "proposal_ids": _unique_sorted(unassigned_raw.get("proposal_ids", [])),
+            "closure_ids": _unique_sorted(unassigned_raw.get("closure_ids", [])),
+        }
+
+        return {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "chapters": chapters,
+            "unassigned": unassigned,
+            "source_manifest": "manifests/chapter_manifest.json",
+        }
+
     def reindex(self) -> Dict[str, Any]:
         """Generate all indices and return summary."""
         print("Scanning runs...")
@@ -538,10 +589,14 @@ class Indexer:
             "closures": closures,
         }
 
+        chapter_manifest = self.load_chapter_manifest()
+        chapter_registry_payload = self.build_chapter_registry_payload(chapter_manifest)
+
         _write_index_json_if_changed(self.indices_path / "run_index.json", run_payload)
         _write_index_json_if_changed(self.indices_path / "proposal_index.json", proposal_payload)
         _write_index_json_if_changed(self.indices_path / "closure_index.json", closure_payload)
         _write_index_json_if_changed(self.indices_path / "inbox_index.json", inbox_index)
+        _write_index_json_if_changed(self.indices_path / "chapter_registry.json", chapter_registry_payload)
         
         return {
             "runs": len(runs),

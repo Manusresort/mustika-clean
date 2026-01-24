@@ -129,6 +129,30 @@ else
   print_summary "chapter_manifest_exists" "FAIL" "missing"
 fi
 
+REGISTRY_PATH="$BASE_DIR/indices/chapter_registry.json"
+if [ -f "$REGISTRY_PATH" ]; then
+  print_summary "chapter_registry_exists" "PASS" "file exists"
+  if python3 - <<PY
+import json
+path = "${REGISTRY_PATH}"
+try:
+    data = json.load(open(path))
+    if 'generated_at' not in data:
+        print('chapter_registry_error: missing generated_at key')
+        raise SystemExit(1)
+except Exception as exc:
+    print(f'chapter_registry_error: {exc}')
+    raise
+PY
+  then
+    print_summary "chapter_registry_has_generated_at" "PASS" "has key"
+  else
+    print_summary "chapter_registry_has_generated_at" "FAIL" "missing key"
+  fi
+else
+  print_summary "chapter_registry_exists" "FAIL" "missing"
+fi
+
 for idx in run_index.json proposal_index.json closure_index.json inbox_index.json; do
   if [ -f "$BASE_DIR/indices/$idx" ]; then
     print_summary "index_$idx" "PASS" "exists"
