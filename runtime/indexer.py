@@ -643,6 +643,75 @@ class Indexer:
             },
         }
 
+    def _glossary_lifecycle(self, evidence_paths: List[str], source_closure_ids: List[str]) -> str:
+        if source_closure_ids:
+            return "approved"
+        if evidence_paths:
+            return "approved"
+        return "draft"
+
+    def build_chapter_manifest_with_glossary(
+        self, chapter_manifest: Dict[str, Any], glossary_entries: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        chapters = chapter_manifest.get("chapters", []) if isinstance(chapter_manifest, dict) else []
+        glossary_by_chapter = {
+            entry.get("chapter_id"): entry
+            for entry in glossary_entries.get("chapters", [])
+            if isinstance(entry, dict)
+        }
+
+        def _unique_sorted(entries: List[str]) -> List[str]:
+            return sorted(dict.fromkeys([e for e in entries if isinstance(e, str) and e]))
+
+        updated = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "chapters": [],
+            "unassigned": chapter_manifest.get("unassigned", {}),
+            "sources": chapter_manifest.get("sources", {}),
+        }
+
+        for chapter in chapters:
+            if not isinstance(chapter, dict):
+                continue
+            chapter_id = chapter.get("chapter_id")
+            glossary_entry = glossary_by_chapter.get(chapter_id, {})
+            evidence_paths = _unique_sorted(glossary_entry.get("glossary_evidence_paths", []))
+            source_closure_ids = _unique_sorted(glossary_entry.get("source_closure_ids", []))
+            glossary = {
+                "lifecycle": self._glossary_lifecycle(evidence_paths, source_closure_ids),
+                "evidence_paths": evidence_paths,
+                "source_closure_ids": source_closure_ids,
+            }
+            enriched = dict(chapter)
+            enriched["glossary"] = glossary
+            updated["chapters"].append(enriched)
+
+        return updated
+
+    def _collect_glossary_summary(self, glossary_entries: Dict[str, Any]) -> Dict[str, Any]:
+        def _unique_sorted(entries: List[str]) -> List[str]:
+            return sorted(dict.fromkeys([e for e in entries if isinstance(e, str) and e]))
+
+        evidence_paths = []
+        source_closure_ids = []
+        for entry in glossary_entries.get("chapters", []):
+            if not isinstance(entry, dict):
+                continue
+            evidence_paths.extend(entry.get("glossary_evidence_paths", []))
+            source_closure_ids.extend(entry.get("source_closure_ids", []))
+        unassigned = glossary_entries.get("unassigned", {})
+        if isinstance(unassigned, dict):
+            evidence_paths.extend(unassigned.get("glossary_evidence_paths", []))
+            source_closure_ids.extend(unassigned.get("source_closure_ids", []))
+
+        evidence_paths = _unique_sorted(evidence_paths)
+        source_closure_ids = _unique_sorted(source_closure_ids)
+        return {
+            "lifecycle": self._glossary_lifecycle(evidence_paths, source_closure_ids),
+            "evidence_paths": evidence_paths,
+            "source_closure_ids": source_closure_ids,
+        }
+
     def build_review_pack_index(self, proposals: List[Dict[str, Any]], closures: List[Dict[str, Any]]) -> Dict[str, Any]:
         closure_map = {}
         for closure in closures:
@@ -765,6 +834,7 @@ class Indexer:
         book_rollup_payload: Dict[str, Any],
         build_manifest_entries: List[Dict[str, Any]],
         closure_index_ids: List[str],
+        glossary_entries: Dict[str, Any],
     ) -> Dict[str, Any]:
         def _unique_sorted(entries: List[str]) -> List[str]:
             return sorted(dict.fromkeys([e for e in entries if isinstance(e, str) and e]))
@@ -812,7 +882,7 @@ class Indexer:
                     "input_closure_ids": _unique_sorted(data.get("closure_ids", [])),
                 })
 
-            provenance = [
+            provenance_paths = [
                 "manifests/chapter_manifest.json",
                 "indices/book_closure_rollup.json",
                 "indices/chapter_closure_rollup.json",
@@ -820,25 +890,29 @@ class Indexer:
             for entry in exports:
                 bm = entry.get("build_manifest")
                 if isinstance(bm, str) and bm:
-                    provenance.append(bm)
+                    provenance_paths.append(bm)
             for closure_id in closure_ids:
                 closure_path = self.base_path / "closures" / closure_id / "closure.json"
                 rel = self._relative_path(closure_path)
                 if rel:
-                    provenance.append(rel)
+                    provenance_paths.append(rel)
 
             status = "draft"
             if closure_ids:
                 if all(cid in closure_index_set for cid in closure_ids):
                     status = "reviewable"
 
+            glossary_summary = self._collect_glossary_summary(glossary_entries)
             book_entries.append({
                 "book_id": book_id,
                 "chapters": chapters,
                 "required_closures": closure_ids,
                 "status": status,
                 "exports": exports,
-                "provenance": _unique_sorted(provenance),
+                "provenance": {
+                    "paths": _unique_sorted(provenance_paths),
+                    "glossary": glossary_summary,
+                },
                 "mapping_mode": (book_rollup_payload.get("mapping") or {}).get("mode"),
             })
 
@@ -895,6 +969,7 @@ class Indexer:
         closure_index_ids = self.load_closure_index()
         chapter_rollup_payload = self.build_chapter_closure_rollup(chapter_manifest, closure_index_ids)
         glossary_entries = self.build_glossary_evidence_index(chapter_manifest, self.load_closure_index_objects())
+        chapter_manifest_glossary = self.build_chapter_manifest_with_glossary(chapter_manifest, glossary_entries)
 
         _write_index_json_if_changed(self.indices_path / "run_index.json", run_payload)
         _write_index_json_if_changed(self.indices_path / "proposal_index.json", proposal_payload)
@@ -915,13 +990,15 @@ class Indexer:
         # B9: book manifest (derived)
         build_manifest_entries = self.load_build_manifest_entries()
         book_manifest_payload = self.build_book_manifest_payload(
-            chapter_manifest=chapter_manifest,
+            chapter_manifest=chapter_manifest_glossary,
             book_rollup_payload=book_rollup_payload,
             build_manifest_entries=build_manifest_entries,
             closure_index_ids=closure_index_ids,
+            glossary_entries=glossary_entries,
         )
         (self.base_path / "manifests").mkdir(parents=True, exist_ok=True)
         _write_index_json_if_changed(self.base_path / "manifests" / "book_manifest.json", book_manifest_payload)
+        _write_index_json_if_changed(self.base_path / "manifests" / "chapter_manifest.json", chapter_manifest_glossary)
         
         return {
             "runs": len(runs),

@@ -329,6 +329,58 @@ else
   print_summary "glossary_evidence_index_exists" "FAIL" "missing"
 fi
 
+# B5) glossary lifecycle gates
+CHAPTER_MANIFEST_PATH="$BASE_DIR/manifests/chapter_manifest.json"
+BOOK_MANIFEST_PATH="$BASE_DIR/manifests/book_manifest.json"
+
+if [ -f "$CHAPTER_MANIFEST_PATH" ]; then
+  if python3 - <<'PY'
+import json
+p = "manifests/chapter_manifest.json"
+d = json.load(open(p, "r", encoding="utf-8"))
+for ch in d.get("chapters", []):
+    g = ch.get("glossary", {})
+    lifecycle = g.get("lifecycle")
+    assert lifecycle in ("draft", "approved", "locked", "deprecated")
+    assert isinstance(g.get("evidence_paths", []), list)
+    assert isinstance(g.get("source_closure_ids", []), list)
+print("ok")
+PY
+  then
+    print_summary "chapter_manifest_glossary_lifecycle" "PASS" "valid"
+  else
+    print_summary "chapter_manifest_glossary_lifecycle" "FAIL" "invalid"
+  fi
+else
+  print_summary "chapter_manifest_glossary_lifecycle" "SKIP" "missing_manifest"
+fi
+
+if [ -f "$BOOK_MANIFEST_PATH" ]; then
+  if python3 - <<'PY'
+import json
+p = "manifests/book_manifest.json"
+d = json.load(open(p, "r", encoding="utf-8"))
+books = d.get("books")
+entries = books if isinstance(books, list) else [d]
+for entry in entries:
+    prov = entry.get("provenance", {})
+    assert isinstance(prov, dict)
+    g = prov.get("glossary", {})
+    lifecycle = g.get("lifecycle")
+    assert lifecycle in ("draft", "approved", "locked", "deprecated")
+    assert isinstance(g.get("evidence_paths", []), list)
+    assert isinstance(g.get("source_closure_ids", []), list)
+print("ok")
+PY
+  then
+    print_summary "book_manifest_glossary_lifecycle" "PASS" "valid"
+  else
+    print_summary "book_manifest_glossary_lifecycle" "FAIL" "invalid"
+  fi
+else
+  print_summary "book_manifest_glossary_lifecycle" "SKIP" "missing_manifest"
+fi
+
 # D) API endpoints
 if [ "$API_UP" = "yes" ]; then
   if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
