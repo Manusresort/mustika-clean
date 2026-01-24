@@ -5,6 +5,7 @@ Idempotent: can be run multiple times safely.
 """
 
 import json
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Any, Optional
@@ -777,6 +778,14 @@ class Indexer:
         _write_index_json_if_changed(self.indices_path / "inbox_index.json", inbox_index)
         _write_index_json_if_changed(self.indices_path / "chapter_registry.json", chapter_registry_payload)
         _write_index_json_if_changed(self.indices_path / "chapter_closure_rollup.json", chapter_rollup_payload)
+
+        # B8a: book closure rollup (derived)
+        book_rollup_payload = build_book_closure_rollup(
+            chapter_registry=chapter_registry_payload,
+            chapter_closure_rollup=chapter_rollup_payload,
+            generated_at=chapter_rollup_payload.get("generated_at", datetime.now(timezone.utc).isoformat()),
+        )
+        _write_index_json_if_changed(self.indices_path / "book_closure_rollup.json", book_rollup_payload)
         _write_index_json_if_changed(self.indices_path / "glossary_evidence_index.json", glossary_entries)
         
         return {
@@ -785,6 +794,97 @@ class Indexer:
             "closures": len(closures),
             "inbox_items": len(inbox_index.get("items", [])),
         }
+
+
+
+def _get_chapter_book_key(ch: dict) -> tuple[str, str] | None:
+    """
+    Returns (mode, book_id) if chapter has a book mapping.
+    mode in {"book_id","book"}.
+    """
+    if not isinstance(ch, dict):
+        return None
+    if isinstance(ch.get("book_id"), str) and ch["book_id"].strip():
+        return ("book_id", ch["book_id"].strip())
+    if isinstance(ch.get("book"), str) and ch["book"].strip():
+        return ("book", ch["book"].strip())
+    return None
+
+
+def build_book_closure_rollup(
+    chapter_registry: dict[str, Any],
+    chapter_closure_rollup: dict[str, Any],
+    generated_at: str,
+) -> dict[str, Any]:
+    chapters = chapter_registry.get("chapters", [])
+    chapter_ids: list[str] = []
+    chapters_by_id: dict[str, dict[str, Any]] = {}
+    if isinstance(chapters, list):
+        for ch in chapters:
+            if isinstance(ch, dict):
+                cid = ch.get("chapter_id")
+                if isinstance(cid, str) and cid.strip():
+                    cid = cid.strip()
+                    chapter_ids.append(cid)
+                    chapters_by_id[cid] = ch
+    chapter_ids = sorted(set(chapter_ids))
+
+    roll_chapters = chapter_closure_rollup.get("chapters", [])
+    closure_ids_by_chapter: dict[str, list[str]] = {cid: [] for cid in chapter_ids}
+    if isinstance(roll_chapters, list):
+        for item in roll_chapters:
+            if not isinstance(item, dict):
+                continue
+            cid = item.get("chapter_id")
+            if not (isinstance(cid, str) and cid.strip()):
+                continue
+            cid = cid.strip()
+            if cid not in closure_ids_by_chapter:
+                continue
+            cids = item.get("closure_ids", [])
+            if isinstance(cids, list):
+                closure_ids_by_chapter[cid] = sorted({c for c in cids if isinstance(c, str) and c})
+
+    books: dict[str, dict[str, Any]] = defaultdict(lambda: {"chapter_ids": [], "closure_ids": set()})
+    mapping_mode: str = "single_default"
+
+    for cid in chapter_ids:
+        ch = chapters_by_id.get(cid, {})
+        bk = _get_chapter_book_key(ch)
+        if bk is None:
+            book_id = "BOOK-DEFAULT"
+        else:
+            mapping_mode = bk[0]
+            book_id = bk[1]
+
+        books[book_id]["chapter_ids"].append(cid)
+        for cl in closure_ids_by_chapter.get(cid, []):
+            books[book_id]["closure_ids"].add(cl)
+
+    out_books: list[dict[str, Any]] = []
+    for book_id in sorted(books.keys()):
+        chs = sorted(set(books[book_id]["chapter_ids"]))
+        cls = sorted(set(books[book_id]["closure_ids"]))
+        status = "none" if len(cls) == 0 else "closed"
+        out_books.append(
+            {
+                "book_id": book_id,
+                "chapter_ids": chs,
+                "closure_ids": cls,
+                "counts": {"chapters": len(chs), "closures": len(cls)},
+                "status": status,
+            }
+        )
+
+    return {
+        "generated_at": generated_at,
+        "books": out_books,
+        "sources": {
+            "chapter_registry": "indices/chapter_registry.json",
+            "chapter_closure_rollup": "indices/chapter_closure_rollup.json",
+        },
+        "mapping": {"mode": mapping_mode},
+    }
 
 
 def main():

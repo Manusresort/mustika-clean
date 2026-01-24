@@ -105,6 +105,23 @@ indexer_rc=0
 python3 indexer.py >/tmp/qa_full_indexer.txt 2>&1 || indexer_rc=$?
 print_summary "indexer_run" "$(passfail $indexer_rc)" "python3 indexer.py"
 
+# B8a) book closure rollup
+if [ -f "$BASE_DIR/indices/book_closure_rollup.json" ]; then
+  print_summary "book_closure_rollup_exists" "PASS" "exists"
+else
+  print_summary "book_closure_rollup_exists" "FAIL" "missing indices/book_closure_rollup.json"
+fi
+
+if [ -f "$BASE_DIR/indices/book_closure_rollup.json" ]; then
+  if rg -q '"generated_at"\s*:' "$BASE_DIR/indices/book_closure_rollup.json"; then
+    print_summary "book_closure_rollup_has_generated_at" "PASS" "generated_at_present"
+  else
+    print_summary "book_closure_rollup_has_generated_at" "FAIL" "generated_at_missing"
+  fi
+else
+  print_summary "book_closure_rollup_has_generated_at" "SKIP" "missing_rollup"
+fi
+
 MANIFEST_PATH="$BASE_DIR/manifests/chapter_manifest.json"
 if [ -f "$MANIFEST_PATH" ]; then
   print_summary "chapter_manifest_exists" "PASS" "file exists"
