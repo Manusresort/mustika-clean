@@ -428,6 +428,19 @@ else
   print_summary "book_manifest_review_packs" "SKIP" "missing_manifest"
 fi
 
+### B8 — Build manifest generation (full)
+BUILD_MANIFEST_RC=0
+python3 scripts/validate_build_manifests.py > "$AUDIT_DIR/validate_build_manifests.stdout.txt" 2>&1 || BUILD_MANIFEST_RC=$?
+if [ "$BUILD_MANIFEST_RC" -eq 0 ]; then
+  print_summary "build_manifest_exists_for_each_export" "PASS" "validated"
+  print_summary "build_manifest_checksums_match_exports" "PASS" "validated"
+  print_summary "build_manifest_tool_versions_present" "PASS" "validated"
+else
+  print_summary "build_manifest_exists_for_each_export" "FAIL" "rc=$BUILD_MANIFEST_RC"
+  print_summary "build_manifest_checksums_match_exports" "FAIL" "rc=$BUILD_MANIFEST_RC"
+  print_summary "build_manifest_tool_versions_present" "FAIL" "rc=$BUILD_MANIFEST_RC"
+fi
+
 # D) API endpoints
 if [ "$API_UP" = "yes" ]; then
   if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then
