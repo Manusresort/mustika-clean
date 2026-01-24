@@ -31,6 +31,10 @@ def _strip_generated_at(obj: Any) -> Any:
     return obj
 
 
+def _book_closure_exists(runtime_base: Path, book_id: str) -> bool:
+    return (runtime_base / "closures" / f"BOOK-{book_id}" / "closure.json").exists()
+
+
 def _write_index_json_if_changed(path: Path, payload: Dict[str, Any]) -> bool:
     """Idempotent write: ignore generated_at-only diffs."""
     new_core = _strip_generated_at(payload)
@@ -909,7 +913,9 @@ class Indexer:
                     provenance_paths.append(rel)
 
             status = "draft"
-            if closure_ids:
+            if _book_closure_exists(self.base_path, book_id):
+                status = "locked"
+            elif closure_ids:
                 if all(cid in closure_index_set for cid in closure_ids):
                     status = "reviewable"
 

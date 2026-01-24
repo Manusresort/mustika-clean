@@ -205,11 +205,86 @@ PY
   else
     print_summary "book_manifest_exports_reference_build_manifest" "FAIL" "missing build_manifest"
   fi
+
+  # B10: Book closure object invariants
+  if python3 - <<'PY'
+import json, pathlib, sys
+p = pathlib.Path("manifests/book_manifest.json")
+d = json.load(open(p, "r", encoding="utf-8"))
+entries = d.get("books") if isinstance(d.get("books"), list) else [d]
+for entry in entries:
+    book_id = entry.get("book_id", "BOOK-DEFAULT")
+    status = entry.get("status")
+    bc = pathlib.Path("closures") / f"BOOK-{book_id}" / "closure.json"
+    if bc.exists():
+        assert status == "locked"
+    else:
+        if status == "locked":
+            raise AssertionError("status locked but BOOK closure missing")
+print("ok")
+PY
+  then
+    print_summary "book_manifest_status_matches_book_closure" "PASS" "status consistent"
+  else
+    print_summary "book_manifest_status_matches_book_closure" "FAIL" "status mismatch"
+  fi
+
+  if python3 - <<'PY'
+import json, pathlib, sys
+p = pathlib.Path("manifests/book_manifest.json")
+d = json.load(open(p, "r", encoding="utf-8"))
+entries = d.get("books") if isinstance(d.get("books"), list) else [d]
+for entry in entries:
+    book_id = entry.get("book_id", "BOOK-DEFAULT")
+    req = entry.get("required_closures", []) or []
+    bc = pathlib.Path("closures") / f"BOOK-{book_id}" / "closure.json"
+    if not bc.exists():
+        continue
+    c = json.load(open(bc, "r", encoding="utf-8"))
+    assert c.get("decision_type") == "BOOK"
+    assert c.get("book_id") == book_id
+    c_req = c.get("required_closure_ids", [])
+    assert isinstance(c_req, list)
+    if req:
+        assert sorted(c_req) == sorted(req)
+print("ok")
+PY
+  then
+    print_summary "book_closure_object_valid" "PASS" "shape ok"
+  else
+    print_summary "book_closure_object_valid" "FAIL" "invalid"
+  fi
+
+  if python3 - <<'PY'
+import json, pathlib, sys
+p = pathlib.Path("manifests/book_manifest.json")
+d = json.load(open(p, "r", encoding="utf-8"))
+entries = d.get("books") if isinstance(d.get("books"), list) else [d]
+for entry in entries:
+    book_id = entry.get("book_id", "BOOK-DEFAULT")
+    bc = pathlib.Path("closures") / f"BOOK-{book_id}" / "closure.json"
+    if not bc.exists():
+        continue
+    c = json.load(open(bc, "r", encoding="utf-8"))
+    c_req = c.get("required_closure_ids", [])
+    for cid in c_req:
+        if not (pathlib.Path("closures") / cid / "closure.json").exists():
+            raise AssertionError(f"missing required closure {cid}")
+print("ok")
+PY
+  then
+    print_summary "book_closure_required_closures_exist" "PASS" "all present"
+  else
+    print_summary "book_closure_required_closures_exist" "FAIL" "missing"
+  fi
 else
   print_summary "book_manifest_exists" "FAIL" "missing"
   print_summary "book_manifest_has_generated_at" "SKIP" "missing"
   print_summary "book_manifest_has_required_closures" "SKIP" "missing"
   print_summary "book_manifest_exports_reference_build_manifest" "SKIP" "missing"
+  print_summary "book_manifest_status_matches_book_closure" "SKIP" "missing"
+  print_summary "book_closure_object_valid" "SKIP" "missing"
+  print_summary "book_closure_required_closures_exist" "SKIP" "missing"
 fi
 
 # B8a) book closure rollup

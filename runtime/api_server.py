@@ -53,6 +53,31 @@ BASE_PATH = Path(__file__).parent.resolve()
 indexer = Indexer(BASE_PATH)
 
 
+def _load_book_required_closures(book_id: str) -> List[str]:
+    manifest_path = BASE_PATH / "manifests" / "book_manifest.json"
+    if not manifest_path.exists():
+        return []
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return []
+    entry = data
+    books = data.get("books")
+    if isinstance(books, list):
+        entry = next(
+            (b for b in books if isinstance(b, dict) and b.get("book_id") == book_id),
+            None,
+        )
+    if not isinstance(entry, dict):
+        return []
+    req = entry.get("required_closures") or entry.get("required_closure_ids") or []
+    return [c for c in req if isinstance(c, str) and c]
+
+
+def _closure_exists(closure_id: str) -> bool:
+    return (BASE_PATH / "closures" / closure_id / "closure.json").exists()
+
+
 # Global exception handler for StarletteHTTPException (HTTPException)
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
@@ -770,6 +795,64 @@ async def get_closure(closure_id: str):
 @app.post("/closures", response_model=ClosureResponse, status_code=status.HTTP_201_CREATED)
 async def create_closure(closure: ClosureCreate):
     """Create a new closure."""
+    decision_type = (closure.decision_type or "").strip()
+
+    # B10: BOOK closure (book-level lock)
+    if decision_type.upper() == "BOOK":
+        book_id = (closure.proposal_id or "BOOK-DEFAULT").strip()
+        if book_id.startswith("BOOK-"):
+            book_id = book_id[len("BOOK-"):]
+        required = _load_book_required_closures(book_id)
+        missing = [cid for cid in required if not _closure_exists(cid)]
+        if missing:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Missing required closures for BOOK-{book_id}: {missing}",
+            )
+        closure_id = f"BOOK-{book_id}"
+        closure_dir = BASE_PATH / "closures" / closure_id
+        closure_dir.mkdir(parents=True, exist_ok=True)
+
+        closure_json_path = closure_dir / "closure.json"
+        if closure_json_path.exists():
+            raise HTTPException(
+                status_code=409,
+                detail=f"Closure {closure_id} already exists and is immutable",
+            )
+
+        closure_data = {
+            "closure_id": closure_id,
+            "created_at": datetime.utcnow().isoformat(),
+            "created_by": closure.created_by or get_username(),
+            "proposal_id": book_id,
+            "run_id": closure.run_id,
+            "source_run_id": closure.run_id,
+            "decision_type": "BOOK",
+            "rationale": closure.rationale,
+            "evidence_paths": closure.evidence_paths,
+            "sign_off": closure.sign_off,
+            "book_id": book_id,
+            "required_closure_ids": required,
+            "present_closure_ids": required,
+        }
+
+        closure_json_path.write_text(
+            json.dumps(closure_data, indent=2),
+            encoding="utf-8",
+        )
+
+        ensure_audit_log(
+            f"Book closure created: {closure_id}",
+            {
+                "closure_id": closure_id,
+                "book_id": book_id,
+                "decision_type": "BOOK",
+            },
+        )
+
+        indexer.reindex()
+        return ClosureResponse(**closure_data)
+
     # Policy check: ensure proposal exists
     proposal_path = BASE_PATH / "proposals" / closure.proposal_id
     if not proposal_path.exists():
@@ -797,7 +880,7 @@ async def create_closure(closure: ClosureCreate):
         "proposal_id": closure.proposal_id,
         "run_id": closure.run_id,
         "source_run_id": closure.run_id,
-        "decision_type": closure.decision_type,
+        "decision_type": decision_type,
         "rationale": closure.rationale,
         "evidence_paths": closure.evidence_paths,
         "sign_off": closure.sign_off,
