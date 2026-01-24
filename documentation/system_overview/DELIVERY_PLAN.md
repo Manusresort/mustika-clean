@@ -6,9 +6,9 @@
 
 - ## 1) Current phase marker
 - CURRENT_PHASE: **Phase 2 — Editorialize**, with `PROJECT_STATUS.md` as the authoritative source.
-- CURRENT_BATCH: **B2 — Chapter manifest derivation** (DONE; evidence: `reports/audit/evidence/session_20260123-1510/qa/summary.tsv`).
-- LAST_COMPLETED: **B2 — Chapter manifest derivation + QA guard** (matrix recorded in `reports/audit/evidence/session_20260123-1510/qa/summary.tsv`).
-- NEXT_BATCH: **B3 — Book manifest** (see `PROJECT_STATUS.md`).
+- CURRENT_BATCH: **B4 — Chapter closure rollups** (DONE; evidence: `reports/audit/evidence/session_20260124-0911/qa/summary.tsv`).
+- LAST_COMPLETED: **B4 — Chapter closure rollups + QA guard** (QA summary at `mustika-rasa-clean/runtime/audit/qa/latest_full/summary.tsv`).
+- NEXT_BATCH: **B5 — Glossary lifecycle gates** (see `PROJECT_STATUS.md`).
 
 ## 2) Batch model
 | Batch | Name | Goals | Deliverables | Entry points | QA gates | DoD | Risks |
@@ -17,7 +17,7 @@
 | B1 | Contract discipline + QA guards | Maak API-UI contract consistent en voeg QA guard toe. | `ADR-003` plus updated `api_server.py`, `ui/src/api.ts`, `qa_full_system.sh`. | GET `/inbox`, QA script. | `qa_full_system.sh` includes `GET_/inbox_counts`. | `/inbox` returns counts and QA ensures totals match items (ADR-003 and QA guard). | Inconsistent counts derivation, QA failure. |
 | B2 (NEW) | Chapter manifest derivation | Indexer emits `runtime/manifests/chapter_manifest.json` referencing runs/proposals/closures. | Chapter manifest spec + indexer updates. | `POST /reindex`, `indexer.py`. | Reindex run, `indices/run_index.json` validation, and QA guard (chapter_manifest exists + generated_at) documented in `reports/audit/evidence/session_20260123-1510/qa/summary.tsv`. | `runtime/manifests/chapter_manifest.json` exists and is derived-only (see `CHAPTER_MANIFEST_SPEC.md`). | Manifest growth/performance. |
 | B3 (NEW) | Chapter registry & UI filters | Surface chapters in UI/inbox via chapter registry. | `indices/chapter_registry.json`, UI filters. | `/inbox` + UI components consuming `chapter_id`. | QA ensures inbox items contain `chapter_id`. | UI filters show chapter names, registry validated (see `IMPLEMENTATION_BACKLOG.md`). | Proxy/UI mismatch. |
-| B4 (NEW) | Chapter closure rollups | Tighten book-level gating by aggregating chapter closures. | Rollup service referencing `closures/<id>`. | `POST /closures`, indexer. | Closure creation + reindex ensures book manifest `required_closures`. | Book manifest (once created) lists closure IDs when all chapter closures exist (see `BOOK_MANIFEST_SPEC.md`). | Partial chapter completion bugs. |
+| B4 (NEW) | Chapter closure rollups | Tighten book-level gating by aggregating chapter closures. | Rollup service referencing `closures/<id>`. | `POST /closures`, indexer. | `chapter_closure_rollup.json` exists with `generated_at`, and QA guard confirms rollup coverage (see `reports/audit/evidence/session_20260124-0911/qa/summary.tsv`). | Book manifest (once created) lists closure IDs when all chapter closures exist (see `BOOK_MANIFEST_SPEC.md`). | Partial chapter completion bugs. |
 | B5 (NEW) | Glossary lifecycle gates | Link glossary decisions to closures evidence. | `glossary` references in chapter manifest entries and `book_manifest.provenance`. | Closure creation, proposal metadata reads. | QA ensures glossary evidence paths recorded. | Each chapter entry references glossary evidence (see `BOOK_TRANSLATION_SYSTEM_SPEC.md`). | Evidence drift. |
 | B6 (NEW) | Review pack bundling | Bundle per-chapter review packs and surface them via API. | `proposals/<id>/review_pack/` manifest plus book manifest provenance. | `/proposals/{id}` + UI review view. | QA validates review_pack entries exist. | API returns `review_pack_files`, QA verifies (see `IMPLEMENTATION_BACKLOG.md`). | Manual pack maintenance. |
 | B7 (NEW) | Book manifest generation | Aggregate chapter manifests, closures, exports. | `runtime/manifests/book_manifest.json`, `book_manifest.exports`. | `POST /reindex`, indexer. | Reindex run and audit log entries (api_server logging). | File contains chapters, required closures, exports, provenance (see `BOOK_MANIFEST_SPEC.md`). | Data drift when chapters change mid-export. |

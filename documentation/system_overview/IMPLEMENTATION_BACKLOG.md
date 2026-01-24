@@ -68,7 +68,8 @@
 - **Problem**: book manifest requires radiating status from chapter closures to book approvals (BOOK_MANIFEST_SPEC.md:40-76).  
 - **Tasks**: create chapter closure rollup service that flags book-level `required_closure` when all chapters approved.  
 - **DoD**: book manifest `required_closures` list populated with closure IDs once each chapter closure exists; `book_manifest.status` transitions accordingly.  
-- **Risks**: partial chapter completion.
+- **Risks**: partial chapter completion.  
+- **Implementation note**: `runtime/indexer.py` now emits `indices/chapter_closure_rollup.json` (see submodule commit `50011e1`), and `scripts/qa_full_system.sh` asserts the rollup file exists with `generated_at`.  
 
 ### 2.5 Glossary lifecycle integration gates (NEW)
 - **Problem**: Glossary decisions currently documented but not tied to manifests (BOOK_TRANSLATION_SYSTEM_SPEC.md:28-39).  
