@@ -178,6 +178,24 @@ if [ "$API_UP" = "yes" ]; then
   fi
 
   if INBOX_JSON_PATH="$INBOX_JSON" python3 - <<'PY'
+import json, os
+path = os.environ['INBOX_JSON_PATH']
+try:
+    data = json.load(open(path))
+    items = data.get('items', [])
+    for item in items:
+        if 'chapter_id' not in item:
+            raise SystemExit('missing chapter_id key')
+except Exception:
+    raise
+PY
+  then
+    print_summary "GET_/inbox_chapter_id_key" "PASS" "exists"
+  else
+    print_summary "GET_/inbox_chapter_id_key" "FAIL" "missing"
+  fi
+
+  if INBOX_JSON_PATH="$INBOX_JSON" python3 - <<'PY'
 import json, os, sys
 path = os.environ["INBOX_JSON_PATH"]
 try:

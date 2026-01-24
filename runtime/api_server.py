@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent
 import sys
 sys.path.insert(0, str(BASE_DIR / "src"))
 # Ensure runtime/src is importable (filesystem-first runtime)
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 import os
 import getpass
 
@@ -132,6 +132,51 @@ class InboxResponse(BaseModel):
     generated_at: str
     counts: Dict[str, int]
     items: List[InboxItem]
+
+CHAPTER_MANIFEST_PATH = BASE_DIR / "manifests" / "chapter_manifest.json"
+CHAPTER_REGISTRY_PATH = BASE_DIR / "indices" / "chapter_registry.json"
+
+def _load_json_if_exists(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        logging.exception("Failed to read %s", path)
+        return {}
+
+def _build_chapter_lookup() -> Tuple[Dict[str, str], Dict[str, str], Dict[str, str]]:
+    manifest = _load_json_if_exists(CHAPTER_MANIFEST_PATH)
+    run_map: Dict[str, str] = {}
+    proposal_map: Dict[str, str] = {}
+    closure_map: Dict[str, str] = {}
+    chapters = manifest.get("chapters", [])
+    for chapter in chapters:
+        chapter_id = chapter.get("chapter_id")
+        if not chapter_id:
+            continue
+        for run_id in chapter.get("run_ids", []):
+            if isinstance(run_id, str):
+                run_map[run_id] = chapter_id
+        for proposal_id in chapter.get("proposal_ids", []):
+            if isinstance(proposal_id, str):
+                proposal_map[proposal_id] = chapter_id
+        for closure_id in chapter.get("closure_ids", []):
+            if isinstance(closure_id, str):
+                closure_map[closure_id] = chapter_id
+    return run_map, proposal_map, closure_map
+
+def _resolve_chapter_id(item: Dict[str, Any], run_map: Dict[str, str], proposal_map: Dict[str, str], closure_map: Dict[str, str]) -> Optional[str]:
+    run_id = item.get("run_id")
+    if isinstance(run_id, str) and run_id in run_map:
+        return run_map[run_id]
+    proposal_id = item.get("proposal_id")
+    if isinstance(proposal_id, str) and proposal_id in proposal_map:
+        return proposal_map[proposal_id]
+    closure_id = item.get("closure_id")
+    if isinstance(closure_id, str) and closure_id in closure_map:
+        return closure_map[closure_id]
+    return None
 
 
 # Helper functions
@@ -311,13 +356,29 @@ async def reindex():
         )
 
 
+@app.get("/chapters")
+async def get_chapters():
+    """Return the chapter registry index."""
+    registry = _load_json_if_exists(CHAPTER_REGISTRY_PATH)
+    if not registry:
+        registry = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "chapters": [],
+            "unassigned": {
+                "run_ids": [],
+                "proposal_ids": [],
+                "closure_ids": [],
+            },
+        }
+    return JSONResponse(status_code=200, content=registry)
+
+
 @app.get("/inbox")
 async def get_inbox():
     """Get inbox items from index."""
     inbox_path = BASE_PATH / "indices" / "inbox_index.json"
-    
+
     try:
-        # Handle missing file: return empty inbox
         if not inbox_path.exists():
             return JSONResponse(
                 status_code=200,
@@ -331,40 +392,33 @@ async def get_inbox():
                     "items": [],
                 }
             )
-        
-        # Read and parse JSON
+
         data = json.loads(inbox_path.read_text(encoding="utf-8"))
-        
-        # Normalize shape: support both { "generated_at": "...", "items": [...] } and [...]
         if isinstance(data, list):
-            # Shape B: array - normalize to object
             normalized = {
                 "generated_at": None,
                 "items": data,
             }
         elif isinstance(data, dict):
-            # Shape A: object - ensure required fields exist
             normalized = {
                 "generated_at": data.get("generated_at"),
                 "items": data.get("items", []),
             }
         else:
-            # Unexpected shape - return empty
             normalized = {
                 "generated_at": None,
                 "items": [],
             }
-        # Always include counts derived from items
+        run_map, proposal_map, closure_map = _build_chapter_lookup()
+        for item in normalized["items"]:
+            item["chapter_id"] = _resolve_chapter_id(item, run_map, proposal_map, closure_map)
         normalized_counts = derive_inbox_counts(normalized["items"])
         normalized["counts"] = normalized_counts
 
         return JSONResponse(status_code=200, content=normalized)
-        
+
     except Exception as e:
-        # Log full traceback
         logging.exception("Failed to read inbox index")
-        
-        # Return JSON error response (do NOT re-raise)
         return JSONResponse(
             status_code=500,
             content={
