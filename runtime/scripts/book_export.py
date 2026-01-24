@@ -16,6 +16,7 @@ Produces:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import sys
@@ -62,6 +63,19 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     ap.add_argument("--out-dir", default="exports/books", help="Output base dir relative to runtime root")
     ap.add_argument("--dry-run", action="store_true", help="Print actions without writing files")
     return ap.parse_args(argv)
+
+
+def write_checksums(release_dir: Path, files_dir: Path, rels: List[str]) -> None:
+    lines = []
+    for rel in sorted(rels):
+        fp = files_dir / rel
+        h = hashlib.sha256()
+        with fp.open("rb") as f:
+            for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                h.update(chunk)
+        lines.append(f"{h.hexdigest()}  files/{rel}")
+    out = release_dir / "CHECKSUMS.sha256"
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main(argv: List[str]) -> int:
@@ -122,12 +136,13 @@ def main(argv: List[str]) -> int:
         if not build_manifest_paths:
             print(f"No build_manifest references found for book_id={book_id}")
             continue
+        build_manifest_paths = sorted(build_manifest_paths, key=lambda p: p.as_posix())
 
         if not args.dry_run:
             release_dir.mkdir(parents=True, exist_ok=True)
             files_dir.mkdir(parents=True, exist_ok=True)
 
-        copied_files: List[str] = []
+        copied_files = set()
         for idx, bm_path in enumerate(build_manifest_paths, start=1):
             dst_name = "build_manifest.json" if idx == 1 else f"build_manifest_{idx}.json"
             if not args.dry_run:
@@ -136,7 +151,7 @@ def main(argv: List[str]) -> int:
             data = load_json(bm_path)
             exports_block = data.get("exports", {}) if isinstance(data, dict) else {}
             file_list = exports_block.get("files", []) if isinstance(exports_block, dict) else []
-            for rel in file_list:
+            for rel in sorted(file_list):
                 if not isinstance(rel, str) or not is_safe_rel_path(rel):
                     continue
                 src = (RUNTIME_ROOT / rel).resolve()
@@ -146,7 +161,9 @@ def main(argv: List[str]) -> int:
                 if not args.dry_run:
                     dst.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(src, dst)
-                copied_files.append(rel)
+                copied_files.add(rel)
+
+        copied_files_list = sorted(copied_files)
 
         readme_lines = [
             "Exporter: B9 skeleton",
@@ -154,11 +171,12 @@ def main(argv: List[str]) -> int:
             f"Input book_manifest: {manifest_path}",
             f"Book id: {book_id}",
             f"Release id: {args.release_id}",
-            "Notes: non-deterministic, no checksums, no packaging.",
+            "Notes: deterministic ordering + CHECKSUMS.sha256; no packaging.",
             f"Build manifests: {len(build_manifest_paths)}",
-            f"Files copied: {len(copied_files)}",
+            f"Files copied: {len(copied_files_list)}",
         ]
         if not args.dry_run:
+            write_checksums(release_dir, files_dir, copied_files_list)
             (release_dir / "EXPORTER_README.txt").write_text("\n".join(readme_lines) + "\n", encoding="utf-8")
 
         print(f"Export written to {release_dir}")

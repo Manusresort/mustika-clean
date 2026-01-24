@@ -697,6 +697,115 @@ else
   print_summary "exporter_help_runs" "WARN" "missing"
 fi
 
+### B11 — Deterministic exports & checksums
+BOOK_EXPORT_RC=0
+if [ -x "$BASE_DIR/scripts/book_export.py" ] && [ -f "$BASE_DIR/manifests/book_manifest.json" ]; then
+  python3 "$BASE_DIR/scripts/book_export.py" --release-id latest > "$AUDIT_DIR/book_export.stdout.txt" 2>&1 || BOOK_EXPORT_RC=$?
+  if [ "$BOOK_EXPORT_RC" -eq 0 ]; then
+    print_summary "book_export_run" "PASS" "latest"
+  else
+    print_summary "book_export_run" "FAIL" "rc=$BOOK_EXPORT_RC"
+  fi
+else
+  print_summary "book_export_run" "SKIP" "missing_exporter_or_manifest"
+fi
+
+if python3 - <<'PY'
+import json
+from pathlib import Path
+bm_path = Path("manifests/book_manifest.json")
+if not bm_path.exists():
+    raise SystemExit(0)
+bm = json.load(open(bm_path, "r", encoding="utf-8"))
+entry = bm
+books = bm.get("books")
+if isinstance(books, list) and books:
+    entry = books[0]
+book_id = entry.get("book_id", "BOOK-DEFAULT")
+checksums = Path("exports") / "books" / book_id / "releases" / "latest" / "CHECKSUMS.sha256"
+if not checksums.exists():
+    raise SystemExit(1)
+print("ok")
+PY
+then
+  print_summary "export_checksums_exists" "PASS" "CHECKSUMS.sha256 present"
+else
+  print_summary "export_checksums_exists" "FAIL" "missing"
+fi
+
+if python3 - <<'PY'
+import json, hashlib
+from pathlib import Path
+bm_path = Path("manifests/book_manifest.json")
+if not bm_path.exists():
+    raise SystemExit(0)
+bm = json.load(open(bm_path, "r", encoding="utf-8"))
+entry = bm
+books = bm.get("books")
+if isinstance(books, list) and books:
+    entry = books[0]
+book_id = entry.get("book_id", "BOOK-DEFAULT")
+release_dir = Path("exports") / "books" / book_id / "releases" / "latest"
+checksums = release_dir / "CHECKSUMS.sha256"
+if not checksums.exists():
+    raise SystemExit(1)
+lines = [ln for ln in checksums.read_text(encoding="utf-8").splitlines() if ln.strip()]
+entries = {}
+for ln in lines:
+    if "  " not in ln:
+        raise SystemExit(1)
+    h, rel = ln.split("  ", 1)
+    entries[rel] = h
+exports = entry.get("exports", [])
+if not isinstance(exports, list) or not exports:
+    raise SystemExit(0)
+bm_ref = exports[0].get("build_manifest")
+if not isinstance(bm_ref, str) or not bm_ref:
+    raise SystemExit(1)
+bm_data = json.load(open(Path(bm_ref), "r", encoding="utf-8"))
+files = bm_data.get("exports", {}).get("files", [])
+for rel in files:
+    rel_path = f"files/{rel}"
+    fp = release_dir / rel_path
+    if not fp.exists():
+        raise SystemExit(1)
+    h = hashlib.sha256(fp.read_bytes()).hexdigest()
+    if entries.get(rel_path) != h:
+        raise SystemExit(1)
+print("ok")
+PY
+then
+  print_summary "export_checksums_match_build_manifest" "PASS" "ok"
+else
+  print_summary "export_checksums_match_build_manifest" "FAIL" "mismatch"
+fi
+
+if python3 - <<'PY'
+from pathlib import Path
+bm_path = Path("manifests/book_manifest.json")
+if not bm_path.exists():
+    raise SystemExit(0)
+bm = __import__("json").load(open(bm_path, "r", encoding="utf-8"))
+entry = bm
+books = bm.get("books")
+if isinstance(books, list) and books:
+    entry = books[0]
+book_id = entry.get("book_id", "BOOK-DEFAULT")
+checksums = Path("exports") / "books" / book_id / "releases" / "latest" / "CHECKSUMS.sha256"
+if not checksums.exists():
+    raise SystemExit(1)
+lines = [ln for ln in checksums.read_text(encoding="utf-8").splitlines() if ln.strip()]
+paths = [ln.split("  ", 1)[1] for ln in lines]
+if paths != sorted(paths):
+    raise SystemExit(1)
+print("ok")
+PY
+then
+  print_summary "export_checksums_sorted" "PASS" "sorted"
+else
+  print_summary "export_checksums_sorted" "FAIL" "unsorted"
+fi
+
 # F) UI build sanity
 if command -v npm >/dev/null 2>&1; then
   ui_rc=0
