@@ -535,6 +535,15 @@ class Indexer:
             pass
         return closures
 
+    def _relative_path(self, path: Path) -> Optional[str]:
+        try:
+            rel = path.relative_to(self.base_path).as_posix()
+            if rel.startswith("../") or ".." in rel.split("/"):
+                return None
+            return rel
+        except ValueError:
+            return None
+
     def build_chapter_registry_payload(self, manifest: Dict[str, Any]) -> Dict[str, Any]:
         chapters_raw = manifest.get("chapters", [])
         unassigned_raw = manifest.get("unassigned", {})
@@ -631,6 +640,57 @@ class Indexer:
                 "chapter_manifest": "manifests/chapter_manifest.json",
                 "closure_index": "indices/closure_index.json",
             },
+        }
+
+    def build_review_pack_index(self, proposals: List[Dict[str, Any]], closures: List[Dict[str, Any]]) -> Dict[str, Any]:
+        closure_map = {}
+        for closure in closures:
+            proposal_id = closure.get("proposal_id")
+            if not proposal_id:
+                continue
+            for path in closure.get("evidence_paths", []) or []:
+                if not isinstance(path, str):
+                    continue
+                norm = path
+                if norm.startswith("/") or ".." in norm.split("/"):
+                    continue
+                closure_map.setdefault(proposal_id, []).append(norm)
+
+        entries = []
+        for proposal in sorted(proposals, key=lambda p: p.get("proposal_id", "")):
+            proposal_id = proposal.get("proposal_id")
+            if not proposal_id:
+                continue
+            files = []
+            proposal_dir = self.proposals_path / proposal_id
+            for candidate in [proposal_dir / "proposal.md", proposal_dir / "status.json"]:
+                if candidate.exists():
+                    rel = self._relative_path(candidate)
+                    if rel:
+                        files.append(rel)
+            review_pack_dir = proposal_dir / "review_pack"
+            has_pack = False
+            if review_pack_dir.exists():
+                for child in sorted(review_pack_dir.rglob("*")):
+                    if child.is_file():
+                        rel = self._relative_path(child)
+                        if rel:
+                            files.append(rel)
+                has_pack = True
+            for closure_path in sorted(set(closure_map.get(proposal_id, []))):
+                files.append(closure_path)
+            entries.append({
+                "proposal_id": proposal_id,
+                "review_pack_files": sorted(dict.fromkeys(files)),
+                "source": {
+                    "has_review_pack_dir": has_pack,
+                    "derived_from": ["proposal_index", "closure_index", "run_index"],
+                },
+            })
+
+        return {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "proposals": entries,
         }
 
     def load_closure_index_objects(self) -> List[Dict[str, Any]]:
