@@ -161,6 +161,28 @@ for idx in run_index.json proposal_index.json closure_index.json inbox_index.jso
   fi
 done
 
+if [ -f "$BASE_DIR/indices/chapter_closure_rollup.json" ]; then
+  print_summary "chapter_closure_rollup_exists" "PASS" "exists"
+  if python3 - <<PY
+import json
+path = "$BASE_DIR/indices/chapter_closure_rollup.json"
+try:
+    data = json.load(open(path))
+    if 'generated_at' not in data:
+        raise SystemExit('missing generated_at key')
+except Exception as exc:
+    print(f'chapter_closure_rollup_error: {exc}')
+    raise
+PY
+  then
+    print_summary "chapter_closure_rollup_has_generated_at" "PASS" "has key"
+  else
+    print_summary "chapter_closure_rollup_has_generated_at" "FAIL" "missing key"
+  fi
+else
+  print_summary "chapter_closure_rollup_exists" "FAIL" "missing"
+fi
+
 # D) API endpoints
 if [ "$API_UP" = "yes" ]; then
   if curl -s http://127.0.0.1:8010/health | rg -q '"ok"\s*:\s*true'; then

@@ -520,6 +520,21 @@ class Indexer:
         except (json.JSONDecodeError, IOError):
             return {}
 
+    def load_closure_index(self) -> List[str]:
+        closures = []
+        closure_index_path = self.indices_path / "closure_index.json"
+        if not closure_index_path.exists():
+            return closures
+        try:
+            data = json.loads(closure_index_path.read_text(encoding="utf-8"))
+            for closure in data.get("closures", []):
+                closure_id = closure.get("closure_id")
+                if isinstance(closure_id, str):
+                    closures.append(closure_id)
+        except (json.JSONDecodeError, IOError):
+            pass
+        return closures
+
     def build_chapter_registry_payload(self, manifest: Dict[str, Any]) -> Dict[str, Any]:
         chapters_raw = manifest.get("chapters", [])
         unassigned_raw = manifest.get("unassigned", {})
@@ -561,6 +576,40 @@ class Indexer:
             "source_manifest": "manifests/chapter_manifest.json",
         }
 
+    def build_chapter_closure_rollup(self, manifest: Dict[str, Any], closure_index_ids: List[str]) -> Dict[str, Any]:
+        chapters_raw = manifest.get("chapters", [])
+        rollup_chapters = []
+
+        def _unique_sorted(entries: List[str]) -> List[str]:
+            return sorted(dict.fromkeys(entries))
+
+        assigned_ids = set()
+        for chapter in sorted(chapters_raw, key=lambda c: c.get("chapter_id", "")):
+            chapter_id = chapter.get("chapter_id")
+            if not chapter_id:
+                continue
+            closure_ids = _unique_sorted(chapter.get("closure_ids", []))
+            assigned_ids.update(closure_ids)
+            rollup_chapters.append({
+                "chapter_id": chapter_id,
+                "closure_ids": closure_ids,
+                "counts": {"total": len(closure_ids)},
+                "status": "closed" if closure_ids else "none",
+            })
+
+        unassigned_ids = [cid for cid in closure_index_ids if cid not in assigned_ids]
+        unassigned = {"closure_ids": _unique_sorted(unassigned_ids)}
+
+        return {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "chapters": rollup_chapters,
+            "unassigned": unassigned,
+            "sources": {
+                "chapter_manifest": "manifests/chapter_manifest.json",
+                "closure_index": "indices/closure_index.json",
+            },
+        }
+
     def reindex(self) -> Dict[str, Any]:
         """Generate all indices and return summary."""
         print("Scanning runs...")
@@ -591,12 +640,15 @@ class Indexer:
 
         chapter_manifest = self.load_chapter_manifest()
         chapter_registry_payload = self.build_chapter_registry_payload(chapter_manifest)
+        closure_index_ids = self.load_closure_index()
+        chapter_rollup_payload = self.build_chapter_closure_rollup(chapter_manifest, closure_index_ids)
 
         _write_index_json_if_changed(self.indices_path / "run_index.json", run_payload)
         _write_index_json_if_changed(self.indices_path / "proposal_index.json", proposal_payload)
         _write_index_json_if_changed(self.indices_path / "closure_index.json", closure_payload)
         _write_index_json_if_changed(self.indices_path / "inbox_index.json", inbox_index)
         _write_index_json_if_changed(self.indices_path / "chapter_registry.json", chapter_registry_payload)
+        _write_index_json_if_changed(self.indices_path / "chapter_closure_rollup.json", chapter_rollup_payload)
         
         return {
             "runs": len(runs),
