@@ -50,3 +50,6 @@ runtime/scripts/run_full_demo.py
 
 # avoid split-authority docs
 documentation/system_overview/
+
+# generated exports
+runtime/exports/

@@ -105,6 +105,48 @@ indexer_rc=0
 python3 indexer.py >/tmp/qa_full_indexer.txt 2>&1 || indexer_rc=$?
 print_summary "indexer_run" "$(passfail $indexer_rc)" "python3 indexer.py"
 
+# B8b) Book build manifest generator
+BOOK_MANIFEST_RC=0
+TEST_BOOK_ID=""
+
+TEST_BOOK_ID="$(python3 - <<'PYP'
+import json
+from pathlib import Path
+p = Path("indices/book_closure_rollup.json")
+data = json.loads(p.read_text(encoding="utf-8"))
+books = data.get("books", [])
+bid = books[0].get("book_id") if books else ""
+print(bid or "")
+PYP
+)"
+
+if [ -n "$TEST_BOOK_ID" ]; then
+  python3 scripts/build_book_build_manifests.py --book-id "$TEST_BOOK_ID" --out-dir exports/books --strict \
+    > "$AUDIT_DIR/book_build_manifest_${TEST_BOOK_ID}.stdout.txt" 2>&1 || BOOK_MANIFEST_RC=$?
+  if [ "$BOOK_MANIFEST_RC" -eq 0 ]; then
+    print_summary "build_book_manifest" "PASS" "book=$TEST_BOOK_ID"
+  else
+    print_summary "build_book_manifest" "FAIL" "book=$TEST_BOOK_ID rc=$BOOK_MANIFEST_RC"
+  fi
+
+  BM_PATH="$BASE_DIR/exports/books/$TEST_BOOK_ID/builds/latest/build_manifest.json"
+  if [ -f "$BM_PATH" ]; then
+    print_summary "book_build_manifest_exists" "PASS" "book=$TEST_BOOK_ID"
+    if rg -q '"generated_at"\s*:' "$BM_PATH"; then
+      print_summary "book_build_manifest_has_generated_at" "PASS" "book=$TEST_BOOK_ID"
+    else
+      print_summary "book_build_manifest_has_generated_at" "FAIL" "generated_at_missing"
+    fi
+  else
+    print_summary "book_build_manifest_exists" "FAIL" "missing $BM_PATH"
+    print_summary "book_build_manifest_has_generated_at" "SKIP" "missing_manifest"
+  fi
+else
+  print_summary "build_book_manifest" "WARN" "no_books_found"
+  print_summary "book_build_manifest_exists" "SKIP" "no_books_found"
+  print_summary "book_build_manifest_has_generated_at" "SKIP" "no_books_found"
+fi
+
 # B8a) book closure rollup
 if [ -f "$BASE_DIR/indices/book_closure_rollup.json" ]; then
   print_summary "book_closure_rollup_exists" "PASS" "exists"
