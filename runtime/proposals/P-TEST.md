@@ -5,4 +5,3 @@ status: draft
 ---
 
 This is a minimal placeholder proposal for CI/QA.
-
