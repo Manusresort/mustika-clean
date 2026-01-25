@@ -54,3 +54,6 @@ documentation/system_overview/
 
 # generated exports
 runtime/exports/
+
+!runtime/proposals/
+!runtime/proposals/P-TEST.md
