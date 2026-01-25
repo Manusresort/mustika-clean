@@ -56,6 +56,5 @@ documentation/system_overview/
 runtime/exports/
 
 !runtime/proposals/
-!runtime/proposals/P-TEST.md
-
-!runtime/proposals/P-TEST.md
+!runtime/proposals/P-TEST/
+!runtime/proposals/P-TEST/proposal.md
