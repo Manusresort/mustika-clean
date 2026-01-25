@@ -697,12 +697,31 @@ else
   print_summary "exporter_help_runs" "WARN" "missing"
 fi
 
+### R1 — Release identity enforcement (ADR-011)
+RELEASE_IDENTITY_RC=0
+RELEASE_IDENTITY_OUT=""
+if [ -x "$BASE_DIR/scripts/qa_release_identity.sh" ]; then
+  RELEASE_IDENTITY_OUT="$("$BASE_DIR/scripts/qa_release_identity.sh" 2>&1 || true)"
+  if echo "$RELEASE_IDENTITY_OUT" | rg -q '^SKIP:'; then
+    print_summary "release_identity_enforced" "SKIP" "$(echo "$RELEASE_IDENTITY_OUT" | head -n 1)"
+  else
+    "$BASE_DIR/scripts/qa_release_identity.sh" >/dev/null 2>&1 || RELEASE_IDENTITY_RC=$?
+    if [ "$RELEASE_IDENTITY_RC" -eq 0 ]; then
+      print_summary "release_identity_enforced" "PASS" "latest.json + immutability"
+    else
+      print_summary "release_identity_enforced" "FAIL" "qa_release_identity.sh rc=$RELEASE_IDENTITY_RC"
+    fi
+  fi
+else
+  print_summary "release_identity_enforced" "SKIP" "missing qa_release_identity.sh"
+fi
+
 ### B11 — Deterministic exports & checksums
 BOOK_EXPORT_RC=0
 if [ -x "$BASE_DIR/scripts/book_export.py" ] && [ -f "$BASE_DIR/manifests/book_manifest.json" ]; then
   python3 "$BASE_DIR/scripts/book_export.py" --release-id latest > "$AUDIT_DIR/book_export.stdout.txt" 2>&1 || BOOK_EXPORT_RC=$?
   if [ "$BOOK_EXPORT_RC" -eq 0 ]; then
-    print_summary "book_export_run" "PASS" "latest"
+    print_summary "book_export_run" "PASS" "export ok (latest.json pointer updated)"
   else
     print_summary "book_export_run" "FAIL" "rc=$BOOK_EXPORT_RC"
   fi
@@ -722,7 +741,13 @@ books = bm.get("books")
 if isinstance(books, list) and books:
     entry = books[0]
 book_id = entry.get("book_id", "BOOK-DEFAULT")
-checksums = Path("exports") / "books" / book_id / "releases" / "latest" / "CHECKSUMS.sha256"
+latest_json = Path("exports") / "books" / book_id / "releases" / "latest.json"
+if not latest_json.exists():
+    raise SystemExit(1)
+release_id = json.load(open(latest_json, "r", encoding="utf-8")).get("release_id")
+if not release_id or release_id == "latest":
+    raise SystemExit(1)
+checksums = Path("exports") / "books" / book_id / "releases" / release_id / "CHECKSUMS.sha256"
 if not checksums.exists():
     raise SystemExit(1)
 print("ok")
@@ -745,7 +770,13 @@ books = bm.get("books")
 if isinstance(books, list) and books:
     entry = books[0]
 book_id = entry.get("book_id", "BOOK-DEFAULT")
-release_dir = Path("exports") / "books" / book_id / "releases" / "latest"
+latest_json = Path("exports") / "books" / book_id / "releases" / "latest.json"
+if not latest_json.exists():
+    raise SystemExit(1)
+release_id = json.load(open(latest_json, "r", encoding="utf-8")).get("release_id")
+if not release_id or release_id == "latest":
+    raise SystemExit(1)
+release_dir = Path("exports") / "books" / book_id / "releases" / release_id
 checksums = release_dir / "CHECKSUMS.sha256"
 if not checksums.exists():
     raise SystemExit(1)
@@ -791,7 +822,13 @@ books = bm.get("books")
 if isinstance(books, list) and books:
     entry = books[0]
 book_id = entry.get("book_id", "BOOK-DEFAULT")
-checksums = Path("exports") / "books" / book_id / "releases" / "latest" / "CHECKSUMS.sha256"
+latest_json = Path("exports") / "books" / book_id / "releases" / "latest.json"
+if not latest_json.exists():
+    raise SystemExit(1)
+release_id = __import__("json").load(open(latest_json, "r", encoding="utf-8")).get("release_id")
+if not release_id or release_id == "latest":
+    raise SystemExit(1)
+checksums = Path("exports") / "books" / book_id / "releases" / release_id / "CHECKSUMS.sha256"
 if not checksums.exists():
     raise SystemExit(1)
 lines = [ln for ln in checksums.read_text(encoding="utf-8").splitlines() if ln.strip()]
