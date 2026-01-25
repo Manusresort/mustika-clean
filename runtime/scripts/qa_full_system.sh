@@ -927,3 +927,9 @@ fi
 printf '\nSummary written to %s\n' "$SUMMARY"
 normalize_summary
 printf 'Normalized summary written to %s\n' "${AUDIT_DIR}/summary.normalized.tsv"
+
+# Final exit code should reflect summary.tsv contents only.
+if rg -q $'\tFAIL\t' "$SUMMARY"; then
+  exit 1
+fi
+exit 0
