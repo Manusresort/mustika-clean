@@ -27,6 +27,23 @@ print(entry.get("book_id") or "BOOK-DEFAULT")
 PY
 )"
 
+HAS_EXPORTS="$(python3 - <<'PY'
+import json
+from pathlib import Path
+p = Path("manifests/book_manifest.json")
+d = json.load(open(p, "r", encoding="utf-8"))
+books = d.get("books")
+entry = books[0] if isinstance(books, list) and books else d
+exports = entry.get("exports", [])
+print("yes" if isinstance(exports, list) and exports else "no")
+PY
+)"
+
+if [ "$HAS_EXPORTS" != "yes" ]; then
+  echo "SKIP: no exports in book_manifest"
+  exit 0
+fi
+
 python3 "$EXPORTER" --book-id "$BOOK_ID" --release-id latest >/tmp/qa_release_identity.stdout.txt 2>&1 || {
   echo "FAIL: export failed"
   exit 1

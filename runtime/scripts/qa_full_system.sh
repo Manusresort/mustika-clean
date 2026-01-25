@@ -806,6 +806,28 @@ else
   print_summary "book_export_run" "SKIP" "missing_exporter_or_manifest"
 fi
 
+HAS_EXPORTS="$(python3 - <<'PY'
+import json
+from pathlib import Path
+bm_path = Path("manifests/book_manifest.json")
+if not bm_path.exists():
+    print("no")
+    raise SystemExit(0)
+bm = json.load(open(bm_path, "r", encoding="utf-8"))
+entry = bm
+books = bm.get("books")
+if isinstance(books, list) and books:
+    entry = books[0]
+exports = entry.get("exports", [])
+print("yes" if isinstance(exports, list) and exports else "no")
+PY
+)"
+
+if [ "$HAS_EXPORTS" != "yes" ]; then
+  print_summary "export_checksums_exists" "SKIP" "no_exports"
+  print_summary "export_checksums_match_build_manifest" "SKIP" "no_exports"
+  print_summary "export_checksums_sorted" "SKIP" "no_exports"
+else
 if python3 - <<'PY'
 import json
 from pathlib import Path
@@ -918,6 +940,7 @@ then
   print_summary "export_checksums_sorted" "PASS" "sorted"
 else
   print_summary "export_checksums_sorted" "FAIL" "unsorted"
+fi
 fi
 
 ### R3 — Release trust metadata (ADR-012)
