@@ -58,6 +58,91 @@ print_summary "CHECK" "RESULT" "NOTES"
 
 cd "$BASE_DIR"
 
+# Release identity check helper (R1)
+release_identity_check() {
+  local rc=0
+  local out=""
+  if [ -x "$BASE_DIR/scripts/qa_release_identity.sh" ]; then
+    out="$("$BASE_DIR/scripts/qa_release_identity.sh" 2>&1 || true)"
+    if echo "$out" | rg -q '^SKIP:'; then
+      print_summary "release_identity_enforced" "SKIP" "$(echo "$out" | head -n 1)"
+      return 0
+    else
+      "$BASE_DIR/scripts/qa_release_identity.sh" >/dev/null 2>&1 || rc=$?
+      if [ "$rc" -eq 0 ]; then
+        print_summary "release_identity_enforced" "PASS" "latest.json + immutability"
+        return 0
+      else
+        print_summary "release_identity_enforced" "FAIL" "qa_release_identity.sh rc=$rc"
+        return 1
+      fi
+    fi
+  else
+    print_summary "release_identity_enforced" "SKIP" "missing qa_release_identity.sh"
+    return 0
+  fi
+}
+
+# Release trust check helper (R3)
+release_trust_check() {
+  if [ "${CI:-}" != "true" ] && [ -x "$BASE_DIR/scripts/write_release_trust.py" ] && [ -f "$BASE_DIR/manifests/book_manifest.json" ]; then
+    TRUST_BOOK_ID="$(python3 - <<'PY'
+import json
+p = "manifests/book_manifest.json"
+d = json.load(open(p, "r", encoding="utf-8"))
+books = d.get("books")
+entry = books[0] if isinstance(books, list) and books else d
+print(entry.get("book_id") or "BOOK-DEFAULT")
+PY
+)"
+    python3 "$BASE_DIR/scripts/write_release_trust.py" --book-id "$TRUST_BOOK_ID" --trust-level unverified --conclusion success --source local >/dev/null 2>&1 || true
+  fi
+
+  if python3 - <<'PY'
+import json, os
+from pathlib import Path
+bm_path = Path("manifests/book_manifest.json")
+if not bm_path.exists():
+    raise SystemExit(0)
+bm = json.load(open(bm_path, "r", encoding="utf-8"))
+entry = bm
+books = bm.get("books")
+if isinstance(books, list) and books:
+    entry = books[0]
+book_id = entry.get("book_id", "BOOK-DEFAULT")
+latest_json = Path("exports") / "books" / book_id / "releases" / "latest.json"
+if not latest_json.exists():
+    raise SystemExit(1)
+release_id = json.load(open(latest_json, "r", encoding="utf-8")).get("release_id")
+if not release_id or release_id == "latest":
+    raise SystemExit(1)
+trust_path = Path("exports") / "books" / book_id / "releases" / release_id / "release_trust.json"
+if not trust_path.exists():
+    raise SystemExit(1)
+data = json.load(open(trust_path, "r", encoding="utf-8"))
+if os.environ.get("CI") == "true":
+    if data.get("trust_level") != "ci_passed" or data.get("conclusion") != "success":
+        raise SystemExit(1)
+else:
+    if data.get("trust_level") not in ("unverified", "ci_passed"):
+        raise SystemExit(1)
+print("ok")
+PY
+  then
+    print_summary "release_trust_present" "PASS" "release_trust.json present"
+    return 0
+  else
+    print_summary "release_trust_present" "FAIL" "missing_or_invalid"
+    return 1
+  fi
+}
+
+if [ "${QA_TRUST_ONLY:-}" = "1" ]; then
+  release_identity_check || exit 1
+  release_trust_check || exit 1
+  exit 0
+fi
+
 # A) Preflight
 python3 --version >/tmp/qa_full_python.txt 2>&1
 print_summary "python3" "PASS" "$(cat /tmp/qa_full_python.txt | tr -d '\n')"
@@ -698,70 +783,7 @@ else
 fi
 
 ### R1 — Release identity enforcement (ADR-011)
-RELEASE_IDENTITY_RC=0
-RELEASE_IDENTITY_OUT=""
-if [ -x "$BASE_DIR/scripts/qa_release_identity.sh" ]; then
-  RELEASE_IDENTITY_OUT="$("$BASE_DIR/scripts/qa_release_identity.sh" 2>&1 || true)"
-  if echo "$RELEASE_IDENTITY_OUT" | rg -q '^SKIP:'; then
-    print_summary "release_identity_enforced" "SKIP" "$(echo "$RELEASE_IDENTITY_OUT" | head -n 1)"
-  else
-    "$BASE_DIR/scripts/qa_release_identity.sh" >/dev/null 2>&1 || RELEASE_IDENTITY_RC=$?
-    if [ "$RELEASE_IDENTITY_RC" -eq 0 ]; then
-      print_summary "release_identity_enforced" "PASS" "latest.json + immutability"
-    else
-      print_summary "release_identity_enforced" "FAIL" "qa_release_identity.sh rc=$RELEASE_IDENTITY_RC"
-    fi
-  fi
-else
-  print_summary "release_identity_enforced" "SKIP" "missing qa_release_identity.sh"
-fi
-
-### R3 — Release trust metadata (ADR-012)
-if [ "${GITHUB_ACTIONS:-}" != "true" ] && [ -x "$BASE_DIR/scripts/write_release_trust.py" ] && [ -f "$BASE_DIR/manifests/book_manifest.json" ]; then
-  TRUST_BOOK_ID="$(python3 - <<'PY'
-import json
-p = "manifests/book_manifest.json"
-d = json.load(open(p, "r", encoding="utf-8"))
-books = d.get("books")
-entry = books[0] if isinstance(books, list) and books else d
-print(entry.get("book_id") or "BOOK-DEFAULT")
-PY
-)"
-  python3 "$BASE_DIR/scripts/write_release_trust.py" --book-id "$TRUST_BOOK_ID" --trust-level unverified >/dev/null 2>&1 || true
-fi
-
-if python3 - <<'PY'
-import json, os
-from pathlib import Path
-bm_path = Path("manifests/book_manifest.json")
-if not bm_path.exists():
-    raise SystemExit(0)
-bm = json.load(open(bm_path, "r", encoding="utf-8"))
-entry = bm
-books = bm.get("books")
-if isinstance(books, list) and books:
-    entry = books[0]
-book_id = entry.get("book_id", "BOOK-DEFAULT")
-latest_json = Path("exports") / "books" / book_id / "releases" / "latest.json"
-if not latest_json.exists():
-    raise SystemExit(1)
-release_id = json.load(open(latest_json, "r", encoding="utf-8")).get("release_id")
-if not release_id or release_id == "latest":
-    raise SystemExit(1)
-trust_path = Path("exports") / "books" / book_id / "releases" / release_id / "release_trust.json"
-if not trust_path.exists():
-    raise SystemExit(1)
-data = json.load(open(trust_path, "r", encoding="utf-8"))
-if os.environ.get("GITHUB_ACTIONS") == "true":
-    if data.get("trust_level") != "ci_passed":
-        raise SystemExit(1)
-print("ok")
-PY
-then
-  print_summary "release_trust_present" "PASS" "release_trust.json present"
-else
-  print_summary "release_trust_present" "FAIL" "missing_or_invalid"
-fi
+release_identity_check
 
 ### B11 — Deterministic exports & checksums
 BOOK_EXPORT_RC=0
@@ -889,6 +911,9 @@ then
 else
   print_summary "export_checksums_sorted" "FAIL" "unsorted"
 fi
+
+### R3 — Release trust metadata (ADR-012)
+release_trust_check
 
 # F) UI build sanity
 if command -v npm >/dev/null 2>&1; then

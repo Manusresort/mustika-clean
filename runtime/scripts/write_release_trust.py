@@ -7,7 +7,7 @@ import os
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,7 +27,7 @@ def write_json_atomic(path: Path, data: Dict[str, Any]) -> None:
     tmp.replace(path)
 
 
-def git_head_sha() -> str | None:
+def git_head_sha() -> Optional[str]:
     try:
         out = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=str(RUNTIME_ROOT), text=True).strip()
         return out or None
@@ -35,37 +35,15 @@ def git_head_sha() -> str | None:
         return None
 
 
-def build_ci_block(conclusion: str | None) -> Dict[str, Any]:
-    if os.environ.get("GITHUB_ACTIONS") == "true":
-        run_id = os.environ.get("GITHUB_RUN_ID")
-        repo = os.environ.get("GITHUB_REPOSITORY")
-        server = os.environ.get("GITHUB_SERVER_URL")
-        run_url = None
-        if run_id and repo and server:
-            run_url = f"{server}/{repo}/actions/runs/{run_id}"
-        return {
-            "provider": "github_actions",
-            "workflow": os.environ.get("GITHUB_WORKFLOW"),
-            "job": os.environ.get("GITHUB_JOB"),
-            "run_id": run_id,
-            "run_url": run_url,
-            "conclusion": conclusion,
-        }
-    return {
-        "provider": None,
-        "workflow": None,
-        "job": None,
-        "run_id": None,
-        "run_url": None,
-        "conclusion": None,
-    }
-
-
 def parse_args(argv: list[str]) -> argparse.Namespace:
     ap = argparse.ArgumentParser(description="Write release_trust.json for latest release.")
     ap.add_argument("--book-id", default="BOOK-DEFAULT")
-    ap.add_argument("--trust-level", default=None, choices=["unverified", "ci_passed", None])
-    ap.add_argument("--conclusion", default=None)
+    ap.add_argument("--conclusion", default=None, choices=["success", "failure", "cancelled", "skipped", None])
+    ap.add_argument("--trust-level", required=True, choices=["ci_passed", "ci_failed", "unverified"])
+    ap.add_argument("--source", required=True, choices=["ci", "local"])
+    ap.add_argument("--run-id", default=None)
+    ap.add_argument("--commit-sha", default=None)
+    ap.add_argument("--workflow", default=None)
     return ap.parse_args(argv)
 
 
@@ -88,21 +66,28 @@ def main(argv: list[str]) -> int:
         return 1
 
     release_dir = RUNTIME_ROOT / "exports" / "books" / book_id / "releases" / release_id
+    if not release_dir.exists():
+        print(f"ERROR: release dir missing: {release_dir}")
+        return 1
+
     trust_path = release_dir / "release_trust.json"
 
-    commit_sha = os.environ.get("GITHUB_SHA") or git_head_sha()
+    commit_sha = args.commit_sha or os.environ.get("GITHUB_SHA") or git_head_sha()
 
-    trust_level = args.trust_level
-    if trust_level is None:
-        trust_level = "ci_passed" if os.environ.get("GITHUB_ACTIONS") == "true" else "unverified"
+    ci_block = {
+        "workflow": args.workflow or os.environ.get("GITHUB_WORKFLOW"),
+        "run_id": args.run_id or os.environ.get("GITHUB_RUN_ID"),
+        "commit_sha": commit_sha,
+    }
 
     data = {
         "book_id": book_id,
         "release_id": release_id,
-        "commit_sha": commit_sha,
-        "trust_level": trust_level,
+        "trust_level": args.trust_level,
+        "conclusion": args.conclusion,
+        "source": args.source,
         "created_at": utc_now(),
-        "ci": build_ci_block(args.conclusion),
+        "ci": ci_block,
     }
 
     write_json_atomic(trust_path, data)
