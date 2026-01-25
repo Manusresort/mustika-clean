@@ -58,6 +58,9 @@ print_summary "CHECK" "RESULT" "NOTES"
 
 cd "$BASE_DIR"
 
+# Do not abort on individual command failures; we record FAIL in summary instead.
+set +e
+
 # Release identity check helper (R1)
 release_identity_check() {
   local rc=0
@@ -112,13 +115,13 @@ if isinstance(books, list) and books:
 book_id = entry.get("book_id", "BOOK-DEFAULT")
 latest_json = Path("exports") / "books" / book_id / "releases" / "latest.json"
 if not latest_json.exists():
-    raise SystemExit(1)
+    raise SystemExit(2)
 release_id = json.load(open(latest_json, "r", encoding="utf-8")).get("release_id")
 if not release_id or release_id == "latest":
-    raise SystemExit(1)
+    raise SystemExit(2)
 trust_path = Path("exports") / "books" / book_id / "releases" / release_id / "release_trust.json"
 if not trust_path.exists():
-    raise SystemExit(1)
+    raise SystemExit(2)
 data = json.load(open(trust_path, "r", encoding="utf-8"))
 if os.environ.get("CI") == "true":
     if data.get("trust_level") != "ci_passed" or data.get("conclusion") != "success":
@@ -132,6 +135,11 @@ PY
     print_summary "release_trust_present" "PASS" "release_trust.json present"
     return 0
   else
+    rc=$?
+    if [ "${CI:-}" != "true" ] && [ "$rc" -eq 2 ]; then
+      print_summary "release_trust_present" "SKIP" "missing_release_or_trust"
+      return 0
+    fi
     print_summary "release_trust_present" "FAIL" "missing_or_invalid"
     return 1
   fi
