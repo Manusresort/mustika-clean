@@ -145,6 +145,59 @@ PY
   fi
 }
 
+# Release promotion check helper (R4)
+promotion_check() {
+  if python3 - <<'PY'
+import json
+from pathlib import Path
+bm_path = Path("manifests/book_manifest.json")
+if not bm_path.exists():
+    raise SystemExit(0)
+bm = json.load(open(bm_path, "r", encoding="utf-8"))
+entry = bm
+books = bm.get("books")
+if isinstance(books, list) and books:
+    entry = books[0]
+book_id = entry.get("book_id", "BOOK-DEFAULT")
+latest_json = Path("exports") / "books" / book_id / "releases" / "latest.json"
+if not latest_json.exists():
+    raise SystemExit(2)
+release_id = json.load(open(latest_json, "r", encoding="utf-8")).get("release_id")
+if not release_id or release_id == "latest":
+    raise SystemExit(2)
+release_dir = Path("exports") / "books" / book_id / "releases" / release_id
+promotion_path = release_dir / "promotion.json"
+if not promotion_path.exists():
+    raise SystemExit(3)
+trust_path = release_dir / "release_trust.json"
+if not trust_path.exists():
+    raise SystemExit(1)
+trust = json.load(open(trust_path, "r", encoding="utf-8"))
+if trust.get("trust_level") != "ci_passed":
+    raise SystemExit(1)
+promotion = json.load(open(promotion_path, "r", encoding="utf-8"))
+if promotion.get("source") == "ci":
+    raise SystemExit(1)
+print("ok")
+PY
+  then
+    print_summary "promotion_valid" "PASS" "promotion.json valid"
+    return 0
+  else
+    rc=$?
+    if [ "$rc" -eq 3 ]; then
+      print_summary "promotion_valid" "SKIP" "no_promotion"
+      return 0
+    fi
+    if [ "$rc" -eq 2 ]; then
+      print_summary "promotion_valid" "SKIP" "missing_release"
+      return 0
+    fi
+    print_summary "promotion_valid" "FAIL" "invalid_promotion"
+    return 1
+  fi
+}
+
 if [ "${QA_TRUST_ONLY:-}" = "1" ]; then
   release_identity_check || exit 1
   release_trust_check || exit 1
@@ -945,6 +998,9 @@ fi
 
 ### R3 — Release trust metadata (ADR-012)
 release_trust_check
+
+### R4 — Release promotion (manual)
+promotion_check
 
 # F) UI build sanity
 if command -v npm >/dev/null 2>&1; then
