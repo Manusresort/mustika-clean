@@ -2,23 +2,29 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# Canonical run index location is under runtime/indices/.
-# Keep backward-compatible fallback for older layouts.
-RUN_INDEX_PATH="runtime/indices/run_index.json"
+# Resolve repo root from this script location so paths work no matter where you run from.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# qa script lives at <repo>/runtime/scripts/, so repo root is two levels up
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Canonical run index location is under runtime/indices/ in the same repo as this script.
+RUN_INDEX_PATH="$REPO_ROOT/runtime/indices/run_index.json"
 if [ ! -f "$RUN_INDEX_PATH" ]; then
-  RUN_INDEX_PATH="indices/run_index.json"
+  # Backward-compatible fallback (older layout)
+  RUN_INDEX_PATH="$REPO_ROOT/indices/run_index.json"
 fi
-RUN_INDEX="$ROOT/$RUN_INDEX_PATH"
+RUN_INDEX="$RUN_INDEX_PATH"
 
 if [ ! -f "$RUN_INDEX" ]; then
   echo "SKIP: missing run_index.json"
   exit 0
 fi
 
-RUN_PATH="$(python3 - <<'PY'
+RUN_PATH="$(RUN_INDEX_PATH="$RUN_INDEX_PATH" python3 - <<'PY'
 import json
 from pathlib import Path
-p = Path("$RUN_INDEX_PATH")
+import os
+p = Path(os.environ["RUN_INDEX_PATH"])
 d = json.loads(p.read_text(encoding="utf-8"))
 runs = d.get("runs", [])
 if not runs:
