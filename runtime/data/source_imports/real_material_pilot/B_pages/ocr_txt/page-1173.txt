@@ -1,0 +1,42 @@
+Pepes Ontjom 552 Ritja Rodoh 574
+Pepes Peda 552 Saba' Au 575
+Pepes Peda Bumbu Kelapa 553 Sabrah Au 576
+Pepes Peda Daun Singkong 553 “Sangsang 576
+Pepes Tahu 554 “Sasate 577
+Pepes Telur Ikan 554 “Selada Ikan Laut 578
+Pepes Tawon 555  “Selada Itali 579
+Pepes Tempe 556  “Selada Tjampur 579
+Pepes Tjendawan 556 Selada Tomat 580
+Pepes Udang 557  Semaji 581
+Pesmol Gurami 557 Sengkuang 581
+Pesmol Ikan Laut 558  Sepat 582
+Perkedel Kukus 558 “Serapah Daging 583
+Petis Bumbon 559  Serombotan 583
+Petjel 559  Seruwit 584
+Petjel Ajam 560 Setam Tenerem 585
+Petjel Bunga Turi 561 Setup Buntjis 585
+Petjel Djantung Pisang 561 Setup Buntjis Bulat 586
+Petjel Panggang Ajam 562 Setup Djagung Muda 586
+Petjel Panggang Ikan 562 Setup Gurami 587
+Petjel Terong 563 Setup Ikan 587
+Petjel Tumpang 563 Setup Tomat dan Prei 588
+Petola Daging 564 Sinalenggam 589
+Pilitode 565 Singgang Ajam 589
+Pindang 565 Siram Lombok 590
+Pindang Bandeng 566 Tahu Bakso 591
+Pindang Ikan Tandjan 566 Tahu Bumbu Bali 591
+Pindang Ketjap 567 Tambusan 592
+Pindang Kuning Ikan Balang 568 “Telur Bumbu Bali 593
+Pindang Satria 568 “Telur Gambuang 593
+Pindang Telur 569 “Telur Petis 594
+Pindang Tempe Bosok 569 Terantjam 594
+Pu Jong Hay 570 Terantjam Bunga Pisang 595
+Pu Jong Hay Djagung Muda 570 Terantjam Ikan Panggang 595
+Rabek 571 Terantjam Ketimun dan Batang
+Radjang Ajam 572 Kuntji 596
+Ragout Dalam Kerang 572 Terantjam Mangga Muda 597
+Ritja Ritja 573 Terantjam Petai Tjina 597
+Ritja Ritja Ajam 573 Terantjam Seledri Taoge
+
+Ritja Ritja Ikan 574 Kemangi 598
+1166 MUSTIKARASA

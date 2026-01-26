@@ -1,0 +1,37 @@
+Kue tar susu 992 Susugoreng 1099
+Lapis susu 1003 “Susu singkong 1100
+Susu ecok 1099
+TELUR
+Atjar telur ajam 384 Orakarik 509
+Baeba 806 Pindang telur 569
+Belado telur 397  Pujong hay 570
+Bolu 822 Pujong hay djagung muda 570
+Cacao telur 1144 Rendang telur 687
+Chateau de sumatera 849 Sambal goreng telur 329
+Dadar isi 644 Sambal goreng telur dengan
+Dadar kelapa muda 645 peda 329
+Gulai lemak telur itik 234 “Sitrun telur 1150
+Gulai telur 248 Susutelur 1151
+Gulai telur tapak liman 248 Taart amandel 1100
+Kue delapan djam 945 Taart kedju 1104
+Kue lilin 965  Taart kopi mocca 1104
+Kue nanas 971 “Taart panili 1106
+Kue panili 973 Tahutelur 701
+Kue telur 992 Telur bumbu bali 593
+Lapis susu 1003 “Telur gambuang 593
+Lapis telur 476 “Telur mata sapi 705
+Masupa 1023 “Telur petis 594
+IKAN
+
+Ikan basah Badjabu bale 641
+Abon gurami 640 Bandasi 718
+Ang sio hi 370  Bandeng bumbu rudjak 718
+Asam padeh ikan 374 Baudiandjoroi 3809
+Atjar gurami 379  Bau peapi 390
+Atjar ikan 379  Beladoikan salai 396
+Atjar ikan bandeng 380  Beladoteri 397
+Atjar ikan emas 380 Berengkesikan 398
+Aunu senebre 387  Bilitango 644
+Aunuve habre 387 Bolabola 819
+
+RESEP MASAKAN INDONESIA WARISAN SUKARNO 1203

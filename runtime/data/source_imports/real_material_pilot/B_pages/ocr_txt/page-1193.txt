@@ -1,0 +1,47 @@
+Bolu koja 825  Kuetar 931
+Bolu lapis 825  Kuetobuu 996
+Boterletter 830 Kue wina keras 998
+Bunga dahlia 842 Lapissusu 1003
+Cake 8a5 Lingkaran bunga 1015
+Cake djahe 846 Martabak 1021
+Cake marmer 847 Masubah 1023
+Cake nenas 847 Pangsit 1042
+Gagadoh tiwadak 882  Panset cake 1042
+Gagaok 883 Poffertjes 1057
+Gegado 886  Ranting kedju 1069
+Harder wiener 9o1 Risolles 1070
+Janhagel 904 Roti manis 1074
+Kaastaart 904  Serabitelur 1090
+Kaju manis 905  Spekulas 1096
+Kalomben 907  Srikaja bakar 1097
+Kue aneka rupa 935  “Taart beschuit 1111
+Kue bawang 938,940  Taart buah 1111
+Kue batang pohon 940 “Taart djantung hati 1102
+Kue bidji bidji 941 “Taart marmer 1105
+Kue bolu kukus 942 “Taart room 1106
+Kue buah?an dengan vla 942 Taart semangka 1107
+Kue dadar 944 Taart tape ubi 1109
+Kue daun daun 945 “Tjalaisi 1121
+Kue djae 946 Tulband 1131
+Kue gulung 951 “Vitello sprits 1135
+Kue kelapa parut 957
+
+Kue kembang gojang 958 Lain-lain
+
+Kue kenari 958  Bakmi kaldu 807
+Kue kentang 959 Bangket bekatul 809
+Kue kulit kapas 961 Krawon tjantel 929
+Kue lengkitang 964 Laksa 470
+Kue lidah kutjing 964 Laksan 471
+Kue lunak lembut 967  Mihun goreng 1026
+Kue rodangi 979 Rudjak mi 1077
+Kue siput siput 984 Sop macaroni 348
+Kue sirna 984 “Takar katul 1112
+Kue sitrun 985  Tami 1113
+Kue suri 986
+
+Kue sus 987
+
+Kue sus keras 987
+
+1186 MUSTIKARASA

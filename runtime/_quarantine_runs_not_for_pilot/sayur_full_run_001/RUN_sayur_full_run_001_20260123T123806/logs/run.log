@@ -1,0 +1,10 @@
+mode: excerpt-aware
+excerpt_id: sayur_full_run_001
+excerpt_source: data/source_imports/sayur_groente_001/sayur_groente_excerpt_v1.txt
+excerpt_version: v1_ocr
+run_id: RUN_sayur_full_run_001_20260123T123806
+started_at: 2026-01-23T12:38:06.759884
+status: FAILED
+stop_reason: Run failed: cannot import name 'LLM' from 'crewai' (/Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/runtime/.venv/lib/python3.11/site-packages/crewai/__init__.py)
+
+---

@@ -1,0 +1,1 @@
+mustika_run_excerpt --excerpt-id sayur_demo_full_001 --excerpt-source /Users/vwvd/Millway/AI-folder/Crew-AI/data/source_imports/sayur_groente_001/sayur_groente_excerpt_v1.txt --excerpt-version v1 --run-id RUN_DEMO_FULL_001

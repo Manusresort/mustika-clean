@@ -1,0 +1,10 @@
+{
+  "excerpt_id": "QA_EXCERPT",
+  "excerpt_source": "/tmp/qa_en.txt",
+  "excerpt_version": "v1",
+  "run_id": "RUN_QA_EXCERPT_20260121T142745",
+  "output_type": "annotator_primary",
+  "main_text": "NL test",
+  "remarks": "STUB: mustikarasa_agents missing; returned rough_nl without agent processing.",
+  "created_at": "2026-01-21T14:27:46.283476"
+}

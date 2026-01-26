@@ -1,0 +1,41 @@
+Pindang Ikan 275  Sajur Kumbu 298
+Pindang Serani 276 “Sajur Lelawar 298
+Rawon 277 Sajur Lemeng 299
+Sajur Asem 277 “Sajur Liklik 300
+Sajur Asem Batang Keladi 278 “Sajur Lombok Hidjau 300
+Sajur Asam Djakarta 298 Sajur Lompong 301
+Sajur Asam Kangkung 279 Sajur Lumbu Pedas 302
+Sajur Asam Katjang Rudji 280 Sajur Lumbu Tidak Pedas 302
+Sajur Asam Ojong 280 “Sajur Lontjom 303
+Sajur Asam Pedas 281 “Sajur Manipol Usdek 303
+Sajur Asam Sawi 281 Sajur Maritja 304
+Sajur Belimbing Wuluh 282 Sajur Menir 304
+Sajur Bening Djagung Muda 283 “Sajur Menir Daun Kelor 305
+Sajur Bening Katjang Sajur Menir Kental 306
+Pandjang 283 Sajur Menir Kol 306
+Sajur Bening Nangka Muda 284 “Sajur Nangka Muda 307
+Sajur Bening Tempe 284 “Sajur Ojong 307
+Sajur Bening Terong 285  Sajur Pepaja Muda 308
+Sajur Betik 285 “Sajur Pindang 308
+Sajur Bobor 288 “Sajur Podomoro 309
+Sajur Bobor Bajam 286 “Sajur Putjuk Labu 309
+Sajur Bobor Daun Kelor 286 “Sajur Putri Gunung 310
+Sajur Bobor Sawi 287 Sajur Rambanan 311
+Sajur Bobor Terong 288 “Sajur Rebung 311
+Sajur Buah Kelor 288 “Sajur Sawi Hidjau 312
+Sajur Daun Daunan 289 Sajur Sawi Putih 312
+Sajur Daun Lumbu 290 “Sajur Sibulung Pulung 313
+Sajur Daun Semanggi 290 “Sajur Tjupang 313
+Sajur Daun Ubi Tumbuk 291 Sajur Ulih 314
+Sajur Djantung 291 Sajur Uni 314
+Sajur Gadang 292 Sajur Undis dan Bunga
+Sajur Ganemu 293 Kembodja 315
+Sajur Gili 295 “Sajur Usik 316
+Sajur Gurih 294 Sambal Godok 317
+Sajur Gurih Labu 295 Sambal Goreng Buntjis 317
+Sajur Katjang 295 Sambal Goreng Djagung 318
+Sajur Katjang Merah 296 Sambal Goreng Djeroan
+Sajur Keluwih 296 Bebek 319
+Sajur Ketjambah Kedele 297 Sambal Goreng Ikan Kakap 319
+Sajur Kimlo 297
+1160 MUSTIKARASA

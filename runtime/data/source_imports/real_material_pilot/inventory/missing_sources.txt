@@ -1,0 +1,2 @@
+/Users/vwvd/Millway/AI-folder/mustika_archive/Mustikarasa/handover_STEP4_STEP5_20251222_140042.tar.gz/step4_extraction/ledgers
+/Users/vwvd/Millway/AI-folder/mustika_archive/Mustikarasa/handover_STEP4_STEP5_20251222_140042.tar.gz.sha256/step4_extraction/ledgers

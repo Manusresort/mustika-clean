@@ -1,0 +1,41 @@
+MAKANAN UTAMA Stamppot Bajam dan
+Aron 179 Kangkung 200
+Arem Arem 179 Stamppot Kol Putih 201
+Arem Arem Aron 180 Tamales 201
+Arem Arem Djagung 181 Tinotuan 202
+Djagung Bose 182 Tiwul 2093
+Djagung Titi 182 Tiwul Djagung 203
+Hutspot 183 Tortilla 203
+Kapusuk Nosu 183 Tortilla Guadalajara 204
+Kentang Ongklok 184
+Kentang Puri 184 LAUK PAUK BASAH
+Ketupat 186 BERKUAH
+Loka Dipeapi 186 Asem Asem 207
+Lontong 187 Asem Asem Buntjis 207
+Lontong Djagung 187 Asem Asem Tahu 208
+Lontong/Ketupat Djagung Asem Asem Terong 208
+dengan Beras 188 Aunu 209
+Nasi Briani 188 Brongkos 209
+Nasi Djagung 189 Brongkos Katjang Merah 210
+Nasi Djagung dengan Beras 189 Brongkos Tahu 211
+Nasi Djagung Gaplek 190 Brongkos Waluh Djipang 211
+Nasi Djagung Nangka Muda 191 Djambrai Sagar 212
+Nasi Djagung Ubi Kaju 191 Djangan Singang 212
+Nasi Golong 191 Djukut Ares 213
+Nasi Goreng 192 Djukut Daun Belimbing 214
+Nasi Gurih Djagung 192 Djukut Meliklik 214
+Nasi Kebuli (Palembang) 193 Djukut Mapelapah 215
+Nasi Kebuli (Medan) 194 Djukut Mapeletjing 216
+Nasi Kukus 194 Djukut Rambanan 216
+Nasi Kukus (dalam Risopan) 195 Djukut Roroban 217
+Nasi Kukus (dalam soblukan) 195 Gangan Asem Kering 218
+Nasi Kuning 195 Gangan Daun Mengkudu 219
+Nasi Liwet 196 Gangan Katjang Hidjau 219
+Nasi Punar 196 Gangan Tungkul 220
+Nasi Samin 197 Gangan Waluh 220
+Nasi Tim 197  Gulai Ajam 221
+Nasi Tumpang 198 Gulai Asam Pedas Ikan 221
+Nasi Wuduk 199 Gulai Bagar 222
+Sagu Sagu 199 Gulai Bebek 223
+Sagu Kelapa 200 Gulai Bebek Masak Hidjau 224
+1158 MUSTIKARASA

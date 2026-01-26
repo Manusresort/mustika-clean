@@ -1,0 +1,6 @@
+path	exists	bytes	mtime_epoch
+step5_extraction/ledgers/recipe_record_ledger_skeleton.tsv	YES	823	1766408150
+step5_extraction/ledgers/extract_plan_by_rb.tsv	YES	10925	1766408150
+step5_extraction/qc/extract_qc_missing_canonical_pages.tsv	YES	39	1766408178
+step5_extraction/qc/extracts_index.tsv	YES	1589	1766408237
+step5_extraction/qc/extracts_sha256.txt	YES	2912	1766408237

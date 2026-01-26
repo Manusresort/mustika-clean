@@ -686,8 +686,13 @@ class Indexer:
                 "evidence_paths": evidence_paths,
                 "source_closure_ids": source_closure_ids,
             }
+            source_refs = {
+                "proposals": _unique_sorted(chapter.get("proposal_ids", [])),
+                "closures": _unique_sorted(chapter.get("closure_ids", [])),
+            }
             enriched = dict(chapter)
             enriched["glossary"] = glossary
+            enriched["source_refs"] = source_refs
             updated["chapters"].append(enriched)
 
         return updated

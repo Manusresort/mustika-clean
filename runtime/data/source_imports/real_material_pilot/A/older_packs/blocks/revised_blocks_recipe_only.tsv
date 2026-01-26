@@ -1,0 +1,29 @@
+block_id	start_page	end_page	pages	bahan_pages	bumbu_pages	tjara_pages	start_new_obs	end_here_obs	boundary_flag	boundary_note	review_status
+BLK-0009	page-0186	page-0187	2	2	1	2	ja	nee			OK
+BLK-0010	page-0189	page-0191	3	3	3	3	ja	ja			OK
+BLK-0011	page-0193	page-0211	19	19	15	19	ja	ja			OK
+BLK-0012	page-0214	page-0243	30	30	30	30	ja	nee			OK
+BLK-0013	page-0245	page-0275	31	31	31	31	nee	nee			OK
+BLK-0014	page-0277	page-0333	57	57	57	57	nee	nee			OK
+BLK-0015	page-0335	page-0336	2	2	2	2	nee	ja			OK
+BLK-0016	page-0338	page-0365	28	28	28	28	nee	nee		END:UNCLEARhoortnogeenregelbij	OK
+BLK-0017	page-0369	page-0401	33	33	33	33	ja	ja			OK
+BLK-0018	page-0403	page-0473	71	71	71	71	ja	nee		END:CONTINUATIONreceptlooptdoor	OK
+BLK-0019	page-0475	page-0614	140	140	140	140	nee	nee		END:CONTINUATIONreceptlooptdoor	OK
+BLK-0020	page-0616	page-0642	27	27	27	27	ja	nee		START:CONTINUATIONreceptlooptdoor	OK
+BLK-0021	page-0645	page-0698	54	54	54	54	ja	ja		START:CONTINUATIONreceptlooptdoor	OK
+BLK-0022	page-0700	page-0716	17	17	17	17	ja	ja			OK
+BLK-0023	page-0721	page-0748	28	28	28	28	ja	nee		START:CONTINUATIONreceptlooptdoor | END:CONTINUATIONreceptlooptdoor	OK
+BLK-0024	page-0751	page-0763	13	13	13	13	nee	ja			OK
+BLK-0025	page-0765	page-0798	34	34	34	34	ja	ja		START:CONTINUATIONreceptlooptdooropvolgendepagina	OK
+BLK-0026	page-0801	page-0900	100	100	55	100	ja	ja		START:CONTINUATIONreceptlooptdooropvolgendepagina	OK
+BLK-0027	page-0902	page-0919	18	18	13	18	ja	nee		START:CONTINUATIONreceptlooptnogeenregeldooropvolgendepagina	OK
+BLK-0028	page-0921	page-0926	6	6	3	6	nee	ja			OK
+BLK-0029	page-0929	page-0978	50	50	20	50	nee	nee			OK
+BLK-0030	page-0980	page-0980	1	1	0	1	ja	ja			OK
+BLK-0031	page-0983	page-1024	42	42	17	42	ja	nee		START:UNCLEARwaarschijnlijknietmaarzoudoorlopopvolgendepaginakunnenhebben	OK
+BLK-0032	page-1028	page-1049	22	22	17	22	nee	nee		START:UNCLEARnummeringzouevtdoorkunnenlopenopdevolgendepagina	OK
+BLK-0033	page-1051	page-1086	36	36	20	36	nee	nee			OK
+BLK-0034	page-1089	page-1103	15	15	8	15	ja	nee			OK
+BLK-0035	page-1105	page-1144	40	40	20	40	nee	ja			OK
+BLK-0036	page-1150	page-1162	13	13	5	13	ja	nee		START:CONTINUATIONreceptlooptdoor	OK

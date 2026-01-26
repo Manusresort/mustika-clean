@@ -1,0 +1,58 @@
+{
+  "absolute_root_path": "/Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/runtime/data/source_imports/real_material_pilot",
+  "counts": {
+    "A_alignment/blocks": 3,
+    "A_alignment/ledgers": 16,
+    "B_pages/images_png": 1196,
+    "B_pages/ocr_txt": 1193
+  },
+  "created_at": "2026-01-26T11:40:34Z",
+  "import_id": "real_material_pilot",
+  "samples": {
+    "A_alignment/blocks": [
+      "candidate_blocks_runs.tsv",
+      "revised_blocks.tsv",
+      "revised_blocks_recipe_only.tsv"
+    ],
+    "A_alignment/ledgers": [
+      "batch_001.tsv",
+      "batch_002_candidates.tsv",
+      "batch_bulk_001_pages.lst",
+      "extract_plan_by_rb.tsv",
+      "page_candidate_ledger.tsv",
+      "page_candidate_ledger_batch_001.tsv",
+      "page_candidate_ledger_batch_002.tsv",
+      "page_exceptions_ledger.tsv",
+      "page_to_recipe_block.tsv",
+      "recipe_block_file_manifest.tsv"
+    ],
+    "B_pages/images_png": [
+      "page-0001.png",
+      "page-0002.png",
+      "page-0003.png",
+      "page-0004.png",
+      "page-0005.png",
+      "page-0006.png",
+      "page-0007.png",
+      "page-0008.png",
+      "page-0009.png",
+      "page-0010.png"
+    ],
+    "B_pages/ocr_txt": [
+      "page-0001.txt",
+      "page-0002.txt",
+      "page-0003.txt",
+      "page-0004.txt",
+      "page-0005.txt",
+      "page-0006.txt",
+      "page-0007.txt",
+      "page-0008.txt",
+      "page-0009.txt",
+      "page-0010.txt"
+    ]
+  },
+  "sha256": {
+    "META/SOURCE_INDEX.md": "7e681608abe23c8dea3fecf649cce274d896f93339b273a37a67da3259fb68db",
+    "META/provenance.json": "28091f69964e70f98f35e77d55721ea18fc24cbaad7c95399ba09f903157170b"
+  }
+}

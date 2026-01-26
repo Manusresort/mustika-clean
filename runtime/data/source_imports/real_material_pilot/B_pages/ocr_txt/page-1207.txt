@@ -1,0 +1,42 @@
+erkedel 673 Tambusan 592
+Perkedel bakar 674 “Terik garing 600
+Perkedel bungkus daun Timbung 754
+
+singkong 675  “Tjah daging 608
+Perkedel daging 675 “Tjili djagung 611
+Petola daging 564 Tufi 755
+Pindang 565 “Tum daging 615
+Pindang serani 276 Tuturuga 358
+Rabek 571 Urutan 709
+Ragout dalam kerang 572
+Rawon 277 Kambing
+Rendang 684 Goreng perut kambing 653
+Rendang minang 687 Gulai bagar 222
+Ritja rodoh 574 Gulai korma 232
+Sambal goreng perentil 326 Gulai korma kambing 232
+Sambal padeh 779 Gulai pagar puri 240
+Sate bumbu dendeng 741 Gulai parsanga 242
+Sate gapit 744 Gule 251
+Sate gurih 744  “Karsigu 461
+Sate lidah 745  Lapis portegis 475
+Sate manis 747  Lapis surabaja 475
+Sate memangut 748 Lula djakarta 486
+Sate padang 749 Magadip 487
+Sate prentul 750  Mahbub 488
+Sate usus 753  Masak kambing 492
+Semur daging 333  Masakan daging 493
+Semur lidah 336  Muluga 496
+Semur ternate 337 Musaga 497
+Seng geseng 670 Naginatgat 670
+Sengkuang 581 Nasutjemba 502
+Serapah daging 583 Nilabar 504
+Sinalenggam 589 Sateasam manis 739
+Sop daging giling dan djagung 341 Sate madura 748
+Sop kare 346 “Satetjirebon 752
+Sop londonderry 348
+Sop sumsum 351 Babi
+Sop tomat isi daging 352  Babiketjap 388
+Soto bandung 354 Babitjien 388
+Soto banten 354 Bakut masak sajur asin 389
+Soto kedu 355  Begenjol 393
+1200 MUSTIKARASA

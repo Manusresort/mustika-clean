@@ -1,0 +1,24 @@
+2 3. DAGING
+S——— EEE EEE EEE EEE EEE———
+
+z Mme
+
+g z a e £ & 5 5 5 a g 1o £
+
+5 g g g m m m IU m m g $
+
+8 Ajam 302 18.2 25.0 0 14 200 1.5 810 0.08 0 35.9 58
+Angsa 354 16.4 31.5 0 15 188 1.8 (900) 010 0 5lI 60
+Bebek (itik) 326 16.0 28.6 0 15 188 1.8 (900) 010 0 54.3 60
+Daging anak sapi sedang 190 19.1 12.0 0 " 193 2.9 (40) O14 0 680 100
+Daging anak sapi kurus 174 19.6 10.0 0 1! 201 2.9 (20) 008 0 69.0 100
+Daging anak sapi gemuk 2070 188 140 0 10 (200) 22 (40) 013 0 620 — 100
+Daging asap 191 32.0 6.0 0 15 300 5.0 (20) 012 0 60.0 100
+Daging babi gemuk 457 11.9 45-0 0 7 117 1,8 (0) 0.58 0 42.0 100
+Daging babi kurus 376 14.1 35.0 0 8 151 2.1 (0) 0.67 0 50.0 100
+Daging domba kurus 206 17.1 14.8 0 10 191 2.6 0 0.15 0 66.3 100
+Daging domba gemuk 337 157 — 277 0 9 157 2.4 0 0.14 o 558 — 100
+Daging kambing 154 16.6 9.2 ) 1! 124 1.0 D) 0.09 0 70.3 100
+Daging kerbau 84 18.7 0.5 0 7 151 2.0 (0) 0.02 0 84.0 100
+Daging kuda kurus us 181 41 09 10 50  (27) 0 0.07 0 76.0 — 100
+Daging sapi gemuk 273 17.5 220 0 10 150 2.6 40 0.08 0 60.0 — 100

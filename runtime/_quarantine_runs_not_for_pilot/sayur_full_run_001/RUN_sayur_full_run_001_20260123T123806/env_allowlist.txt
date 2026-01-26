@@ -1,0 +1,7 @@
+PATH=/Users/vwvd/Millway/AI-folder/Crew-AI/mustika-rasa-clean/runtime/.venv/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin
+HOME=/Users/vwvd
+USER=vwvd
+SHELL=/bin/zsh
+LANG=nl_NL.UTF-8
+TERM=xterm-256color
+OPENAI_API_KEY=[REDACTED]

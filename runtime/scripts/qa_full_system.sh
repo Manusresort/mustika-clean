@@ -251,6 +251,19 @@ indexer_rc=0
 python3 indexer.py >/tmp/qa_full_indexer.txt 2>&1 || indexer_rc=$?
 print_summary "indexer_run" "$(passfail $indexer_rc)" "python3 indexer.py"
 
+# P4-B2) Runner outputs check
+if [ -x "$BASE_DIR/scripts/qa_runner_produces_outputs.sh" ]; then
+  "$BASE_DIR/scripts/qa_runner_produces_outputs.sh" >/tmp/qa_runner_outputs.txt 2>&1
+  runner_rc=$?
+  if [ "$runner_rc" -eq 0 ]; then
+    print_summary "runner_outputs_present" "PASS" "outputs present"
+  else
+    print_summary "runner_outputs_present" "FAIL" "outputs missing"
+  fi
+else
+  print_summary "runner_outputs_present" "SKIP" "missing qa_runner_produces_outputs.sh"
+fi
+
 # B8b) Book build manifest generator
 BOOK_MANIFEST_RC=0
 TEST_BOOK_ID=""

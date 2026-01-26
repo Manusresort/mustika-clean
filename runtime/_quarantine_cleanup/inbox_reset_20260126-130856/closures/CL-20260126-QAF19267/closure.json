@@ -1,0 +1,14 @@
+{
+  "closure_id": "CL-20260126-QAF19267",
+  "created_at": "2026-01-26T09:21:07.882089",
+  "created_by": "qa",
+  "proposal_id": "QAF19267-FULL",
+  "run_id": "RUN_QA_FULL",
+  "source_run_id": "RUN_QA_FULL",
+  "decision_type": "qa_full",
+  "rationale": "QA full system closure rationale",
+  "evidence_paths": [
+    "proposals/QAF19267-FULL/status.json"
+  ],
+  "sign_off": true
+}

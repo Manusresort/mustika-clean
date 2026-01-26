@@ -1,6 +1,9 @@
 runtime/audit/
 runtime/indices/
 runtime/proposals/
+!runtime/proposals/
+!runtime/proposals/P-TEST/
+!runtime/proposals/P-TEST/proposal.md
 runtime/builds/
 runtime/outputs/
 runtime/.cache/

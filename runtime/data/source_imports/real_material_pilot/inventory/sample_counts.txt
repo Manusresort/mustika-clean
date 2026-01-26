@@ -1,0 +1,5 @@
+A/primary_files\t16
+A/handovers_files\t9
+A/older_packs_files\t16
+B/images_link_entries\t2
+B/ocr_txt_link_entries\t2

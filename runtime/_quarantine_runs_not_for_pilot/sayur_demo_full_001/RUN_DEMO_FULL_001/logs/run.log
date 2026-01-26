@@ -1,0 +1,10 @@
+mode: excerpt-aware
+excerpt_id: sayur_demo_full_001
+excerpt_source: /Users/vwvd/Millway/AI-folder/Crew-AI/data/source_imports/sayur_groente_001/sayur_groente_excerpt_v1.txt
+excerpt_version: v1
+run_id: RUN_DEMO_FULL_001
+started_at: 2026-01-23T12:21:25.450988
+status: GATED
+stop_reason: Validator failed
+
+---

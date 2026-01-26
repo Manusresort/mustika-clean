@@ -1,0 +1,10 @@
+mode: excerpt-aware
+excerpt_id: sayur_full_run_001
+excerpt_source: data/source_imports/sayur_groente_001/sayur_groente_excerpt_v1.txt
+excerpt_version: v1_ocr
+run_id: RUN_sayur_full_run_001_20260123T123552
+started_at: 2026-01-23T12:35:52.417177
+status: FAILED
+stop_reason: Run failed: data must be str, not NoneType
+
+---
