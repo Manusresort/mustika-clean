@@ -2,7 +2,13 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-RUN_INDEX="$ROOT/indices/run_index.json"
+# Canonical run index location is under runtime/indices/.
+# Keep backward-compatible fallback for older layouts.
+RUN_INDEX_PATH="runtime/indices/run_index.json"
+if [ ! -f "$RUN_INDEX_PATH" ]; then
+  RUN_INDEX_PATH="indices/run_index.json"
+fi
+RUN_INDEX="$ROOT/$RUN_INDEX_PATH"
 
 if [ ! -f "$RUN_INDEX" ]; then
   echo "SKIP: missing run_index.json"
@@ -12,7 +18,7 @@ fi
 RUN_PATH="$(python3 - <<'PY'
 import json
 from pathlib import Path
-p = Path("indices/run_index.json")
+p = Path("$RUN_INDEX_PATH")
 d = json.loads(p.read_text(encoding="utf-8"))
 runs = d.get("runs", [])
 if not runs:
