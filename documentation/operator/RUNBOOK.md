@@ -103,6 +103,33 @@ Common failure cases:
 - `ERROR: promotion already exists ...` (immutable promotion)
 - `ERROR: promotion is manual-only; CI is not allowed` (CI context)
 
+## Release lifecycle
+
+Preconditions:
+- QA PASS (`runtime/scripts/qa_full_system.sh`)
+- `release_trust.json` exists and `trust_level == ci_passed`
+
+Steps:
+1) Run export (see exporter flow).
+2) Ensure trust metadata exists (CI writes `release_trust.json`).
+3) Manually promote the release (see “Promoting a Release (Manual-Only)”).
+4) Publish verification checklist:
+   - `promotion.json` present
+   - `CHECKSUMS.sha256` exists and verifies
+   - `release_manifest.json` present
+
+## Incident handling
+
+Scenarios:
+- QA FAIL after promotion
+- Trust mismatch (e.g., `release_trust.json` not `ci_passed`)
+- Bad export discovered post-publish
+
+Rules:
+- Do not mutate existing releases (no rewrite/overwrite).
+- Rollback is a new release + new promotion.
+- Record incident and create a new immutable release with corrected outputs.
+
 ## Run output regression check
 
 Command:
