@@ -452,23 +452,55 @@ fi
 
 MANIFEST_PATH="$BASE_DIR/manifests/chapter_manifest.json"
 if [ -f "$MANIFEST_PATH" ]; then
-  print_summary "chapter_manifest_exists" "PASS" "file exists"
-  if python3 - <<PY
+  if python3 - <<'PY'
 import json
-path = "${MANIFEST_PATH}"
-try:
-    data = json.load(open(path))
-    if 'generated_at' not in data:
-        print('chapter_manifest_error: missing generated_at key')
-        raise SystemExit(1)
-except Exception as exc:
-    print(f'chapter_manifest_error: {exc}')
-    raise
+from pathlib import Path
+
+path = Path("manifests/chapter_manifest.json")
+data = json.load(path.open("r", encoding="utf-8"))
+if "generated_at" not in data or not data.get("generated_at"):
+    raise SystemExit(1)
+chapters = data.get("chapters")
+if not isinstance(chapters, list):
+    raise SystemExit(1)
+print("ok")
 PY
   then
+    print_summary "chapter_manifest_exists" "PASS" "file exists"
     print_summary "chapter_manifest_has_generated_at" "PASS" "has key"
   else
-    print_summary "chapter_manifest_has_generated_at" "FAIL" "missing key"
+    print_summary "chapter_manifest_exists" "FAIL" "invalid_structure"
+    print_summary "chapter_manifest_has_generated_at" "FAIL" "missing_or_invalid"
+  fi
+  if python3 - <<'PY'
+import hashlib
+import subprocess
+from pathlib import Path
+
+path = Path("manifests/chapter_manifest.json")
+def sha256(p: Path) -> str:
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+if not path.exists():
+    raise SystemExit(1)
+
+before = sha256(path)
+rc = subprocess.call(["python3", "indexer.py"])
+if rc != 0:
+    raise SystemExit(1)
+after = sha256(path)
+if before != after:
+    raise SystemExit(1)
+print("ok")
+PY
+  then
+    print_summary "chapter_manifest_derived" "PASS" "indexer_consistent"
+  else
+    print_summary "chapter_manifest_derived" "FAIL" "mismatch_after_indexer"
   fi
 else
   print_summary "chapter_manifest_exists" "FAIL" "missing"
