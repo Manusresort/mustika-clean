@@ -82,6 +82,27 @@ Non-goals:
   - API/UI logs: check `runtime/audit/` if present and script output streams.
 ADDED: See `documentation/system_overview/PROJECT_STATE_PACK.md` (DoD — Run logging & reproducibility) for the definition of “reproducible” as audit- and comparison-ready, not deterministic reruns.
 
+## Promoting a Release (Manual-Only)
+
+Preconditions (must all be true):
+- `release_trust.json` exists under `runtime/exports/books/<book_id>/releases/<release_id>/`
+- `trust_level == ci_passed`
+- NOT running in CI (`CI=true` is forbidden)
+
+Example command:
+```bash
+python3 runtime/scripts/promote_release.py --book-id <book_id> --release-id <release_id> --actor <name>
+```
+
+Expected output:
+- `runtime/exports/books/<book_id>/releases/<release_id>/promotion.json`
+
+Common failure cases:
+- `ERROR: missing release_trust.json ...` (no trust record present)
+- `ERROR: trust_level is not ci_passed` (CI trust not satisfied)
+- `ERROR: promotion already exists ...` (immutable promotion)
+- `ERROR: promotion is manual-only; CI is not allowed` (CI context)
+
 ## Run output regression check
 
 Command:
